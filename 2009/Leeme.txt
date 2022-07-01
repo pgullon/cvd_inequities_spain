@@ -1,0 +1,48 @@
+#########################################################################################################################					
+INSTITUTO NACIONAL DE ESTADÍSTICA	www.ine.es				
+					
+FICHEROS DE MICRODATOS					
+	ENCUESTA EUROPEA DE SALUD EN ESPAÑA. CUESTIONARIO HOGAR (EESEhogar)				
+	AÑO 2009				
+					
+Leeme.txt 					
+############################################################					
+					
+Este directorio contiene:					
+					
+1- Este archivo (leeme.txt)					
+2- Un fichero Excel con el diseño de registro de los microdatos ( "dr_EESEhogar_2009.xlsx")					
+3- El fichero de microdatos en formato txt, ancho fijo ("md_EESEhogar_2009.txt"). La longitud de cada					
+	   variable se puede consultar en el fichero Excel del diseño de registro "dr_EESEhogar_2009.xlsx"				
+4- Cinco directorios: CSV y Excel, R, SAS, SPSS, STATA					
+					
+Contenido de los directorios:					
+					
+1- El directorio CSV y excel contiene:					
+	a) El fichero de microdatos en formato CSV, el separador es la TABULACIÓN ("EESEhogar_2009.csv")				
+	b) El fichero de microdatos en formato xlsx (md_EESEhogar_2009.xslx)
+					
+2- El directorio R contiene:					
+	a) Programa en R que lee los microdatos ("MD_EESEhogar_2009.R")				
+	Necesita los ficheros del directorio raíz  ("..._EESEhogar_2009...") para su correcto funcionamiento				
+	b) Archivo de instrucciones para R (LeemeR.txt)				
+					
+3- El directorio SAS contiene:					
+	a) Fichero de microdatos en formato SAS, con los datos codificados (es decir,				
+	   las variables cualitativas son un código numérico, por ejemplo '40' en lugar				
+	   de 'Segovia') ("EESEhogar_2009.sas7bdat")				
+	b) Programa SAS con las sentencias para dar formato a las variables del fichero				
+	   de microdatos anterior ("EESEhogar_2009_conFormato.sas")				
+					
+4- El directorio SPSS contiene:					
+	a) Fichero de microdatos en formato SPSS, con los diccionarios de las variables				
+	   integrados ("EESEhogar_2009.sav")				
+	   				
+5- El directorio STATA contiene:					
+	a) Fichero de microdatos en formato STATA, sin los diccionarios de las variables				
+	   integrados ("EESEhogar_2009.dta"). Las etiquetas las variables y valores pueden consultarse en el				
+	   fichero Excel del diseño de registro "dr_EESEhogar_2009.xlsx" que				
+	   está en la misma carpeta que este fichero "Leeme.txt"				
+	   				
+					
+#########################################################################################################################					
