@@ -3,7 +3,7 @@ library(tidyverse)
 library(openxlsx)
 library(haven)
 
-
+rm(list=ls())
 
 
 ###################################### 2003 ###########################
