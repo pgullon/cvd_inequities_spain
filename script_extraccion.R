@@ -6,6 +6,12 @@ library(haven)
 rm(list=ls())
 
 
+
+###################################### 2001 ###########################
+#Cargamos encuesta adultos
+
+
+
 ###################################### 2003 ###########################
 #Cargamos encuesta adultos
 campos <- read.xlsx("2003/Adul03.xlsx", colNames = FALSE) %>%
