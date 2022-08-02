@@ -8,8 +8,13 @@ rm(list=ls())
 
 
 ###################################### 2001 ###########################
-#Cargamos encuesta adultos
-
+#Cargamos encuesta adultos (2001 no tiene hogar)
+campos <- read.xlsx("2001/Adul01.xlsx", colNames = FALSE) %>%
+  filter(is.na(X2) == FALSE & X2 != "LONGITUD")
+nombres <- campos$X1
+anchos  <- campos$X2 %>% as.numeric
+ense2001 <- read_fwf("2001/ADULTO01.txt", col_positions = fwf_widths(widths = anchos, col_names = nombres))
+save(ense2001, file = "2001/ense2001.RData")
 
 
 ###################################### 2003 ###########################
