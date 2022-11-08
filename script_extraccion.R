@@ -5,7 +5,6 @@ library(haven)
 
 rm(list=ls())
 
-#probando si funciona otra vez el gitg
 
 ###################################### 2001 ###########################
 #Cargamos encuesta adultos (2001 no tiene hogar)
