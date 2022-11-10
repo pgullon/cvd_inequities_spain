@@ -12,8 +12,8 @@ campos <- read.xlsx("2001/Adul01.xlsx", colNames = FALSE) %>%
   filter(is.na(X2) == FALSE & X2 != "LONGITUD")
 nombres <- campos$X1
 anchos  <- campos$X2 %>% as.numeric
-ense2001 <- read_fwf("2001/ADULTO01.txt", col_positions = fwf_widths(widths = anchos, col_names = nombres))
-save(ense2001, file = "2001/ense2001.RData")
+ense_2001 <- read_fwf("2001/ADULTO01.txt", col_positions = fwf_widths(widths = anchos, col_names = nombres))
+save(ense_2001, file = "2001/ense2001.RData")
 
 
 ###################################### 2003 ###########################
@@ -34,7 +34,7 @@ hogar2003 <- read_fwf("2003/HOGAR03.txt", col_positions = fwf_widths(widths = an
 #Juntamos adultos con hogar y nos quedamos con la muestra de hogar
 ense_2003 <- adulto2003 %>%
   left_join(hogar2003, by="NIDENTIF")
-save(ense2003, file = "2003/ense2003.RData")
+save(ense_2003, file = "2003/ense2003.RData")
 
 
 
@@ -57,7 +57,7 @@ hogar2006 <- read_fwf("2006/HOGAR06.txt", col_positions = fwf_widths(widths = an
 #Juntamos adultos con hogar y nos quedamos con la muestra de hogar
 ense_2006 <- adulto2006 %>%
   left_join(hogar2006, by="NIDENTIF")
-save(ense2006, file = "2006/ense2006.RData")
+save(ense_2006, file = "2006/ense2006.RData")
 
 
 
@@ -81,7 +81,7 @@ hogar2009 <- read_fwf("2009/HOGAR09.txt", col_positions = fwf_widths(widths = an
 #Juntamos adultos con hogar y nos quedamos con la muestra de hogar
 eese_2009 <- adulto2009 %>%
   left_join(hogar2009, by="IDENTHOGAR")
-save(eese2009, file = "2009/eese2009.RData")
+save(eese_2009, file = "2009/eese2009.RData")
 
 
 
@@ -104,7 +104,7 @@ hogar2011 <- read_fwf("2011/HOGAR11.txt", col_positions = fwf_widths(widths = an
 #Juntamos adultos con hogar y nos quedamos con la muestra de hogar
 ense_2011 <- adulto2011 %>%
   left_join(hogar2011, by="IDENTHOGAR")
-save(ense2011, file = "2011/ense2011.RData")
+save(ense_2011, file = "2011/ense2011.RData")
 
 
 ###################################### 2014 ###########################
