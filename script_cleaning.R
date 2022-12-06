@@ -35,7 +35,6 @@ rm(list=ls())
 
 
 ############################ ENSE 2001 ###################################
-
 ######################### NO USAR TODAVÍA #################################
 
 
@@ -49,11 +48,11 @@ ense_2001 <-  ense_2001 %>%
          #migration=as.numeric(case_when(PAIS==724~1, B2!=724~2)),
          #nacionalidad=case_when(NACION==1 ~1, NACION==6~2),
          #clase=na_if(SPCLASE.x, 6), clase=na_if(clase, 9),
-         #clase_tr=((rescale(clase)-1))*-1,
+         #clase_tr=((cume_dist(clase)-1))*-1,
          education=p64a, 
-         education_tr=((rescale(education)-1))*-1,
+         education_tr=((cume_dist(education)-1))*-1,
          income=as.numeric(na_if(p69, 9)),
-         income_tr=((rescale(income)-1))*-1,
+         income_tr=((cume_dist(income)-1))*-1,
          nino=case_when(NINO==51~1, NINO==52~2, NINO==53~3, 
                         is.na(NINO)~0),
          home_n=as.numeric(ADULTO)+as.numeric(nino),
@@ -82,7 +81,8 @@ ense_2001 <-  ense_2001 %>%
 ############################ ENSE 2003 ###################################
 load("2003/ense2003.RData")
 
-# Creamos las variables y nos quedamos solo con las variables de interés. NO PAÍS DE NACIMIENTO. ALCOHOL RARO
+# Creamos las variables y nos quedamos solo con las variables de interés. 
+# NO PAÍS DE NACIMIENTO. ALCOHOL RARO
 ense_2003 <-  ense_2003 %>% 
   mutate(edad=as.numeric(EDAD.x), 
          sexo=as.numeric(SEXO.x), 
@@ -90,12 +90,13 @@ ense_2003 <-  ense_2003 %>%
          #migration=as.numeric(case_when(PAIS==724~1, B2!=724~2)),
          nacionalidad=case_when(NACION==1 ~1, NACION==6~2),
          clase=na_if(SPCLASE.x, 7), clase=na_if(clase, 9),
-         clase_tr=(clase-7)*(-1),
-         clase_tr=rescale(clase_tr),
+         clase_tr=cume_dist(clase),
+         clase2=case_when((clase==1 | clase==2 | clase==3)~0,
+                          (clase==4 | clase==5 | clase==6)~1),
          education=SPESTUDI.x, 
-         education_tr=((rescale(education)-1))*-1,
+         education_tr=((cume_dist(education)-1))*-1,
          income=as.numeric(na_if(IN_MENS, 9)),
-         income_tr=((rescale(income)-1))*-1,
+         income_tr=((cume_dist(income)-1))*-1,
          nino=case_when(NINO==51~1, NINO==52~2, NINO==53~3, 
                         is.na(NINO)~0),
          home_n=as.numeric(ADULTO)+as.numeric(nino),
@@ -112,7 +113,7 @@ ense_2003 <-  ense_2003 %>%
          sobrepeso=case_when(imc<25 ~0, imc>=25~1),
          smoking=case_when((FUMA==1 | FUMA==2) ~ 1 , 
                            (FUMA==3 | FUMA==4) ~ 0)) %>%
-  select(NIDENTIF, FACTOR.x, edad, sexo, ccaa, nacionalidad, clase, clase_tr,
+  select(NIDENTIF, FACTOR.x, edad, sexo, ccaa, nacionalidad, clase, clase_tr, clase2,
          education, education_tr, income, income_tr, home_n, diabetes, hta, 
          col, imc, obesity, sobrepeso, smoking) %>%
   filter(edad>17) %>%
@@ -134,11 +135,13 @@ ense_2006 <-  ense_2006 %>%
          migration=as.numeric(case_when(B2==724~1, B2!=724~2)),
          nacionalidad=case_when((B3==1 |B3==3) ~1, B3==2~2),
          clase=na_if(SPCLASE.x, 9),
-         clase_tr=((rescale(clase)-1))*-1,
+         clase_tr=cume_dist(clase),
+         clase2=case_when((clase==1 | clase==2 | clase==3)~0,
+                          (clase==4 | clase==5 | clase==6)~1),
          education=na_if(A12, 98), education=as.numeric(na_if(education, 99)), 
-         education_tr=((rescale(education)-1))*-1,
+         education_tr=((cume_dist(education)-1))*-1,
          income=as.numeric(na_if(E3, 9)),
-         income_tr=((rescale(income)-1))*-1,
+         income_tr=((cume_dist(income)-1))*-1,
          home_n=as.numeric(A9_1.y)+as.numeric(A9_2.y),
          diabetes=case_when((B15_11A==1 |B15_11C==1) ~ 1, 
                             (B15_11A==6 | B15_11C==6) ~ 0), 
@@ -154,7 +157,7 @@ ense_2006 <-  ense_2006 %>%
          smoking=case_when((H1_67==1 | H1_67==2) ~ 1 , 
                            (H1_67==3 | H1_67==4) ~ 0), 
          alcohol=na_if(H2_81, 8), alcohol=as.numeric(na_if(alcohol, 9))) %>%
-  select(NIDENTIF, FACTOR.x, edad, sexo, ccaa, migration, nacionalidad, clase, clase_tr,
+  select(NIDENTIF, FACTOR.x, edad, sexo, ccaa, migration, nacionalidad, clase, clase_tr, clase2,
          education, education_tr, income, income_tr, home_n, diabetes, hta, 
          col, imc, obesity, sobrepeso, smoking) %>%
   filter(edad>17) %>%
@@ -172,7 +175,8 @@ save(ense_2006, file = "2006/ense2006_clean.RData")
 
 load("2009/eese2009.RData")
 
-# Creamos las variables y nos quedamos solo con las variables de interés. NO CLASE, NO PERSONAS POR HOGAR, NO COLESTEROL. renta muchos perdidos
+# Creamos las variables y nos quedamos solo con las variables de interés. 
+# NO CLASE, NO PERSONAS POR HOGAR, NO COLESTEROL. renta muchos perdidos
 eese_2009 <-  eese_2009 %>% 
   mutate(edad=as.numeric(EDAD), 
          sexo=as.numeric(SEXO), 
@@ -180,9 +184,9 @@ eese_2009 <-  eese_2009 %>%
          migration=na_if(HH9_1, 8), migration=na_if(migration, 9),
          nacionalidad=case_when(HH10_1a==1~1, HH10_1a==6~2),
          education=na_if(HH13, 98), education=as.numeric(na_if(education, 99)), 
-         education_tr=((rescale(education)-1))*-1,
+         education_tr=((cume_dist(education)-1))*-1,
          income=as.numeric(na_if(IN3.y, 98)),
-         income_tr=((rescale(income)-1))*-1,
+         income_tr=((cume_dist(income)-1))*-1,
          diabetes=case_when((HS4_11==1 |HS5_11==1) ~ 1, 
                             (HS4_11==6 | HS5_11==6) ~ 0), 
          hta=case_when((HS4_5==1 | HS5_5==1) ~ 1, 
@@ -218,11 +222,13 @@ ense_2011 <-  ense_2011 %>%
          migration=na_if(E1_1, 8), migration=na_if(migration, 9),
          nacionalidad=case_when(E2_1a==1~1, E2_1a==6~2),
          clase=na_if(CLASE_PR.x, 9),
-         clase_tr=((rescale(clase)-1))*-1,
+         clase_tr=cume_dist(clase),
+         clase2=case_when((clase==1 | clase==2 | clase==3)~0,
+                          (clase==4 | clase==5 | clase==6)~1),
          education=na_if(A10_i, 98), education=as.numeric(na_if(education, 99)), 
-         education_tr=((rescale(education)-1))*-1,
+         education_tr=((cume_dist(education)-1))*-1,
          income=na_if(D28, 98), income=as.numeric(na_if(income, 99)),
-         income_tr=((rescale(income)-1))*-1,
+         income_tr=((cume_dist(income)-1))*-1,
          home_n=as.numeric(NADULTOS)+as.numeric(NMENORES),
          diabetes=case_when((G21a_11==1 |G21c_11==1) ~ 1, 
                             (G21a_11==6 | G21c_11==6) ~ 0), 
@@ -240,7 +246,7 @@ ense_2011 <-  ense_2011 %>%
          smoking=case_when((S105==1 | S105==2) ~ 1 , 
                            (S105==3 | S105==4) ~ 0), 
          alcohol=na_if(T120, 8), alcohol=as.numeric(na_if(alcohol, 9))) %>%
-  select(IDENTHOGAR, FACTORADULTO, edad, sexo, ccaa, migration, nacionalidad, clase, clase_tr,
+  select(IDENTHOGAR, FACTORADULTO, edad, sexo, ccaa, migration, nacionalidad, clase, clase_tr, clase2,
          education, education_tr, income, income_tr, home_n, diabetes, hta, 
          col, imc, obesity, sobrepeso, smoking) %>%
   filter(edad>17) %>%
@@ -261,11 +267,13 @@ eese_2014 <-  eese_2014 %>%
          migration=na_if(E1_1, 8), migration=na_if(migration, 9),
          nacionalidad=E2_1a, 
          clase=na_if(CLASE_PR.x, 8), clase=na_if(clase, 9), 
-         clase_tr=((rescale(clase)-1))*-1,
+         clase_tr=cume_dist(clase),
+         clase2=case_when((clase==1 | clase==2 | clase==3)~0,
+                          (clase==4 | clase==5 | clase==6)~1),
          education=na_if(ESTUDIOS, 98), education=as.numeric(na_if(education, 99)), 
-         education_tr=((rescale(education)-1))*-1,
+         education_tr=((cume_dist(education)-1))*-1,
          income=na_if(D26, 98), income=as.numeric(na_if(income, 99)),
-         income_tr=((rescale(income)-1))*-1,
+         income_tr=((cume_dist(income)-1))*-1,
          home_n=as.numeric(NADULTOS)+as.numeric(NMENORES),
          diabetes=case_when((G25a_12==1 |G25c_12==1) ~ 1, 
                             (G25a_12==2 | G25c_12==2) ~ 0), 
@@ -283,7 +291,7 @@ eese_2014 <-  eese_2014 %>%
          smoking=case_when((V121==1 | V121==2) ~ 1 , 
                            (V121==3 | V121==4) ~ 0), 
          alcohol=na_if(W127, 98), alcohol=as.numeric(na_if(alcohol, 99))) %>%
-  select(IDENTHOGAR, FACTORADULTO, edad, sexo, ccaa, migration, nacionalidad, clase, clase_tr,
+  select(IDENTHOGAR, FACTORADULTO, edad, sexo, ccaa, migration, nacionalidad, clase, clase_tr, clase2,
          education, education_tr, income, income_tr, home_n, diabetes, hta, 
          col, imc, obesity, sobrepeso, smoking) %>%
   filter(edad>17) %>%
@@ -303,11 +311,13 @@ ense_2017 <-  ense_2017 %>%
          migration=na_if(E1_1, 8), migration=na_if(migration, 9),
          nacionalidad=E2_1a, 
          clase=na_if(CLASE_PR.x, 8), clase=na_if(clase, 9), 
-         clase_tr=((rescale(clase)-1))*-1,
+         clase_tr=cume_dist(clase),
+         clase2=case_when((clase==1 | clase==2 | clase==3)~0,
+                          (clase==4 | clase==5 | clase==6)~1),
          education=na_if(NIVEST, 98), education=as.numeric(na_if(education, 99)), 
-         education_tr=((rescale(education)-1))*-1,
+         education_tr=((cume_dist(education)-1))*-1,
          income=na_if(D29, 98), income=as.numeric(na_if(income, 99)),
-         income_tr=((rescale(income)-1))*-1,
+         income_tr=((cume_dist(income)-1))*-1,
          home_n=as.numeric(NADULTOS)+as.numeric(NMENORES),
          diabetes=case_when((G25a_12==1 |G25c_12==1) ~ 1, 
                             (G25a_12==2 | G25c_12==2) ~ 0), 
@@ -325,7 +335,7 @@ ense_2017 <-  ense_2017 %>%
          smoking=case_when((V121==1 | V121==2) ~ 1 , 
                            (V121==3 | V121==4) ~ 0), 
          alcohol=na_if(W127, 98), alcohol=as.numeric(na_if(alcohol, 99))) %>%
-  select(IDENTHOGAR,FACTORADULTO, edad, sexo, ccaa, migration, nacionalidad, clase, clase_tr,
+  select(IDENTHOGAR,FACTORADULTO, edad, sexo, ccaa, migration, nacionalidad, clase, clase_tr, clase2,
          education, education_tr, income, income_tr, home_n, diabetes, hta, 
          col, imc, obesity, sobrepeso, smoking) %>%
   filter(edad>17) %>%
@@ -347,11 +357,13 @@ eese_2020 <-  eese_2020 %>%
          migration=na_if(E1_1, 8), migration=na_if(migration, 9),
          nacionalidad=E2_1a, 
          clase=na_if(CLASE_PR.x, 8), clase=na_if(clase, 9), 
-         clase_tr=((rescale(clase)-1))*-1,
+         clase_tr=cume_dist(clase),
+         clase2=case_when((clase==1 | clase==2 | clase==3)~0,
+                          (clase==4 | clase==5 | clase==6)~1),
          education=na_if(ESTUDIOS, 98), education=as.numeric(na_if(education, 99)), 
-         education_tr=((rescale(education)-1))*-1,
+         education_tr=((cume_dist(education)-1))*-1,
          income=na_if(D26, 98), income=as.numeric(na_if(income, 99)),
-         income_tr=((rescale(income)-1))*-1,
+         income_tr=((cume_dist(income)-1))*-1,
          home_n=as.numeric(NADULTOS)+as.numeric(NMENORES),
          diabetes=case_when((G25a_12==1 |G25c_12==1) ~ 1, 
                             (G25a_12==2 | G25c_12==2) ~ 0), 
@@ -369,7 +381,7 @@ eese_2020 <-  eese_2020 %>%
          smoking=case_when((V121==1 | V121==2) ~ 1 , 
                            (V121==3 | V121==4) ~ 0), 
          alcohol=na_if(W127, 98), alcohol=as.numeric(na_if(alcohol, 99))) %>%
-  select(IDENTHOGAR, FACTORADULTO, edad, sexo, ccaa, migration, nacionalidad, clase, clase_tr,
+  select(IDENTHOGAR, FACTORADULTO, edad, sexo, ccaa, migration, nacionalidad, clase, clase_tr, clase2,
          education, education_tr, income, income_tr, home_n, diabetes, hta, 
          col, imc, obesity, sobrepeso, smoking) %>%
   filter(edad>17) %>%
