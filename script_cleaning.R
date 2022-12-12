@@ -40,7 +40,9 @@ rm(list=ls())
 
 load("2001/ense2001.RData")
 
-# Creamos las variables y nos quedamos solo con las variables de interés. NO PAÍS DE NACIMIENTO. NO NACIONALIDAD. CLASE CNO
+# Creamos las variables y nos quedamos solo con las variables de interés. 
+#ESPERAR A EXTRAER DE DATOS DE ISABEL
+# NO PAÍS DE NACIMIENTO. NO NACIONALIDAD. CLASE CNO
 ense_2001 <-  ense_2001 %>% 
   mutate(edad=as.numeric(EDAD_i), 
          sexo=as.numeric(SEXO_i), 
@@ -84,7 +86,9 @@ load("2003/ense2003.RData")
 # Creamos las variables y nos quedamos solo con las variables de interés. 
 # NO PAÍS DE NACIMIENTO. ALCOHOL RARO
 ense_2003 <-  ense_2003 %>% 
-  mutate(edad=as.numeric(EDAD.x), 
+  mutate(id=NIDENTIF, 
+         factor=FACTOR.x, 
+         edad=as.numeric(EDAD.x), 
          sexo=as.numeric(SEXO.x), 
          ccaa=as.numeric(na_if(CCAA.x, 18)),
          #migration=as.numeric(case_when(PAIS==724~1, B2!=724~2)),
@@ -113,12 +117,13 @@ ense_2003 <-  ense_2003 %>%
          sobrepeso=case_when(imc<25 ~0, imc>=25~1),
          smoking=case_when((FUMA==1 | FUMA==2) ~ 1 , 
                            (FUMA==3 | FUMA==4) ~ 0)) %>%
-  select(NIDENTIF, FACTOR.x, edad, sexo, ccaa, nacionalidad, clase, clase_tr, clase2,
+  select(id, factor, edad, sexo, ccaa, nacionalidad, clase, clase_tr, clase2,
          education, education_tr, income, income_tr, home_n, diabetes, hta, 
          col, imc, obesity, sobrepeso, smoking) %>%
   filter(edad>17) %>%
   distinct() %>%
-  na.omit()
+  na.omit() %>%
+  mutate(encuesta=2003, migration=NA)
 
 
 save(ense_2003, file = "2003/ense2003_clean.RData")
@@ -129,7 +134,8 @@ load("2006/ense2006.RData")
 
 # Creamos las variables y nos quedamos solo con las variables de interés
 ense_2006 <-  ense_2006 %>% 
-  mutate(edad=as.numeric(EDAD.x), 
+  mutate(id=NIDENTIF, 
+         factor=FACTOR.x,edad=as.numeric(EDAD.x), 
          sexo=as.numeric(SEXO.x), 
          ccaa=na_if(CCAA.x, 18), ccaa=as.numeric(na_if(ccaa, 19)),
          migration=as.numeric(case_when(B2==724~1, B2!=724~2)),
@@ -157,12 +163,13 @@ ense_2006 <-  ense_2006 %>%
          smoking=case_when((H1_67==1 | H1_67==2) ~ 1 , 
                            (H1_67==3 | H1_67==4) ~ 0), 
          alcohol=na_if(H2_81, 8), alcohol=as.numeric(na_if(alcohol, 9))) %>%
-  select(NIDENTIF, FACTOR.x, edad, sexo, ccaa, migration, nacionalidad, clase, clase_tr, clase2,
+  select(id, factor, edad, sexo, ccaa, migration, nacionalidad, clase, clase_tr, clase2,
          education, education_tr, income, income_tr, home_n, diabetes, hta, 
          col, imc, obesity, sobrepeso, smoking) %>%
   filter(edad>17) %>%
   distinct() %>%
-  na.omit()
+  na.omit() %>%
+  mutate(encuesta=2006)
 
 
 save(ense_2006, file = "2006/ense2006_clean.RData")
@@ -178,7 +185,9 @@ load("2009/eese2009.RData")
 # Creamos las variables y nos quedamos solo con las variables de interés. 
 # NO CLASE, NO PERSONAS POR HOGAR, NO COLESTEROL. renta muchos perdidos
 eese_2009 <-  eese_2009 %>% 
-  mutate(edad=as.numeric(EDAD), 
+  mutate(id=IDENTHOGAR, 
+         factor=FACTORADULTO,
+         edad=as.numeric(EDAD), 
          sexo=as.numeric(SEXO), 
          ccaa=na_if(CCAA.x, 18), ccaa=as.numeric(na_if(ccaa, 19)),
          migration=na_if(HH9_1, 8), migration=na_if(migration, 9),
@@ -201,12 +210,13 @@ eese_2009 <-  eese_2009 %>%
          smoking=case_when((SK1==1 | SK1==2) ~ 1 , 
                            (SK1==3 | SK1==4) ~ 0), 
          alcohol=na_if(AL1, 8), alcohol=as.numeric(na_if(alcohol, 9))) %>%
-  select(IDENTHOGAR, FACTORADULTO, edad, sexo, ccaa, migration, nacionalidad,
+  select(id, factor, edad, sexo, ccaa, migration, nacionalidad,
          education, education_tr, diabetes, hta, 
          imc, obesity, sobrepeso, smoking, alcohol) %>%
   filter(edad>17) %>%
   distinct() %>%
-  na.omit()
+  na.omit() %>%
+  mutate(encuesta=2009)
 
 
 
@@ -216,7 +226,9 @@ load("2011/ense2011.RData")
 
 # Creamos las variables y nos quedamos solo con las variables de interés
 ense_2011 <-  ense_2011 %>% 
-  mutate(edad=as.numeric(EDADa), 
+  mutate(id=IDENTHOGAR, 
+         factor=FACTORADULTO, 
+         edad=as.numeric(EDADa), 
          sexo=as.numeric(SEXOa), 
          ccaa=na_if(CCAA.x, 18), ccaa=as.numeric(na_if(ccaa, 19)),
          migration=na_if(E1_1, 8), migration=na_if(migration, 9),
@@ -246,12 +258,13 @@ ense_2011 <-  ense_2011 %>%
          smoking=case_when((S105==1 | S105==2) ~ 1 , 
                            (S105==3 | S105==4) ~ 0), 
          alcohol=na_if(T120, 8), alcohol=as.numeric(na_if(alcohol, 9))) %>%
-  select(IDENTHOGAR, FACTORADULTO, edad, sexo, ccaa, migration, nacionalidad, clase, clase_tr, clase2,
+  select(id, factor, edad, sexo, ccaa, migration, nacionalidad, clase, clase_tr, clase2,
          education, education_tr, income, income_tr, home_n, diabetes, hta, 
          col, imc, obesity, sobrepeso, smoking) %>%
   filter(edad>17) %>%
   distinct() %>%
-  na.omit()
+  na.omit() %>%
+  mutate(encuesta=2011)
 
 save(ense_2011, file = "2011/ense2011_clean.RData")
 
@@ -261,7 +274,9 @@ load("2014/eese2014.RData")
 
 # Creamos las variables y nos quedamos solo con las variables de interés
 eese_2014 <-  eese_2014 %>% 
-  mutate(edad=as.numeric(EDADa), 
+  mutate(id=IDENTHOGAR, 
+         factor=FACTORADULTO,
+         edad=as.numeric(EDADa), 
          sexo=as.numeric(SEXOa), 
          ccaa=na_if(CCAA.x, 18), ccaa=as.numeric(na_if(ccaa, 19)),
          migration=na_if(E1_1, 8), migration=na_if(migration, 9),
@@ -291,12 +306,13 @@ eese_2014 <-  eese_2014 %>%
          smoking=case_when((V121==1 | V121==2) ~ 1 , 
                            (V121==3 | V121==4) ~ 0), 
          alcohol=na_if(W127, 98), alcohol=as.numeric(na_if(alcohol, 99))) %>%
-  select(IDENTHOGAR, FACTORADULTO, edad, sexo, ccaa, migration, nacionalidad, clase, clase_tr, clase2,
+  select(id, factor, edad, sexo, ccaa, migration, nacionalidad, clase, clase_tr, clase2,
          education, education_tr, income, income_tr, home_n, diabetes, hta, 
          col, imc, obesity, sobrepeso, smoking) %>%
   filter(edad>17) %>%
   distinct() %>%
-  na.omit()
+  na.omit() %>%
+  mutate(encuesta=2014)
 
 save(eese_2014, file = "2014/eese2014_clean.RData")
 
@@ -305,7 +321,9 @@ load("2017/ense2017.RData")
 
 # Creamos las variables y nos quedamos solo con las variables de interés
 ense_2017 <-  ense_2017 %>% 
-  mutate(edad=as.numeric(EDADa), 
+  mutate(id=IDENTHOGAR, 
+         factor=FACTORADULTO,
+         edad=as.numeric(EDADa), 
          sexo=as.numeric(SEXOa), 
          ccaa=na_if(CCAA.x, 18), ccaa=as.numeric(na_if(ccaa, 19)),
          migration=na_if(E1_1, 8), migration=na_if(migration, 9),
@@ -335,12 +353,13 @@ ense_2017 <-  ense_2017 %>%
          smoking=case_when((V121==1 | V121==2) ~ 1 , 
                            (V121==3 | V121==4) ~ 0), 
          alcohol=na_if(W127, 98), alcohol=as.numeric(na_if(alcohol, 99))) %>%
-  select(IDENTHOGAR,FACTORADULTO, edad, sexo, ccaa, migration, nacionalidad, clase, clase_tr, clase2,
+  select(id,factor, edad, sexo, ccaa, migration, nacionalidad, clase, clase_tr, clase2,
          education, education_tr, income, income_tr, home_n, diabetes, hta, 
          col, imc, obesity, sobrepeso, smoking) %>%
   filter(edad>17) %>%
   distinct() %>%
-  na.omit()
+  na.omit() %>%
+  mutate(encuesta=2017)
 
 
 save(ense_2017, file = "2017/ense2017_clean.RData")
@@ -351,7 +370,9 @@ load("2020/eese2020.RData")
 
 # Creamos las variables y nos quedamos solo con las variables de interés
 eese_2020 <-  eese_2020 %>% 
-  mutate(edad=as.numeric(EDADa), 
+  mutate(id=IDENTHOGAR, 
+         factor=FACTORADULTO,
+         edad=as.numeric(EDADa), 
          sexo=as.numeric(SEXOa), 
          ccaa=na_if(CCAA.x, 18), ccaa=as.numeric(na_if(ccaa, 19)),
          migration=na_if(E1_1, 8), migration=na_if(migration, 9),
@@ -381,13 +402,23 @@ eese_2020 <-  eese_2020 %>%
          smoking=case_when((V121==1 | V121==2) ~ 1 , 
                            (V121==3 | V121==4) ~ 0), 
          alcohol=na_if(W127, 98), alcohol=as.numeric(na_if(alcohol, 99))) %>%
-  select(IDENTHOGAR, FACTORADULTO, edad, sexo, ccaa, migration, nacionalidad, clase, clase_tr, clase2,
+  select(id, factor, edad, sexo, ccaa, migration, nacionalidad, clase, clase_tr, clase2,
          education, education_tr, income, income_tr, home_n, diabetes, hta, 
          col, imc, obesity, sobrepeso, smoking) %>%
   filter(edad>17) %>%
   distinct() %>%
-  na.omit()
+  na.omit() %>%
+  mutate(encuesta=2020)
          
 
 save(eese_2020, file = "2020/eese2020_clean.RData")
 
+
+dta <- ense_2003 %>%
+  rbind(ense_2006) %>%
+  rbind(ense_2011) %>%
+  rbind(eese_2014) %>%
+  rbind(ense_2017) %>%
+  rbind(eese_2020)
+
+save(dta, file = "joined_dta.RData")
