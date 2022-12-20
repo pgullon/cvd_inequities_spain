@@ -7,12 +7,8 @@ rm(list=ls())
 
 
 ###################################### 2001 ###########################
-#Cargamos encuesta adultos (2001 no tiene hogar)
-campos <- read.xlsx("2001/Adul01.xlsx", colNames = FALSE) %>%
-  filter(is.na(X2) == FALSE & X2 != "LONGITUD")
-nombres <- campos$X1
-anchos  <- campos$X2 %>% as.numeric
-ense_2001 <- read_fwf("2001/ADULTO01.txt", col_positions = fwf_widths(widths = anchos, col_names = nombres))
+#Cargamos encuesta adultos obtenidas por un SPSS que ha aportado Isabel Aguilar por otro estudio (2001 no tiene hogar)
+ense_2001 <- read_sav("2001/ENS_ADULTOS_2001.sav")
 save(ense_2001, file = "2001/ense2001.RData")
 
 
