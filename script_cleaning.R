@@ -486,8 +486,10 @@ eese_2020 <-  eese_2020 %>%
 save(eese_2020, file = "2020/eese2020_clean.RData")
 
 
-dta <- ense_2003 %>%
+dta <- ense_2001 %>%
+  rbind(ense_2003) %>%
   rbind(ense_2006) %>%
+  rbind(eese_2009) %>%
   rbind(ense_2011) %>%
   rbind(eese_2014) %>%
   rbind(ense_2017) %>%
