@@ -39,16 +39,22 @@ load("2001/ense2001.RData")
 
 
 # Creamos las variables y nos quedamos solo con las variables de interés. 
-# NO PAÍS DE NACIMIENTO. NO NACIONALIDAD. CLASE CNO. NO ALCOHOL
+# NO PAÍS DE NACIMIENTO. NO NACIONALIDAD. NO ALCOHOL
+# Como en la encuesta de 2001 no está clase, la calculamos nosotros en correspondencia CNO-79
+
+clase_2001 <- read_delim("clase_2001.csv", 
+                         delim = ";", escape_double = FALSE, trim_ws = TRUE)
+
 ense_2001 <-  ense_2001 %>% 
+    left_join(clase_2001) %>%
   mutate(id=NCUEST,
          factor=as.numeric(FACTOR),
          edad=as.numeric(P4_01), 
          sexo=as.numeric(P3_01), 
          ccaa=na_if(CCAA, 18), ccaa=as.numeric(na_if(ccaa, 19)),
          migration=NA, nacionalidad=NA,
-         clase=NA,
-         clase_tr=((cume_dist(clase)-1))*-1,
+         clase=na_if(cso12, 9),
+         clase_tr=cume_dist(clase),
          education_3=case_when((P57A==0 | P57A==1 | P57A==2)~1, 
                                (P57A==3 | P57A==4 | P57A==5 | P57A==6)~2, 
                                (P57A==7 | P57A==8 | P57A==9 | P57A==10 | P57A==11
