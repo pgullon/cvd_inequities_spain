@@ -21,6 +21,9 @@ ccaas <- read_delim("ccaas.csv", delim = ";",
                     escape_double = FALSE, trim_ws = TRUE)
 
 
+#Centramos edad
+dta <- dta %>%
+  mutate(edad=scale(edad, center=T, scale=F))
 
 ################### DESIGUALDADES POR EDUCACIÓN #########################
 
@@ -30,18 +33,19 @@ ccaas <- read_delim("ccaas.csv", delim = ";",
 #Estimamos con modelos multinivel que asumen que hay una desigualdad que cambia en el tiempo. Observaciones -> ccaa -> tiempo
 
 
-rii_diabetes <- glmmTMB(diabetes~education_3_tr+edad+sexo+(1+education_3_tr|ccaa) + (1+education_3_tr|ccaa: encuesta), data=dta,
+
+rii_diabetes <- glmmTMB(diabetes~education_3_tr+edad+sexo+(1+education_3_tr|encuesta) + (1+education_3_tr|encuesta: ccaa), data=dta,
                       family="poisson")
 
 rii_diabetes <- rii_diabetes %>%
-  extract_random_coefs(re="ccaa:encuesta") %>%
+  extract_random_coefs(re="encuesta:ccaa") %>%
   mutate(rii=exp(value), 
          rii_infci=exp(value-1.96*se),
          rii_supci=exp(value+1.96*se)) %>% 
   filter(effect=="education_3_tr") %>% 
   select(rii, rii_infci, rii_supci, group) %>% 
   mutate(sexo="Overall") %>%
-  separate(group, c('ccaa', 'encuesta')) %>%
+  separate(group, c('encuesta', 'ccaa')) %>%
   mutate(encuesta=ymd(encuesta, truncated = 2L), 
          ccaa=as.numeric(ccaa)) %>%
   left_join(ccaas) %>%
@@ -53,18 +57,18 @@ rii_diabetes <- rii_diabetes %>%
 ################################# HTA ######################################
 
 
-rii_hta <- glmmTMB(hta~education_3_tr+edad+sexo+(1+education_3_tr|ccaa) + (1+education_3_tr|ccaa: encuesta), data=dta,
+rii_hta <- glmmTMB(hta~education_3_tr+edad+sexo+(1+education_3_tr|encuesta) + (1+education_3_tr|encuesta: ccaa), data=dta,
                         family="poisson")
 
 rii_hta <- rii_hta %>%
-  extract_random_coefs(re="ccaa:encuesta") %>%
+  extract_random_coefs(re="encuesta:ccaa") %>%
   mutate(rii=exp(value), 
          rii_infci=exp(value-1.96*se),
          rii_supci=exp(value+1.96*se)) %>% 
   filter(effect=="education_3_tr") %>% 
   select(rii, rii_infci, rii_supci, group) %>% 
   mutate(sexo="Overall") %>%
-  separate(group, c('ccaa', 'encuesta')) %>%
+  separate(group, c('encuesta', 'ccaa')) %>%
   mutate(encuesta=ymd(encuesta, truncated = 2L), 
          ccaa=as.numeric(ccaa)) %>%
   left_join(ccaas) %>%
@@ -77,18 +81,18 @@ rii_hta <- rii_hta %>%
 ############################# COLESEROL #######################################
 
 
-rii_col <- glmmTMB(col~education_3_tr+edad+sexo+(1+education_3_tr|ccaa) + (1+education_3_tr|ccaa: encuesta), data=subset(dta, encuesta!=2009),
+rii_col <- glmmTMB(col~education_3_tr+edad+sexo+(1+education_3_tr|encuesta) + (1+education_3_tr|encuesta: ccaa), data=subset(dta, encuesta!=2009),
                         family="poisson")
 
 rii_col <- rii_col %>%
-  extract_random_coefs(re="ccaa:encuesta") %>%
+  extract_random_coefs(re="encuesta:ccaa") %>%
   mutate(rii=exp(value), 
          rii_infci=exp(value-1.96*se),
          rii_supci=exp(value+1.96*se)) %>% 
   filter(effect=="education_3_tr") %>% 
   select(rii, rii_infci, rii_supci, group) %>% 
   mutate(sexo="Overall") %>%
-  separate(group, c('ccaa', 'encuesta')) %>%
+  separate(group, c('encuesta', 'ccaa')) %>%
   mutate(encuesta=ymd(encuesta, truncated = 2L), 
          ccaa=as.numeric(ccaa)) %>%
   left_join(ccaas) %>%
@@ -99,18 +103,18 @@ rii_col <- rii_col %>%
 ############################### OBESIDAD #######################################
 
 
-rii_obesity <- glmmTMB(obesity~education_3_tr+edad+sexo+(1+education_3_tr|ccaa) + (1+education_3_tr|ccaa: encuesta), data=dta,
+rii_obesity <- glmmTMB(obesity~education_3_tr+edad+sexo+(1+education_3_tr|encuesta) + (1+education_3_tr|encuesta: ccaa), data=dta,
                         family="poisson")
 
 rii_obesity <- rii_obesity %>%
-  extract_random_coefs(re="ccaa:encuesta") %>%
+  extract_random_coefs(re="encuesta:ccaa") %>%
   mutate(rii=exp(value), 
          rii_infci=exp(value-1.96*se),
          rii_supci=exp(value+1.96*se)) %>% 
   filter(effect=="education_3_tr") %>% 
   select(rii, rii_infci, rii_supci, group) %>% 
   mutate(sexo="Overall") %>%
-  separate(group, c('ccaa', 'encuesta')) %>%
+  separate(group, c('encuesta', 'ccaa')) %>%
   mutate(encuesta=ymd(encuesta, truncated = 2L), 
          ccaa=as.numeric(ccaa)) %>%
   left_join(ccaas) %>%
@@ -120,18 +124,18 @@ rii_obesity <- rii_obesity %>%
 ################################ SOBREPESO #####################################
 
 
-rii_sobrepeso <- glmmTMB(sobrepeso~education_3_tr+edad+sexo+(1+education_3_tr|ccaa) + (1+education_3_tr|ccaa: encuesta), data=dta,
+rii_sobrepeso <- glmmTMB(sobrepeso~education_3_tr+edad+sexo+(1+education_3_tr|encuesta) + (1+education_3_tr|encuesta: ccaa), data=dta,
                         family="poisson")
 
 rii_sobrepeso <- rii_sobrepeso %>%
-  extract_random_coefs(re="ccaa:encuesta") %>%
+  extract_random_coefs(re="encuesta:ccaa") %>%
   mutate(rii=exp(value), 
          rii_infci=exp(value-1.96*se),
          rii_supci=exp(value+1.96*se)) %>% 
   filter(effect=="education_3_tr") %>% 
   select(rii, rii_infci, rii_supci, group) %>% 
   mutate(sexo="Overall") %>%
-  separate(group, c('ccaa', 'encuesta')) %>%
+  separate(group, c('encuesta', 'ccaa')) %>%
   mutate(encuesta=ymd(encuesta, truncated = 2L), 
          ccaa=as.numeric(ccaa)) %>%
   left_join(ccaas) %>%
@@ -141,18 +145,18 @@ rii_sobrepeso <- rii_sobrepeso %>%
 ############################## SMOKING #######################################
 
 
-rii_smoking <- glmmTMB(smoking~education_3_tr+edad+sexo+(1+education_3_tr|ccaa) + (1+education_3_tr|ccaa: encuesta), data=dta,
+rii_smoking <- glmmTMB(smoking~education_3_tr+edad+sexo+(1+education_3_tr|encuesta) + (1+education_3_tr|encuesta: ccaa), data=dta,
                         family="poisson")
 
 rii_smoking <- rii_smoking %>%
-  extract_random_coefs(re="ccaa:encuesta") %>%
+  extract_random_coefs(re="encuesta:ccaa") %>%
   mutate(rii=exp(value), 
          rii_infci=exp(value-1.96*se),
          rii_supci=exp(value+1.96*se)) %>% 
   filter(effect=="education_3_tr") %>% 
   select(rii, rii_infci, rii_supci, group) %>% 
   mutate(sexo="Overall") %>%
-  separate(group, c('ccaa', 'encuesta')) %>%
+  separate(group, c('encuesta', 'ccaa')) %>%
   mutate(encuesta=ymd(encuesta, truncated = 2L), 
          ccaa=as.numeric(ccaa)) %>%
   left_join(ccaas) %>%
@@ -165,18 +169,18 @@ rii_smoking <- rii_smoking %>%
 dta <- dta %>%
   mutate(alcohol=(alcohol-1)*-1)
 
-rii_alcohol <- glmmTMB(alcohol~education_3_tr+edad+sexo+(1+education_3_tr|ccaa) + (1+education_3_tr|ccaa: encuesta), data=subset(dta, encuesta!=2001),
+rii_alcohol <- glmmTMB(alcohol~education_3_tr+edad+sexo+(1+education_3_tr|encuesta) + (1+education_3_tr|encuesta: ccaa), data=subset(dta, encuesta!=2001),
                         family="poisson")
 
 rii_alcohol <- rii_alcohol %>%
-  extract_random_coefs(re="ccaa:encuesta") %>%
+  extract_random_coefs(re="encuesta:ccaa") %>%
   mutate(rii=exp(value), 
          rii_infci=exp(value-1.96*se),
          rii_supci=exp(value+1.96*se)) %>% 
   filter(effect=="education_3_tr") %>% 
   select(rii, rii_infci, rii_supci, group) %>% 
   mutate(sexo="Overall") %>%
-  separate(group, c('ccaa', 'encuesta')) %>%
+  separate(group, c('encuesta', 'ccaa')) %>%
   mutate(encuesta=ymd(encuesta, truncated = 2L), 
          ccaa=as.numeric(ccaa)) %>%
   left_join(ccaas) %>%
@@ -186,18 +190,18 @@ rii_alcohol <- rii_alcohol %>%
 ########################### SEDENTARISMO #####################################
 
 
-rii_sedentario <- glmmTMB(sedentario~education_3_tr+edad+sexo+(1+education_3_tr|ccaa) + (1+education_3_tr|ccaa: encuesta), data=dta,
+rii_sedentario <- glmmTMB(sedentario~education_3_tr+edad+sexo+(1+education_3_tr|encuesta) + (1+education_3_tr|encuesta: ccaa), data=dta,
                         family="poisson")
 
 rii_sedentario <- rii_sedentario %>%
-  extract_random_coefs(re="ccaa:encuesta") %>%
+  extract_random_coefs(re="encuesta:ccaa") %>%
   mutate(rii=exp(value), 
          rii_infci=exp(value-1.96*se),
          rii_supci=exp(value+1.96*se)) %>% 
   filter(effect=="education_3_tr") %>% 
   select(rii, rii_infci, rii_supci, group) %>% 
   mutate(sexo="Overall") %>%
-  separate(group, c('ccaa', 'encuesta')) %>%
+  separate(group, c('encuesta', 'ccaa')) %>%
   mutate(encuesta=ymd(encuesta, truncated = 2L), 
          ccaa=as.numeric(ccaa)) %>%
   left_join(ccaas) %>%
@@ -217,18 +221,19 @@ rii_sedentario <- rii_sedentario %>%
 
 dta_clase <- subset(dta, encuesta!=2009)
 
-rii_diabetes <- glmmTMB(diabetes~clase_tr+edad+sexo+(1+clase_tr|ccaa) + (1+clase_tr|ccaa: encuesta), data=dta_clase,
+
+rii_diabetes <- glmmTMB(diabetes~clase_tr+edad+sexo+(1+clase_tr|encuesta) + (1+clase_tr|encuesta: ccaa), data=dta_clase,
                         family="poisson")
 
 rii_diabetes <- rii_diabetes %>%
-  extract_random_coefs(re="ccaa:encuesta") %>%
+  extract_random_coefs(re="encuesta:ccaa") %>%
   mutate(rii=exp(value), 
          rii_infci=exp(value-1.96*se),
          rii_supci=exp(value+1.96*se)) %>% 
   filter(effect=="clase_tr") %>% 
   select(rii, rii_infci, rii_supci, group) %>% 
   mutate(sexo="Overall") %>%
-  separate(group, c('ccaa', 'encuesta')) %>%
+  separate(group, c('encuesta', 'ccaa')) %>%
   mutate(encuesta=ymd(encuesta, truncated = 2L), 
          ccaa=as.numeric(ccaa)) %>%
   left_join(ccaas) %>%
@@ -240,18 +245,18 @@ rii_diabetes <- rii_diabetes %>%
 ################################# HTA ######################################
 
 
-rii_hta <- glmmTMB(hta~clase_tr+edad+sexo+(1+clase_tr|ccaa) + (1+clase_tr|ccaa: encuesta), data=dta_clase,
+rii_hta <- glmmTMB(hta~clase_tr+edad+sexo+(1+clase_tr|encuesta) + (1+clase_tr|encuesta: ccaa), data=dta_clase,
                    family="poisson")
 
 rii_hta <- rii_hta %>%
-  extract_random_coefs(re="ccaa:encuesta") %>%
+  extract_random_coefs(re="encuesta:ccaa") %>%
   mutate(rii=exp(value), 
          rii_infci=exp(value-1.96*se),
          rii_supci=exp(value+1.96*se)) %>% 
   filter(effect=="clase_tr") %>% 
   select(rii, rii_infci, rii_supci, group) %>% 
   mutate(sexo="Overall") %>%
-  separate(group, c('ccaa', 'encuesta')) %>%
+  separate(group, c('encuesta', 'ccaa')) %>%
   mutate(encuesta=ymd(encuesta, truncated = 2L), 
          ccaa=as.numeric(ccaa)) %>%
   left_join(ccaas) %>%
@@ -264,18 +269,18 @@ rii_hta <- rii_hta %>%
 ############################# COLESEROL #######################################
 
 
-rii_col <- glmmTMB(col~clase_tr+edad+sexo+(1+clase_tr|ccaa) + (1+clase_tr|ccaa: encuesta), data=subset(dta_clase, encuesta!=2009),
+rii_col <- glmmTMB(col~clase_tr+edad+sexo+(1+clase_tr|encuesta) + (1+clase_tr|encuesta: ccaa), data=dta_clase,
                    family="poisson")
 
 rii_col <- rii_col %>%
-  extract_random_coefs(re="ccaa:encuesta") %>%
+  extract_random_coefs(re="encuesta:ccaa") %>%
   mutate(rii=exp(value), 
          rii_infci=exp(value-1.96*se),
          rii_supci=exp(value+1.96*se)) %>% 
   filter(effect=="clase_tr") %>% 
   select(rii, rii_infci, rii_supci, group) %>% 
   mutate(sexo="Overall") %>%
-  separate(group, c('ccaa', 'encuesta')) %>%
+  separate(group, c('encuesta', 'ccaa')) %>%
   mutate(encuesta=ymd(encuesta, truncated = 2L), 
          ccaa=as.numeric(ccaa)) %>%
   left_join(ccaas) %>%
@@ -286,18 +291,18 @@ rii_col <- rii_col %>%
 ############################### OBESIDAD #######################################
 
 
-rii_obesity <- glmmTMB(obesity~clase_tr+edad+sexo+(1+clase_tr|ccaa) + (1+clase_tr|ccaa: encuesta), data=dta_clase,
+rii_obesity <- glmmTMB(obesity~clase_tr+edad+sexo+(1+clase_tr|encuesta) + (1+clase_tr|encuesta: ccaa), data=dta_clase,
                        family="poisson")
 
 rii_obesity <- rii_obesity %>%
-  extract_random_coefs(re="ccaa:encuesta") %>%
+  extract_random_coefs(re="encuesta:ccaa") %>%
   mutate(rii=exp(value), 
          rii_infci=exp(value-1.96*se),
          rii_supci=exp(value+1.96*se)) %>% 
   filter(effect=="clase_tr") %>% 
   select(rii, rii_infci, rii_supci, group) %>% 
   mutate(sexo="Overall") %>%
-  separate(group, c('ccaa', 'encuesta')) %>%
+  separate(group, c('encuesta', 'ccaa')) %>%
   mutate(encuesta=ymd(encuesta, truncated = 2L), 
          ccaa=as.numeric(ccaa)) %>%
   left_join(ccaas) %>%
@@ -307,18 +312,18 @@ rii_obesity <- rii_obesity %>%
 ################################ SOBREPESO #####################################
 
 
-rii_sobrepeso <- glmmTMB(sobrepeso~clase_tr+edad+sexo+(1+clase_tr|ccaa) + (1+clase_tr|ccaa: encuesta), data=dta_clase,
+rii_sobrepeso <- glmmTMB(sobrepeso~clase_tr+edad+sexo+(1+clase_tr|encuesta) + (1+clase_tr|encuesta: ccaa), data=dta_clase,
                          family="poisson")
 
 rii_sobrepeso <- rii_sobrepeso %>%
-  extract_random_coefs(re="ccaa:encuesta") %>%
+  extract_random_coefs(re="encuesta:ccaa") %>%
   mutate(rii=exp(value), 
          rii_infci=exp(value-1.96*se),
          rii_supci=exp(value+1.96*se)) %>% 
   filter(effect=="clase_tr") %>% 
   select(rii, rii_infci, rii_supci, group) %>% 
   mutate(sexo="Overall") %>%
-  separate(group, c('ccaa', 'encuesta')) %>%
+  separate(group, c('encuesta', 'ccaa')) %>%
   mutate(encuesta=ymd(encuesta, truncated = 2L), 
          ccaa=as.numeric(ccaa)) %>%
   left_join(ccaas) %>%
@@ -328,18 +333,18 @@ rii_sobrepeso <- rii_sobrepeso %>%
 ############################## SMOKING #######################################
 
 
-rii_smoking <- glmmTMB(smoking~clase_tr+edad+sexo+(1+clase_tr|ccaa) + (1+clase_tr|ccaa: encuesta), data=dta_clase,
+rii_smoking <- glmmTMB(smoking~clase_tr+edad+sexo+(1+clase_tr|encuesta) + (1+clase_tr|encuesta: ccaa), data=dta_clase,
                        family="poisson")
 
 rii_smoking <- rii_smoking %>%
-  extract_random_coefs(re="ccaa:encuesta") %>%
+  extract_random_coefs(re="encuesta:ccaa") %>%
   mutate(rii=exp(value), 
          rii_infci=exp(value-1.96*se),
          rii_supci=exp(value+1.96*se)) %>% 
   filter(effect=="clase_tr") %>% 
   select(rii, rii_infci, rii_supci, group) %>% 
   mutate(sexo="Overall") %>%
-  separate(group, c('ccaa', 'encuesta')) %>%
+  separate(group, c('encuesta', 'ccaa')) %>%
   mutate(encuesta=ymd(encuesta, truncated = 2L), 
          ccaa=as.numeric(ccaa)) %>%
   left_join(ccaas) %>%
@@ -350,18 +355,18 @@ rii_smoking <- rii_smoking %>%
 ################################# ALCOHOL #####################################
 
 
-rii_alcohol <- glmmTMB(alcohol~clase_tr+edad+sexo+(1+clase_tr|ccaa) + (1+clase_tr|ccaa: encuesta), data=dta_clase,
+rii_alcohol <- glmmTMB(alcohol~clase_tr+edad+sexo+(1+clase_tr|encuesta) + (1+clase_tr|encuesta: ccaa), data=subset(dta_clase, encuesta!=2001),
                        family="poisson")
 
 rii_alcohol <- rii_alcohol %>%
-  extract_random_coefs(re="ccaa:encuesta") %>%
+  extract_random_coefs(re="encuesta:ccaa") %>%
   mutate(rii=exp(value), 
          rii_infci=exp(value-1.96*se),
          rii_supci=exp(value+1.96*se)) %>% 
   filter(effect=="clase_tr") %>% 
   select(rii, rii_infci, rii_supci, group) %>% 
   mutate(sexo="Overall") %>%
-  separate(group, c('ccaa', 'encuesta')) %>%
+  separate(group, c('encuesta', 'ccaa')) %>%
   mutate(encuesta=ymd(encuesta, truncated = 2L), 
          ccaa=as.numeric(ccaa)) %>%
   left_join(ccaas) %>%
@@ -371,22 +376,23 @@ rii_alcohol <- rii_alcohol %>%
 ########################### SEDENTARISMO #####################################
 
 
-rii_sedentario <- glmmTMB(sedentario~clase_tr+edad+sexo+(1+clase_tr|ccaa) + (1+clase_tr|ccaa: encuesta), data=dta_clase,
+rii_sedentario <- glmmTMB(sedentario~clase_tr+edad+sexo+(1+clase_tr|encuesta) + (1+clase_tr|encuesta: ccaa), data=dta_clase,
                           family="poisson")
 
 rii_sedentario <- rii_sedentario %>%
-  extract_random_coefs(re="ccaa:encuesta") %>%
+  extract_random_coefs(re="encuesta:ccaa") %>%
   mutate(rii=exp(value), 
          rii_infci=exp(value-1.96*se),
          rii_supci=exp(value+1.96*se)) %>% 
   filter(effect=="clase_tr") %>% 
   select(rii, rii_infci, rii_supci, group) %>% 
   mutate(sexo="Overall") %>%
-  separate(group, c('ccaa', 'encuesta')) %>%
+  separate(group, c('encuesta', 'ccaa')) %>%
   mutate(encuesta=ymd(encuesta, truncated = 2L), 
          ccaa=as.numeric(ccaa)) %>%
   left_join(ccaas) %>%
   mutate(fr="sedentario")
+
 
 
 

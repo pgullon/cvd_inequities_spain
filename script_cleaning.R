@@ -9,7 +9,7 @@ rm(list=ls())
 
 # Nombres comunes para las variables en todas las encuestas
 # Edad=age
-# Sexo=sex
+# Sexo=sex (0 mujer, 1 hombre)
 # Comunidad Autónoma=ccaa
 # País de nacimiento=migration
 # Nacionalidad española=nacionalidad
@@ -50,7 +50,8 @@ ense_2001 <-  ense_2001 %>%
   mutate(id=NCUEST,
          factor=as.numeric(FACTOR),
          edad=as.numeric(P4_01), 
-         sexo=as.numeric(P3_01), 
+         sexo=as.numeric(P3_01), sexo=na_if(sexo, 9), 
+         sexo=case_when(sexo==1~1, sexo==2~0),
          ccaa=na_if(CCAA, 18), ccaa=as.numeric(na_if(ccaa, 19)),
          migration=NA, nacionalidad=NA,
          clase=na_if(cso12, 9),
@@ -104,7 +105,8 @@ ense_2003 <-  ense_2003 %>%
   mutate(id=NIDENTIF, 
          factor=as.numeric(FACTOR.x), 
          edad=as.numeric(EDAD.x), 
-         sexo=as.numeric(SEXO.x), 
+         sexo=as.numeric(SEXO.x),
+         sexo=case_when(sexo==1~1, sexo==6~0),
          ccaa=as.numeric(na_if(CCAA.x, 18)),
          migration=NA,
          nacionalidad=case_when(NACION==1 ~1, NACION==6~2),
@@ -122,7 +124,7 @@ ense_2003 <-  ense_2003 %>%
          col=case_when(COLESTER==1 ~ 1, 
                        COLESTER==6 ~ 0),
          peso=na_if(PESO, 998), peso=as.numeric(na_if(peso, 999)), 
-         altura=na_if(ALTURA, 998), altura=na_if(altura, 999),
+         altura=na_if(ALTURA, 998), altura=as.numeric(na_if(altura, 999)),
          imc=round(peso/(altura/100)^2,2), 
          obesity=case_when(imc<30 ~0, imc>=30~1),
          sobrepeso=case_when(imc<25 ~0, imc>=25~1),
@@ -156,6 +158,7 @@ ense_2006 <-  ense_2006 %>%
          factor=as.numeric(FACTOR.x),
          edad=as.numeric(EDAD.x), 
          sexo=as.numeric(SEXO.x), 
+         sexo=case_when(sexo==1~1, sexo==6~0),
          ccaa=na_if(CCAA.x, 18), ccaa=as.numeric(na_if(ccaa, 19)),
          migration=as.numeric(case_when(B2==724~1, B2!=724~2)),
          nacionalidad=case_when((B3==1 |B3==3) ~1, B3==2~2),
@@ -214,7 +217,8 @@ eese_2009 <-  eese_2009 %>%
   mutate(id=IDENTHOGAR, 
          factor=as.numeric(FACTORADULTO),
          edad=as.numeric(EDAD), 
-         sexo=as.numeric(SEXO), 
+         sexo=as.numeric(SEXO),
+         sexo=case_when(sexo==1~1, sexo==2~0),
          ccaa=na_if(CCAA.x, 18), ccaa=as.numeric(na_if(ccaa, 19)),
          migration=na_if(HH9_1, 8), migration=na_if(migration, 9),
          nacionalidad=case_when(HH10_1a==1~1, HH10_1a==6~2),
@@ -274,6 +278,7 @@ ense_2011 <-  ense_2011 %>%
          factor=as.numeric(FACTORADULTO), 
          edad=as.numeric(EDADa), 
          sexo=as.numeric(SEXOa), 
+         sexo=case_when(sexo==1~1, sexo==2~0),
          ccaa=na_if(CCAA.x, 18), ccaa=as.numeric(na_if(ccaa, 19)),
          migration=na_if(E1_1, 8), migration=na_if(migration, 9),
          nacionalidad=case_when(E2_1a==1~1, E2_1a==6~2),
@@ -329,6 +334,7 @@ eese_2014 <-  eese_2014 %>%
          factor=as.numeric(FACTORADULTO),
          edad=as.numeric(EDADa), 
          sexo=as.numeric(SEXOa), 
+         sexo=case_when(sexo==1~1, sexo==2~0),
          ccaa=na_if(CCAA.x, 18), ccaa=as.numeric(na_if(ccaa, 19)),
          migration=na_if(E1_1, 8), migration=na_if(migration, 9),
          nacionalidad=E2_1a, 
@@ -385,6 +391,7 @@ ense_2017 <-  ense_2017 %>%
          factor=as.numeric(FACTORADULTO),
          edad=as.numeric(EDADa), 
          sexo=as.numeric(SEXOa), 
+         sexo=case_when(sexo==1~1, sexo==2~0),
          ccaa=na_if(CCAA.x, 18), ccaa=as.numeric(na_if(ccaa, 19)),
          migration=na_if(E1_1, 8), migration=na_if(migration, 9),
          nacionalidad=E2_1a, 
@@ -442,7 +449,8 @@ eese_2020 <-  eese_2020 %>%
   mutate(id=IDENTHOGAR, 
          factor=as.numeric(FACTORADULTO),
          edad=as.numeric(EDADa), 
-         sexo=as.numeric(SEXOa), 
+         sexo=as.numeric(SEXOa),
+         sexo=case_when(sexo==1~1, sexo==2~0),
          ccaa=na_if(CCAA.x, 18), ccaa=as.numeric(na_if(ccaa, 19)),
          migration=na_if(E1_1, 8), migration=na_if(migration, 9),
          nacionalidad=E2_1a, 
@@ -499,6 +507,9 @@ dta <- ense_2001 %>%
   rbind(ense_2011) %>%
   rbind(eese_2014) %>%
   rbind(ense_2017) %>%
-  rbind(eese_2020)
+  rbind(eese_2020) %>%
+  mutate(clase_tr_2=cume_dist(clase), 
+         clase_tr_2=rescale(clase_tr_2), 
+         education_3_tr_2=rescale(education_3_tr))
 
 save(dta, file = "joined_dta.RData")
