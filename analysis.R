@@ -25,6 +25,20 @@ ccaas <- read_delim("ccaas.csv", delim = ";",
 dta <- dta %>%
   mutate(edad=scale(edad, center=T, scale=F))
 
+#Pruebas de categorizacion clase y education
+dta <- dta %>%
+  mutate(clase=rescale(clase), 
+         education=rescale(education_3), 
+         education=(education-1)*-1)
+
+
+# encuesta de encuestas por probar
+dta <- dta %>%
+  mutate(encuesta_pool=case_when((encuesta==2001 | encuesta==2003)~2001, 
+                        (encuesta==2006 | encuesta==2009)~2006, 
+                        (encuesta==2011 | encuesta==2014)~2011, 
+                        (encuesta==2017 | encuesta==2020)~2017)) 
+
 ################### DESIGUALDADES POR EDUCACIÓN #########################
 
 ####################### DIABETES ##################################
@@ -34,7 +48,7 @@ dta <- dta %>%
 
 
 
-rii_diabetes <- glmmTMB(diabetes~education_3_tr+edad+sexo+(1+education_3_tr|encuesta) + (1+education_3_tr|encuesta: ccaa), data=dta,
+rii_diabetes <- glmmTMB(diabetes~education+edad+sexo+(1+education|encuesta) + (1+education|encuesta: ccaa), data=dta,
                       family="poisson")
 
 rii_diabetes <- rii_diabetes %>%
@@ -42,7 +56,7 @@ rii_diabetes <- rii_diabetes %>%
   mutate(rii=exp(value), 
          rii_infci=exp(value-1.96*se),
          rii_supci=exp(value+1.96*se)) %>% 
-  filter(effect=="education_3_tr") %>% 
+  filter(effect=="education") %>% 
   select(rii, rii_infci, rii_supci, group) %>% 
   mutate(sexo="Overall") %>%
   separate(group, c('encuesta', 'ccaa')) %>%
@@ -78,10 +92,11 @@ rii_hta <- rii_hta %>%
 
 
 
+
 ############################# COLESEROL #######################################
 
 
-rii_col <- glmmTMB(col~education_3_tr+edad+sexo+(1+education_3_tr|encuesta) + (1+education_3_tr|encuesta: ccaa), data=subset(dta, encuesta!=2009),
+rii_col <- glmmTMB(col~education+edad+sexo+(1+education|encuesta) + (1+education|encuesta: ccaa), data=subset(dta, encuesta!=2009),
                         family="poisson")
 
 rii_col <- rii_col %>%
@@ -89,7 +104,7 @@ rii_col <- rii_col %>%
   mutate(rii=exp(value), 
          rii_infci=exp(value-1.96*se),
          rii_supci=exp(value+1.96*se)) %>% 
-  filter(effect=="education_3_tr") %>% 
+  filter(effect=="education") %>% 
   select(rii, rii_infci, rii_supci, group) %>% 
   mutate(sexo="Overall") %>%
   separate(group, c('encuesta', 'ccaa')) %>%
@@ -103,7 +118,7 @@ rii_col <- rii_col %>%
 ############################### OBESIDAD #######################################
 
 
-rii_obesity <- glmmTMB(obesity~education_3_tr+edad+sexo+(1+education_3_tr|encuesta) + (1+education_3_tr|encuesta: ccaa), data=dta,
+rii_obesity <- glmmTMB(obesity~education+edad+sexo+(1+education|encuesta) + (1+education|encuesta: ccaa), data=dta,
                         family="poisson")
 
 rii_obesity <- rii_obesity %>%
@@ -111,7 +126,7 @@ rii_obesity <- rii_obesity %>%
   mutate(rii=exp(value), 
          rii_infci=exp(value-1.96*se),
          rii_supci=exp(value+1.96*se)) %>% 
-  filter(effect=="education_3_tr") %>% 
+  filter(effect=="education") %>% 
   select(rii, rii_infci, rii_supci, group) %>% 
   mutate(sexo="Overall") %>%
   separate(group, c('encuesta', 'ccaa')) %>%
@@ -124,7 +139,7 @@ rii_obesity <- rii_obesity %>%
 ################################ SOBREPESO #####################################
 
 
-rii_sobrepeso <- glmmTMB(sobrepeso~education_3_tr+edad+sexo+(1+education_3_tr|encuesta) + (1+education_3_tr|encuesta: ccaa), data=dta,
+rii_sobrepeso <- glmmTMB(sobrepeso~education+edad+sexo+(1+education|encuesta) + (1+education|encuesta: ccaa), data=dta,
                         family="poisson")
 
 rii_sobrepeso <- rii_sobrepeso %>%
@@ -132,7 +147,7 @@ rii_sobrepeso <- rii_sobrepeso %>%
   mutate(rii=exp(value), 
          rii_infci=exp(value-1.96*se),
          rii_supci=exp(value+1.96*se)) %>% 
-  filter(effect=="education_3_tr") %>% 
+  filter(effect=="education") %>% 
   select(rii, rii_infci, rii_supci, group) %>% 
   mutate(sexo="Overall") %>%
   separate(group, c('encuesta', 'ccaa')) %>%
@@ -145,7 +160,7 @@ rii_sobrepeso <- rii_sobrepeso %>%
 ############################## SMOKING #######################################
 
 
-rii_smoking <- glmmTMB(smoking~education_3_tr+edad+sexo+(1+education_3_tr|encuesta) + (1+education_3_tr|encuesta: ccaa), data=dta,
+rii_smoking <- glmmTMB(smoking~education+edad+sexo+(1+education|encuesta) + (1+education|encuesta: ccaa), data=dta,
                         family="poisson")
 
 rii_smoking <- rii_smoking %>%
@@ -153,7 +168,7 @@ rii_smoking <- rii_smoking %>%
   mutate(rii=exp(value), 
          rii_infci=exp(value-1.96*se),
          rii_supci=exp(value+1.96*se)) %>% 
-  filter(effect=="education_3_tr") %>% 
+  filter(effect=="education") %>% 
   select(rii, rii_infci, rii_supci, group) %>% 
   mutate(sexo="Overall") %>%
   separate(group, c('encuesta', 'ccaa')) %>%
@@ -169,7 +184,7 @@ rii_smoking <- rii_smoking %>%
 dta <- dta %>%
   mutate(alcohol=(alcohol-1)*-1)
 
-rii_alcohol <- glmmTMB(alcohol~education_3_tr+edad+sexo+(1+education_3_tr|encuesta) + (1+education_3_tr|encuesta: ccaa), data=subset(dta, encuesta!=2001),
+rii_alcohol <- glmmTMB(alcohol~education+edad+sexo+(1+education|encuesta) + (1+education|encuesta: ccaa), data=subset(dta, encuesta!=2001),
                         family="poisson")
 
 rii_alcohol <- rii_alcohol %>%
@@ -177,7 +192,7 @@ rii_alcohol <- rii_alcohol %>%
   mutate(rii=exp(value), 
          rii_infci=exp(value-1.96*se),
          rii_supci=exp(value+1.96*se)) %>% 
-  filter(effect=="education_3_tr") %>% 
+  filter(effect=="education") %>% 
   select(rii, rii_infci, rii_supci, group) %>% 
   mutate(sexo="Overall") %>%
   separate(group, c('encuesta', 'ccaa')) %>%
@@ -190,7 +205,7 @@ rii_alcohol <- rii_alcohol %>%
 ########################### SEDENTARISMO #####################################
 
 
-rii_sedentario <- glmmTMB(sedentario~education_3_tr+edad+sexo+(1+education_3_tr|encuesta) + (1+education_3_tr|encuesta: ccaa), data=dta,
+rii_sedentario <- glmmTMB(sedentario~education+edad+sexo+(1+education|encuesta) + (1+education|encuesta: ccaa), data=dta,
                         family="poisson")
 
 rii_sedentario <- rii_sedentario %>%
@@ -198,7 +213,7 @@ rii_sedentario <- rii_sedentario %>%
   mutate(rii=exp(value), 
          rii_infci=exp(value-1.96*se),
          rii_supci=exp(value+1.96*se)) %>% 
-  filter(effect=="education_3_tr") %>% 
+  filter(effect=="education") %>% 
   select(rii, rii_infci, rii_supci, group) %>% 
   mutate(sexo="Overall") %>%
   separate(group, c('encuesta', 'ccaa')) %>%
@@ -222,7 +237,7 @@ rii_sedentario <- rii_sedentario %>%
 dta_clase <- subset(dta, encuesta!=2009)
 
 
-rii_diabetes <- glmmTMB(diabetes~clase_tr+edad+sexo+(1+clase_tr|encuesta) + (1+clase_tr|encuesta: ccaa), data=dta_clase,
+rii_diabetes <- glmmTMB(diabetes~clase+edad+sexo+(1+clase|encuesta) + (1+clase|encuesta: ccaa), data=dta_clase,
                         family="poisson")
 
 rii_diabetes <- rii_diabetes %>%
@@ -230,7 +245,7 @@ rii_diabetes <- rii_diabetes %>%
   mutate(rii=exp(value), 
          rii_infci=exp(value-1.96*se),
          rii_supci=exp(value+1.96*se)) %>% 
-  filter(effect=="clase_tr") %>% 
+  filter(effect=="clase") %>% 
   select(rii, rii_infci, rii_supci, group) %>% 
   mutate(sexo="Overall") %>%
   separate(group, c('encuesta', 'ccaa')) %>%
@@ -245,7 +260,7 @@ rii_diabetes <- rii_diabetes %>%
 ################################# HTA ######################################
 
 
-rii_hta <- glmmTMB(hta~clase_tr+edad+sexo+(1+clase_tr|encuesta) + (1+clase_tr|encuesta: ccaa), data=dta_clase,
+rii_hta <- glmmTMB(hta~clase+edad+sexo+(1+clase|encuesta) + (1+clase|encuesta: ccaa), data=dta_clase,
                    family="poisson")
 
 rii_hta <- rii_hta %>%
@@ -253,7 +268,7 @@ rii_hta <- rii_hta %>%
   mutate(rii=exp(value), 
          rii_infci=exp(value-1.96*se),
          rii_supci=exp(value+1.96*se)) %>% 
-  filter(effect=="clase_tr") %>% 
+  filter(effect=="clase") %>% 
   select(rii, rii_infci, rii_supci, group) %>% 
   mutate(sexo="Overall") %>%
   separate(group, c('encuesta', 'ccaa')) %>%
@@ -269,7 +284,7 @@ rii_hta <- rii_hta %>%
 ############################# COLESEROL #######################################
 
 
-rii_col <- glmmTMB(col~clase_tr+edad+sexo+(1+clase_tr|encuesta) + (1+clase_tr|encuesta: ccaa), data=dta_clase,
+rii_col <- glmmTMB(col~clase+edad+sexo+(1+clase|encuesta) + (1+clase|encuesta: ccaa), data=dta_clase,
                    family="poisson")
 
 rii_col <- rii_col %>%
@@ -277,7 +292,7 @@ rii_col <- rii_col %>%
   mutate(rii=exp(value), 
          rii_infci=exp(value-1.96*se),
          rii_supci=exp(value+1.96*se)) %>% 
-  filter(effect=="clase_tr") %>% 
+  filter(effect=="clase") %>% 
   select(rii, rii_infci, rii_supci, group) %>% 
   mutate(sexo="Overall") %>%
   separate(group, c('encuesta', 'ccaa')) %>%
@@ -291,7 +306,7 @@ rii_col <- rii_col %>%
 ############################### OBESIDAD #######################################
 
 
-rii_obesity <- glmmTMB(obesity~clase_tr+edad+sexo+(1+clase_tr|encuesta) + (1+clase_tr|encuesta: ccaa), data=dta_clase,
+rii_obesity <- glmmTMB(obesity~clase+edad+sexo+(1+clase|encuesta) + (1+clase|encuesta: ccaa), data=dta_clase,
                        family="poisson")
 
 rii_obesity <- rii_obesity %>%
@@ -299,7 +314,7 @@ rii_obesity <- rii_obesity %>%
   mutate(rii=exp(value), 
          rii_infci=exp(value-1.96*se),
          rii_supci=exp(value+1.96*se)) %>% 
-  filter(effect=="clase_tr") %>% 
+  filter(effect=="clase") %>% 
   select(rii, rii_infci, rii_supci, group) %>% 
   mutate(sexo="Overall") %>%
   separate(group, c('encuesta', 'ccaa')) %>%
@@ -312,7 +327,7 @@ rii_obesity <- rii_obesity %>%
 ################################ SOBREPESO #####################################
 
 
-rii_sobrepeso <- glmmTMB(sobrepeso~clase_tr+edad+sexo+(1+clase_tr|encuesta) + (1+clase_tr|encuesta: ccaa), data=dta_clase,
+rii_sobrepeso <- glmmTMB(sobrepeso~clase+edad+sexo+(1+clase|encuesta) + (1+clase|encuesta: ccaa), data=dta_clase,
                          family="poisson")
 
 rii_sobrepeso <- rii_sobrepeso %>%
@@ -320,7 +335,7 @@ rii_sobrepeso <- rii_sobrepeso %>%
   mutate(rii=exp(value), 
          rii_infci=exp(value-1.96*se),
          rii_supci=exp(value+1.96*se)) %>% 
-  filter(effect=="clase_tr") %>% 
+  filter(effect=="clase") %>% 
   select(rii, rii_infci, rii_supci, group) %>% 
   mutate(sexo="Overall") %>%
   separate(group, c('encuesta', 'ccaa')) %>%
@@ -333,7 +348,7 @@ rii_sobrepeso <- rii_sobrepeso %>%
 ############################## SMOKING #######################################
 
 
-rii_smoking <- glmmTMB(smoking~clase_tr+edad+sexo+(1+clase_tr|encuesta) + (1+clase_tr|encuesta: ccaa), data=dta_clase,
+rii_smoking <- glmmTMB(smoking~clase+edad+sexo+(1+clase|encuesta) + (1+clase|encuesta: ccaa), data=dta_clase,
                        family="poisson")
 
 rii_smoking <- rii_smoking %>%
@@ -341,7 +356,7 @@ rii_smoking <- rii_smoking %>%
   mutate(rii=exp(value), 
          rii_infci=exp(value-1.96*se),
          rii_supci=exp(value+1.96*se)) %>% 
-  filter(effect=="clase_tr") %>% 
+  filter(effect=="clase") %>% 
   select(rii, rii_infci, rii_supci, group) %>% 
   mutate(sexo="Overall") %>%
   separate(group, c('encuesta', 'ccaa')) %>%
@@ -355,7 +370,7 @@ rii_smoking <- rii_smoking %>%
 ################################# ALCOHOL #####################################
 
 
-rii_alcohol <- glmmTMB(alcohol~clase_tr+edad+sexo+(1+clase_tr|encuesta) + (1+clase_tr|encuesta: ccaa), data=subset(dta_clase, encuesta!=2001),
+rii_alcohol <- glmmTMB(alcohol~clase+edad+sexo+(1+clase|encuesta) + (1+clase|encuesta: ccaa), data=subset(dta_clase, encuesta!=2001),
                        family="poisson")
 
 rii_alcohol <- rii_alcohol %>%
@@ -363,7 +378,7 @@ rii_alcohol <- rii_alcohol %>%
   mutate(rii=exp(value), 
          rii_infci=exp(value-1.96*se),
          rii_supci=exp(value+1.96*se)) %>% 
-  filter(effect=="clase_tr") %>% 
+  filter(effect=="clase") %>% 
   select(rii, rii_infci, rii_supci, group) %>% 
   mutate(sexo="Overall") %>%
   separate(group, c('encuesta', 'ccaa')) %>%
@@ -376,7 +391,7 @@ rii_alcohol <- rii_alcohol %>%
 ########################### SEDENTARISMO #####################################
 
 
-rii_sedentario <- glmmTMB(sedentario~clase_tr+edad+sexo+(1+clase_tr|encuesta) + (1+clase_tr|encuesta: ccaa), data=dta_clase,
+rii_sedentario <- glmmTMB(sedentario~clase+edad+sexo+(1+clase|encuesta) + (1+clase|encuesta: ccaa), data=dta_clase,
                           family="poisson")
 
 rii_sedentario <- rii_sedentario %>%
@@ -384,7 +399,7 @@ rii_sedentario <- rii_sedentario %>%
   mutate(rii=exp(value), 
          rii_infci=exp(value-1.96*se),
          rii_supci=exp(value+1.96*se)) %>% 
-  filter(effect=="clase_tr") %>% 
+  filter(effect=="clase") %>% 
   select(rii, rii_infci, rii_supci, group) %>% 
   mutate(sexo="Overall") %>%
   separate(group, c('encuesta', 'ccaa')) %>%
