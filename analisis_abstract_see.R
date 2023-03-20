@@ -695,3 +695,6 @@ write.csv(clase, "desigualdades_clase.csv")
 
 
 
+
+
+
