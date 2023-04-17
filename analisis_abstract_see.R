@@ -15,7 +15,7 @@ rm(list=ls())
 
 load("joined_dta.RData")
 
-##Modificado Por Luis Cereijo##
+
 
 #Centramos edad
 dta <- dta %>%
