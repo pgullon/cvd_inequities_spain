@@ -2,6 +2,7 @@
 library(tidyr)
 library(tidyverse)
 library(scales)
+library(labelled)
 
 
 rm(list=ls())
@@ -28,7 +29,7 @@ rm(list=ls())
 # Tabaquismo=smoking
 # Consumo de alcohol=alcohol
 # Sedentarismo=sedentario
-# Alimentación=food TODAVÍA PENDIENTES
+# Alimentación=fruta (por ahora solo fruta y verdura diaria en dicotómico con 0 si no consume) 
 
 
 
@@ -36,7 +37,7 @@ rm(list=ls())
 
 
 load("2001/ense2001.RData")
-
+labelled::unlabelled(ense_2001)
 
 # Creamos las variables y nos quedamos solo con las variables de interés. 
 # NO PAÍS DE NACIMIENTO. NO NACIONALIDAD. NO ALCOHOL
@@ -83,15 +84,23 @@ ense_2001 <-  ense_2001 %>%
                            (P28==3 | P28==4) ~ 0), 
          alcohol=NA,
          sedentario=case_when(P40==1~1, 
-                              (P40==2 | P40==3 | P40==4)~0))%>%
+                              (P40==2 | P40==3 | P40==4)~0), 
+         fruta=na_if(P42_1, 9), 
+         verdura=na_if(P42_6, 9), 
+         fruta=case_when(fruta==1~0, 
+                         (fruta==2 | fruta==3 | fruta==4 | fruta==5)~1), 
+         verdura=case_when(verdura==1~0, 
+                           (verdura==2 | verdura==3  | verdura==4 | verdura==5)~1), 
+         fruta_verdura=case_when(fruta==1~1, verdura==1~1, 
+                                 (fruta==0 | verdura==0)~0)) %>%
   select(id, factor, edad, sexo, ccaa, nacionalidad, migration, clase, clase_tr,
          education_3, education_3_tr, education_5, education_5_tr, diabetes, hta, 
-         col, imc, obesity, sobrepeso, smoking, alcohol, sedentario) %>%
+         col, imc, obesity, sobrepeso, smoking, alcohol, sedentario, fruta, verdura, fruta_verdura) %>%
   filter(edad>17) %>%
   distinct() %>%
   drop_na(id, factor, edad, sexo, ccaa, education_3, education_3_tr, 
           education_5, education_5_tr, diabetes, hta, 
-          col, imc, obesity, sobrepeso, smoking, sedentario) %>%
+          col, imc, obesity, sobrepeso, smoking, sedentario, fruta_verdura) %>%
   mutate(encuesta=2001)
 
 save(ense_2001, file = "2001/ense2001_clean.RData")
@@ -107,7 +116,7 @@ ense_2003 <-  ense_2003 %>%
          edad=as.numeric(EDAD.x), 
          sexo=as.numeric(SEXO.x),
          sexo=case_when(sexo==1~1, sexo==6~0),
-         ccaa=as.numeric(na_if(CCAA.x, 18)),
+         ccaa=as.numeric(na_if(CCAA.x, "18")),
          migration=NA,
          nacionalidad=case_when(NACION==1 ~1, NACION==6~2),
          clase=na_if(SPCLASE.x, 7), clase=na_if(clase, 9),
@@ -123,7 +132,7 @@ ense_2003 <-  ense_2003 %>%
                         TENSION==6 ~ 0),
          col=case_when(COLESTER==1 ~ 1, 
                        COLESTER==6 ~ 0),
-         peso=na_if(PESO, 998), peso=as.numeric(na_if(peso, 999)), 
+         peso=na_if(PESO, "998"), peso=as.numeric(na_if(peso, "999")), 
          altura=na_if(ALTURA, 998), altura=as.numeric(na_if(altura, 999)),
          imc=round(peso/(altura/100)^2,2), 
          obesity=case_when(imc<30 ~0, imc>=30~1),
@@ -133,15 +142,21 @@ ense_2003 <-  ense_2003 %>%
          alcohol=case_when(BEBE==1~1, 
                            BEBE==6~0), 
          sedentario=case_when(D_ACFISO==1~1, 
-                              D_ACFISO==2~0)) %>%
+                              D_ACFISO==2~0), 
+         fruta=case_when(FRUTA==1~0, 
+                         (FRUTA==2 | FRUTA==3 | FRUTA==4 | FRUTA==5)~1), 
+         verdura=case_when(VERDURA==1~0, 
+                           (VERDURA==2 | VERDURA==3  | VERDURA==4 | VERDURA==5)~1), 
+         fruta_verdura=case_when(fruta==1~1, verdura==1~1, 
+                                 (fruta==0 | verdura==0)~0)) %>%
   select(id, factor, edad, sexo, ccaa, nacionalidad, migration, clase, clase_tr,
          education_3, education_3_tr, education_5, education_5_tr, diabetes, hta, 
-         col, imc, obesity, sobrepeso, smoking, alcohol, sedentario) %>%
+         col, imc, obesity, sobrepeso, smoking, alcohol, sedentario, fruta, verdura, fruta_verdura) %>%
   filter(edad>17) %>%
   distinct() %>%
   drop_na(id, factor, edad, sexo, ccaa, nacionalidad, clase, clase_tr,
           education_3, education_3_tr, diabetes, hta, 
-          col, imc, obesity, sobrepeso, smoking, alcohol, sedentario) %>%
+          col, imc, obesity, sobrepeso, smoking, alcohol, sedentario, fruta_verdura) %>%
   mutate(encuesta=2003)
 
 
@@ -159,12 +174,12 @@ ense_2006 <-  ense_2006 %>%
          edad=as.numeric(EDAD.x), 
          sexo=as.numeric(SEXO.x), 
          sexo=case_when(sexo==1~1, sexo==6~0),
-         ccaa=na_if(CCAA.x, 18), ccaa=as.numeric(na_if(ccaa, 19)),
+         ccaa=na_if(CCAA.x, "18"), ccaa=as.numeric(na_if(ccaa, "19")),
          migration=as.numeric(case_when(B2==724~1, B2!=724~2)),
          nacionalidad=case_when((B3==1 |B3==3) ~1, B3==2~2),
          clase=na_if(SPCLASE.x, 9),
          clase_tr=cume_dist(clase),
-         education=na_if(A12, 98), education=as.numeric(na_if(education, 99)),
+         education=na_if(A12, "98"), education=as.numeric(na_if(education, "99")),
          education_3=case_when((education==1 | education==2 | education==3)~1, 
                                (education==4 | education==5 | education==6 | education==7)~2, 
                                (education==8 | education==9)~3),
@@ -181,7 +196,7 @@ ense_2006 <-  ense_2006 %>%
                        (B15_1A==6 | B15_1C==6) ~ 0),
          col=case_when((B15_14A==1 |B15_14C==1) ~ 1, 
                        (B15_14A==6 | B15_14C==6) ~ 0),
-         peso=na_if(L1_128, 998), peso=as.numeric(na_if(peso, 999)), 
+         peso=na_if(L1_128, "998"), peso=as.numeric(na_if(peso, "999")), 
          altura=na_if(L1_129, 998), altura=na_if(altura, 999),
          imc=round(peso/(altura/100)^2,2), 
          obesity=case_when(imc<30 ~0, imc>=30~1),
@@ -191,15 +206,23 @@ ense_2006 <-  ense_2006 %>%
          alcohol=case_when(H2_82==1~1, 
                            H2_82==6~0), 
          sedentario=case_when(H3_93==6~1, 
-                              H3_93==1~0)) %>%
+                              H3_93==1~0), 
+         fruta=na_if(H4_96_1, 9), 
+         verdura=na_if(H4_96_7, 9), 
+         fruta=case_when(fruta==1~0, 
+                         (fruta==2 | fruta==3 | fruta==4 | fruta==5)~1), 
+         verdura=case_when(verdura==1~0, 
+                           (verdura==2 | verdura==3  | verdura==4 | verdura==5)~1), 
+         fruta_verdura=case_when(fruta==1~1, verdura==1~1, 
+                                 (fruta==0 | verdura==0)~0)) %>%
   select(id, factor, edad, sexo, ccaa, nacionalidad, migration, clase, clase_tr,
          education_3, education_3_tr, education_5, education_5_tr, diabetes, hta, 
-         col, imc, obesity, sobrepeso, smoking, alcohol, sedentario) %>%
+         col, imc, obesity, sobrepeso, smoking, alcohol, sedentario, fruta, verdura, fruta_verdura) %>%
   filter(edad>17) %>%
   distinct() %>%
   drop_na(id, factor, edad, sexo, ccaa, nacionalidad, migration, clase, clase_tr,
           education_3, education_3_tr, education_5, education_5_tr, diabetes, hta, 
-          col, imc, obesity, sobrepeso, smoking, sedentario) %>%
+          col, imc, obesity, sobrepeso, smoking, sedentario, fruta_verdura) %>%
   mutate(encuesta=2006)
 
 
@@ -219,11 +242,11 @@ eese_2009 <-  eese_2009 %>%
          edad=as.numeric(EDAD), 
          sexo=as.numeric(SEXO),
          sexo=case_when(sexo==1~1, sexo==2~0),
-         ccaa=na_if(CCAA.x, 18), ccaa=as.numeric(na_if(ccaa, 19)),
+         ccaa=na_if(CCAA.x, "18"), ccaa=as.numeric(na_if(ccaa, "19")),
          migration=na_if(HH9_1, 8), migration=na_if(migration, 9),
          nacionalidad=case_when(HH10_1a==1~1, HH10_1a==6~2),
          clase=NA, clase_tr=NA,
-         education=na_if(HH13, 98), education=as.numeric(na_if(education, 99)),
+         education=na_if(HH13, "98"), education=as.numeric(na_if(education, "99")),
          education_3=case_when((education==1 | education==2 | education==3)~1, 
                                (education==4 | education==5 | education==6 | education==7)~2, 
                                (education==8 | education==9)~3),
@@ -239,7 +262,7 @@ eese_2009 <-  eese_2009 %>%
          col=NA,
          hta=case_when((HS4_5==1 | HS5_5==1) ~ 1, 
                        (HS4_5==6 | HS5_5==6) ~ 0),
-         peso=na_if(BMI2, 998), peso=as.numeric(na_if(peso, 999)), 
+         peso=na_if(BMI2, "998"), peso=as.numeric(na_if(peso, "999")), 
          altura=na_if(BMI1, 998), altura=na_if(altura, 999),
          imc=round(peso/(altura/100)^2,2), 
          obesity=case_when(imc<30 ~0, imc>=30~1),
@@ -254,10 +277,18 @@ eese_2009 <-  eese_2009 %>%
          vigorosa=case_when((PE1==1 | PE1==2 | PE1==3 | PE1==4 | PE1==5 | PE1==6 | PE1==7)~0, 
                             PE1==0~1), 
          sedentario=case_when((moderada==1 | vigorosa==1)~1, 
-                              (moderada==0 & vigorosa==0)~0)) %>%
+                              (moderada==0 & vigorosa==0)~0), 
+         fruta=na_if(FV1, 9), fruta=na_if(fruta, 8), 
+         verdura=na_if(FV2, 9), verdura=na_if(verdura, 8), 
+         fruta=case_when((fruta==1 | fruta==2)~0, 
+                         (fruta==3 | fruta==4 | fruta==5 | fruta==6)~1), 
+         verdura=case_when((verdura==1 | verdura==2)~0, 
+                           (verdura==3 | verdura==4  | verdura==5 | verdura==6)~1), 
+         fruta_verdura=case_when(fruta==1~1, verdura==1~1, 
+                                 (fruta==0 | verdura==0)~0)) %>%
   select(id, factor, edad, sexo, ccaa, nacionalidad, migration, clase, clase_tr,
          education_3, education_3_tr, education_5, education_5_tr, diabetes, hta, 
-         col, imc, obesity, sobrepeso, smoking, alcohol, sedentario) %>%
+         col, imc, obesity, sobrepeso, smoking, alcohol, sedentario, fruta, verdura, fruta_verdura) %>%
   filter(edad>17) %>%
   distinct() %>%
   drop_na(id, factor, edad, sexo, ccaa, nacionalidad, migration, 
@@ -279,12 +310,12 @@ ense_2011 <-  ense_2011 %>%
          edad=as.numeric(EDADa), 
          sexo=as.numeric(SEXOa), 
          sexo=case_when(sexo==1~1, sexo==2~0),
-         ccaa=na_if(CCAA.x, 18), ccaa=as.numeric(na_if(ccaa, 19)),
+         ccaa=na_if(CCAA.x, "18"), ccaa=as.numeric(na_if(ccaa, "19")),
          migration=na_if(E1_1, 8), migration=na_if(migration, 9),
          nacionalidad=case_when(E2_1a==1~1, E2_1a==6~2),
          clase=na_if(CLASE_PR.x, 9),
          clase_tr=cume_dist(clase),
-         education=na_if(A10_i, 98), education=as.numeric(na_if(education, 99)), 
+         education=na_if(A10_i, "98"), education=as.numeric(na_if(education, "99")), 
          education_3=case_when((education==2 | education==3 | education==4)~1, 
                                (education==5 | education==6 | education==7 | education==8)~2, 
                                (education==9)~3),
@@ -301,7 +332,7 @@ ense_2011 <-  ense_2011 %>%
                        (G21a_1==6 | G21c_1==6) ~ 0),
          col=case_when((G21a_14==1 |G21c_14==1) ~ 1, 
                        (G21a_14==6 | G21c_11==6) ~ 0),
-         peso=na_if(R102, 998), peso=as.numeric(na_if(peso, 999)), 
+         peso=na_if(R102, "998"), peso=as.numeric(na_if(peso, "999")), 
          altura=na_if(R103, 998), altura=na_if(altura, 999),
          imc=round(peso/(altura/100)^2,2), 
          obesity=case_when(imc<30 ~0, imc>=30~1),
@@ -311,15 +342,23 @@ ense_2011 <-  ense_2011 %>%
          alcohol=case_when(T121==1~1, 
                            T121==6~0), 
          sedentario=case_when(U129==1~1, 
-                              (U129==2 | U129==3 | U129==4)~0)) %>%
+                              (U129==2 | U129==3 | U129==4)~0), 
+         fruta=na_if(V133_1, 9), fruta=na_if(fruta, 8), 
+         verdura=na_if(V133_7, 9), verdura=na_if(verdura, 8), 
+         fruta=case_when(fruta==1~0, 
+                         (fruta==2 | fruta==3 | fruta==4 | fruta==5)~1), 
+         verdura=case_when(verdura==1~0, 
+                           (verdura==2 | verdura==3  | verdura==4 | verdura==5)~1), 
+         fruta_verdura=case_when(fruta==1~1, verdura==1~1, 
+                                 (fruta==0 | verdura==0)~0)) %>%
   select(id, factor, edad, sexo, ccaa, nacionalidad, migration, clase, clase_tr,
          education_3, education_3_tr, education_5, education_5_tr, diabetes, hta, 
-         col, imc, obesity, sobrepeso, smoking, alcohol, sedentario) %>%
+         col, imc, obesity, sobrepeso, smoking, alcohol, sedentario, fruta, verdura, fruta_verdura) %>%
   filter(edad>17) %>%
   distinct() %>%
   drop_na(id, factor, edad, sexo, ccaa, nacionalidad, migration, clase, clase_tr,
           education_3, education_3_tr, education_5, education_5_tr, diabetes, hta, 
-          col, imc, obesity, sobrepeso, smoking, sedentario) %>%
+          col, imc, obesity, sobrepeso, smoking, sedentario, fruta_verdura) %>%
   mutate(encuesta=2011)
 
 save(ense_2011, file = "2011/ense2011_clean.RData")
@@ -335,12 +374,12 @@ eese_2014 <-  eese_2014 %>%
          edad=as.numeric(EDADa), 
          sexo=as.numeric(SEXOa), 
          sexo=case_when(sexo==1~1, sexo==2~0),
-         ccaa=na_if(CCAA.x, 18), ccaa=as.numeric(na_if(ccaa, 19)),
+         ccaa=na_if(CCAA.x, "18"), ccaa=as.numeric(na_if(ccaa, "19")),
          migration=na_if(E1_1, 8), migration=na_if(migration, 9),
          nacionalidad=E2_1a, 
          clase=na_if(CLASE_PR.x, 8), clase=na_if(clase, 9), 
          clase_tr=cume_dist(clase),
-         education=na_if(ESTUDIOS, 98), education=as.numeric(na_if(education, 99)), 
+         education=na_if(ESTUDIOS, "98"), education=as.numeric(na_if(education, "99")), 
          education_3=case_when((education==2 | education==3 | education==4)~1, 
                                (education==5 | education==6 | education==7 | education==8)~2, 
                                (education==9)~3),
@@ -357,27 +396,35 @@ eese_2014 <-  eese_2014 %>%
                        (G25a_1==2 | G25c_1==2) ~ 0),
          col=case_when((G25a_15==1 |G25c_15==1) ~ 1, 
                        (G25a_15==2 | G25c_15==2) ~ 0),
-         peso=na_if(S110, 998), peso=as.numeric(na_if(peso, 999)), 
+         peso=na_if(S110, "998"), peso=as.numeric(na_if(peso, "999")), 
          altura=na_if(S109, 998), altura=na_if(altura, 999),
          imc=round(peso/(altura/100)^2,2), 
          obesity=case_when(imc<30 ~0, imc>=30~1),
          sobrepeso=case_when(imc<25 ~0, imc>=25~1),
          smoking=case_when((V121==1 | V121==2) ~ 1 , 
                            (V121==3 | V121==4) ~ 0), 
-         alcohol=na_if(W127, 98), alcohol=as.numeric(na_if(alcohol, 99)), 
+         alcohol=na_if(W127, "98"), alcohol=as.numeric(na_if(alcohol, "99")), 
          alcohol=case_when((alcohol==1 | alcohol==2 | alcohol==3 | alcohol==4 
                             | alcohol==5 | alcohol==6 | alcohol==7)~1, 
                            (alcohol==8 | alcohol==9)~0), 
          sedentario=case_when(T112==1~1, 
-                              (T112==2 | T112==3 | T112==4)~0)) %>%
+                              (T112==2 | T112==3 | T112==4)~0),
+         fruta=na_if(U120_1, 9), fruta=na_if(fruta, 8), 
+         verdura=na_if(U120_7, 9), verdura=na_if(verdura, 8), 
+         fruta=case_when(fruta==1~0, 
+                         (fruta==2 | fruta==3 | fruta==4 | fruta==5 | fruta==6)~1), 
+         verdura=case_when(verdura==1~0, 
+                           (verdura==2 | verdura==3  | verdura==4 | verdura==5 | verdura==6)~1), 
+         fruta_verdura=case_when(fruta==1~1, verdura==1~1, 
+                                 (fruta==0 | verdura==0)~0)) %>%
   select(id, factor, edad, sexo, ccaa, nacionalidad, migration, clase, clase_tr,
          education_3, education_3_tr, education_5, education_5_tr, diabetes, hta, 
-         col, imc, obesity, sobrepeso, smoking, alcohol, sedentario) %>%
+         col, imc, obesity, sobrepeso, smoking, alcohol, sedentario, fruta, verdura, fruta_verdura) %>%
   filter(edad>17) %>%
   distinct() %>%
   drop_na(id, factor, edad, sexo, ccaa, nacionalidad, migration, clase, clase_tr,
           education_3, education_3_tr, education_5, education_5_tr, diabetes, hta, 
-          col, imc, obesity, sobrepeso, smoking, alcohol, sedentario) %>%
+          col, imc, obesity, sobrepeso, smoking, alcohol, sedentario, fruta_verdura) %>%
   mutate(encuesta=2014)
 
 save(eese_2014, file = "2014/eese2014_clean.RData")
@@ -392,12 +439,12 @@ ense_2017 <-  ense_2017 %>%
          edad=as.numeric(EDADa), 
          sexo=as.numeric(SEXOa), 
          sexo=case_when(sexo==1~1, sexo==2~0),
-         ccaa=na_if(CCAA.x, 18), ccaa=as.numeric(na_if(ccaa, 19)),
+         ccaa=na_if(CCAA.x, "18"), ccaa=as.numeric(na_if(ccaa, "19")),
          migration=na_if(E1_1, 8), migration=na_if(migration, 9),
          nacionalidad=E2_1a, 
          clase=na_if(CLASE_PR.x, 8), clase=na_if(clase, 9), 
          clase_tr=cume_dist(clase),
-         education=na_if(NIVEST, 98), education=as.numeric(na_if(education, 99)), 
+         education=na_if(NIVEST, "98"), education=as.numeric(na_if(education, "99")), 
          education_3=case_when((education==2 | education==3 | education==4)~1, 
                                (education==5 | education==6 | education==7 | education==8)~2, 
                                (education==9)~3),
@@ -414,27 +461,35 @@ ense_2017 <-  ense_2017 %>%
                        (G25a_1==2 | G25c_1==2) ~ 0),
          col=case_when((G25a_15==1 |G25c_15==1) ~ 1, 
                        (G25a_15==2 | G25c_15==2) ~ 0),
-         peso=na_if(S110, 998), peso=as.numeric(na_if(peso, 999)), 
+         peso=na_if(S110, "998"), peso=as.numeric(na_if(peso, "999")), 
          altura=na_if(S109, 998), altura=na_if(altura, 999),
          imc=round(peso/(altura/100)^2,2), 
          obesity=case_when(imc<30 ~0, imc>=30~1),
          sobrepeso=case_when(imc<25 ~0, imc>=25~1),
          smoking=case_when((V121==1 | V121==2) ~ 1 , 
                            (V121==3 | V121==4) ~ 0), 
-         alcohol=na_if(W127, 98), alcohol=as.numeric(na_if(alcohol, 99)),
+         alcohol=na_if(W127, "98"), alcohol=as.numeric(na_if(alcohol, "99")),
          alcohol=case_when((alcohol==1 | alcohol==2 | alcohol==3 | alcohol==4 
                             | alcohol==5 | alcohol==6 | alcohol==7)~1, 
                            (alcohol==8 | alcohol==9)~0), 
          sedentario=case_when(T112==1~1, 
-                              (T112==2 | T112==3 | T112==4)~0)) %>%
+                              (T112==2 | T112==3 | T112==4)~0), 
+         fruta=na_if(U120_1, 9), fruta=na_if(fruta, 8), 
+         verdura=na_if(U120_7, 9), verdura=na_if(verdura, 8), 
+         fruta=case_when(fruta==1~0, 
+                         (fruta==2 | fruta==3 | fruta==4 | fruta==5 | fruta==6)~1), 
+         verdura=case_when(verdura==1~0, 
+                           (verdura==2 | verdura==3  | verdura==4 | verdura==5 | verdura==6)~1), 
+         fruta_verdura=case_when(fruta==1~1, verdura==1~1, 
+                                 (fruta==0 | verdura==0)~0)) %>%
   select(id, factor, edad, sexo, ccaa, nacionalidad, migration, clase, clase_tr,
          education_3, education_3_tr, education_5, education_5_tr, diabetes, hta, 
-         col, imc, obesity, sobrepeso, smoking, alcohol, sedentario) %>%
+         col, imc, obesity, sobrepeso, smoking, alcohol, sedentario, fruta, verdura, fruta_verdura) %>%
   filter(edad>17) %>%
   distinct() %>%
   drop_na(id, factor, edad, sexo, ccaa, nacionalidad, migration, clase, clase_tr,
           education_3, education_3_tr, education_5, education_5_tr, diabetes, hta, 
-          col, imc, obesity, sobrepeso, smoking, alcohol, sedentario) %>%
+          col, imc, obesity, sobrepeso, smoking, alcohol, sedentario, fruta_verdura) %>%
   mutate(encuesta=2017)
 
 
@@ -451,12 +506,12 @@ eese_2020 <-  eese_2020 %>%
          edad=as.numeric(EDADa), 
          sexo=as.numeric(SEXOa),
          sexo=case_when(sexo==1~1, sexo==2~0),
-         ccaa=na_if(CCAA.x, 18), ccaa=as.numeric(na_if(ccaa, 19)),
+         ccaa=na_if(CCAA.x, "18"), ccaa=as.numeric(na_if(ccaa, "19")),
          migration=na_if(E1_1, 8), migration=na_if(migration, 9),
          nacionalidad=E2_1a, 
          clase=na_if(CLASE_PR.x, 8), clase=na_if(clase, 9), 
          clase_tr=cume_dist(clase),
-         education=na_if(ESTUDIOS, 98), education=as.numeric(na_if(education, 99)), 
+         education=na_if(ESTUDIOS, "98"), education=as.numeric(na_if(education, "99")), 
          education_3=case_when((education==2 | education==3 | education==4)~1, 
                                (education==5 | education==6 | education==7 | education==8)~2, 
                                (education==9)~3),
@@ -473,27 +528,35 @@ eese_2020 <-  eese_2020 %>%
                             (G25a_1==2 | G25c_1==2) ~ 0),
          col=case_when((G25a_15==1 |G25c_15==1) ~ 1, 
                             (G25a_15==2 | G25c_15==2) ~ 0),
-         peso=na_if(S110, 998), peso=as.numeric(na_if(peso, 999)), 
+         peso=na_if(S110, "998"), peso=as.numeric(na_if(peso, "999")), 
          altura=na_if(S109, 998), altura=na_if(altura, 999),
          imc=round(peso/(altura/100)^2,2), 
          obesity=case_when(imc<30 ~0, imc>=30~1),
          sobrepeso=case_when(imc<25 ~0, imc>=25~1),
          smoking=case_when((V121==1 | V121==2) ~ 1 , 
                            (V121==3 | V121==4) ~ 0), 
-         alcohol=na_if(W127, 98), alcohol=as.numeric(na_if(alcohol, 99)),
+         alcohol=na_if(W127, "98"), alcohol=as.numeric(na_if(alcohol, "99")),
          alcohol=case_when((alcohol==1 | alcohol==2 | alcohol==3 | alcohol==4 
                             | alcohol==5 | alcohol==6 | alcohol==7)~1, 
                            (alcohol==8 | alcohol==9)~0), 
          sedentario=case_when(T112==1~1, 
-                              (T112==2 | T112==3 | T112==4)~0)) %>%
+                              (T112==2 | T112==3 | T112==4)~0), 
+         fruta=na_if(U120_1, 9), fruta=na_if(fruta, 8), 
+         verdura=na_if(U120_7, 9), verdura=na_if(verdura, 8), 
+         fruta=case_when(fruta==1~0, 
+                         (fruta==2 | fruta==3 | fruta==4 | fruta==5 | fruta==6)~1), 
+         verdura=case_when(verdura==1~0, 
+                           (verdura==2 | verdura==3  | verdura==4 | verdura==5 | verdura==6)~1), 
+         fruta_verdura=case_when(fruta==1~1, verdura==1~1, 
+                                 (fruta==0 | verdura==0)~0)) %>%
   select(id, factor, edad, sexo, ccaa, nacionalidad, migration, clase, clase_tr,
          education_3, education_3_tr, education_5, education_5_tr, diabetes, hta, 
-         col, imc, obesity, sobrepeso, smoking, alcohol, sedentario) %>%
+         col, imc, obesity, sobrepeso, smoking, alcohol, sedentario, fruta, verdura, fruta_verdura) %>%
   filter(edad>17) %>%
   distinct() %>%
   drop_na(id, factor, edad, sexo, ccaa, nacionalidad, migration, clase, clase_tr,
           education_3, education_3_tr, education_5, education_5_tr, diabetes, hta, 
-          col, imc, obesity, sobrepeso, smoking, alcohol, sedentario) %>%
+          col, imc, obesity, sobrepeso, smoking, alcohol, sedentario, fruta_verdura) %>%
   mutate(encuesta=2020)
          
 
@@ -507,9 +570,6 @@ dta <- ense_2001 %>%
   rbind(ense_2011) %>%
   rbind(eese_2014) %>%
   rbind(ense_2017) %>%
-  rbind(eese_2020) %>%
-  mutate(clase_tr_2=cume_dist(clase), 
-         clase_tr_2=rescale(clase_tr_2), 
-         education_3_tr_2=rescale(education_3_tr))
+  rbind(eese_2020) 
 
 save(dta, file = "joined_dta.RData")

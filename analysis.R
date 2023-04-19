@@ -25,14 +25,8 @@ ccaas <- read_delim("ccaas.csv", delim = ";",
 dta <- dta %>%
   mutate(edad=scale(edad, center=T, scale=F))
 
-#Pruebas de categorizacion clase y education
-dta <- dta %>%
-  mutate(clase=rescale(clase), 
-         education=rescale(education_3), 
-         education=(education-1)*-1)
 
-
-# encuesta de encuestas por probar
+# pool de encuestas por probar
 dta <- dta %>%
   mutate(encuesta_pool=case_when((encuesta==2001 | encuesta==2003)~2001, 
                         (encuesta==2006 | encuesta==2009)~2006, 
@@ -45,9 +39,6 @@ dta <- dta %>%
 #Primero el Relative Index of Inequality
 
 #Estimamos con modelos multinivel que asumen que hay una desigualdad que cambia en el tiempo. Observaciones -> ccaa -> tiempo
-
-
-
 rii_diabetes <- glmmTMB(diabetes~education_3_tr+edad+sexo+(1+education_3_tr|encuesta) + (1+education_3_tr|encuesta: ccaa), data=dta,
                       family="poisson")
 
@@ -112,6 +103,39 @@ rii_diabetes_m <- rii_diabetes_m %>%
 rii_diabetes <- rii_diabetes %>%
   rbind(rii_diabetes_h) %>%
   rbind(rii_diabetes_m)
+
+
+
+# Slope Index of Inequality con modelos poisson aditivos
+dta <- dta %>%
+  mutate(encuesta_sii=case_when(encuesta==2001~0, encuesta==2003~1, 
+                                encuesta==2006~2, encuesta==2009~3, 
+                                encuesta==2011~4, encuesta==2014~5, 
+                                encuesta==2017~6, encuesta==2020~7))
+sii_diabetes <- glmmTMB(diabetes~education_3_tr+edad+encuesta_sii+sexo+education_3_tr:encuesta_sii+
+                          (1+education_3_tr|encuesta_sii), data=dta,
+                        family=poisson(link="identity"))
+
+sii_diabetes <- sii_diabetes %>%
+  extract_random_coefs(re="encuesta:ccaa") %>%
+  mutate(rii=exp(value), 
+         rii_infci=exp(value-1.96*se),
+         rii_supci=exp(value+1.96*se)) %>% 
+  filter(effect=="education_3_tr") %>% 
+  select(rii, rii_infci, rii_supci, group) %>% 
+  mutate(sexo="Overall") %>%
+  separate(group, c('encuesta', 'ccaa')) %>%
+  mutate(encuesta=ymd(encuesta, truncated = 2L), 
+         ccaa=as.numeric(ccaa)) %>%
+  left_join(ccaas) %>%
+  mutate(fr="diabetes")
+
+
+
+
+
+
+
 
 
 ################################# HTA ######################################
