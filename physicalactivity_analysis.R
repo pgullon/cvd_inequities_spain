@@ -338,4 +338,64 @@ fig_CCAA
 ############################################################################################################
 ##################################OBTENEMOS VARIABLES iPAQ PARA 2009-2020###################################
 ############################################################################################################
+library(tidyverse)
+library(openxlsx)
+library(haven)
 
+rm(list=ls())
+
+###################################### 2009 #################################################################
+#Cargamos encuesta adultos
+campos <- read.xlsx("2009/Adul09.xlsx", colNames = FALSE) %>%
+  filter(is.na(X3) == FALSE & X3 != "Longitud") 
+nombres <- campos$X1
+anchos  <- campos$X3 %>% as.numeric
+adulto2009 <- read_fwf("2009/ADULTO09.txt", col_positions = fwf_widths(widths = anchos, col_names = nombres))
+
+##Comprobamos que esté todo ok##
+table(adulto2009$PE3)
+table(adulto2009$PE4_1)
+table(adulto2009$PE4_2)
+table(adulto2009$PE1)
+table(adulto2009$PE2_1)
+table(adulto2009$PE2_2)
+table(adulto2009$PE5)
+table(adulto2009$PE6_1)
+table(adulto2009$PE6_2)
+
+#convertir a numérica 
+
+#Obtenemos minutos/día de cada intensidad de actividad#
+adulto2009 <- adulto2009 %>% 
+  mutate(moderada=as.numeric(adulto2009$PE4_1))
+  
+  mutate(moderada_min_dia = as.numeric(adulto2009$PE4_1)* 60)
+
+###################################### 2011 #################################################################
+#Cargamos encuesta adultos
+campos <- read.xlsx("2011/Adul11.xlsx", colNames = FALSE) %>%
+  filter(is.na(X2) == FALSE & X2 != "LONGITUD") 
+nombres <- campos$X1
+anchos  <- campos$X2 %>% as.numeric
+adulto2011 <- read_fwf("2011/ADULTO11.txt", col_positions = fwf_widths(widths = anchos, col_names = nombres))
+
+
+
+###################################### 2014 ###########################
+#Cargamos encuesta adultos
+campos <- read.xlsx("2014/Adul14.xlsx", colNames = FALSE) %>%
+  filter(is.na(X3) == FALSE & X3 != "Longitud") 
+nombres <- campos$X1
+anchos  <- campos$X3 %>% as.numeric
+adulto2014 <- read_fwf("2014/ADULTO14.txt", col_positions = fwf_widths(widths = anchos, col_names = nombres))
+
+###################################### 2017 ###########################
+#Cargamos encuesta adultos
+campos <- read.xlsx("2017/Adul17.xlsx", colNames = FALSE) %>%
+  filter(is.na(X2) == FALSE & X2 != "LONGITUD") 
+nombres <- campos$X1
+anchos  <- campos$X2 %>% as.numeric
+adulto2017 <- read_fwf("2017/ADULTO17.txt", col_positions = fwf_widths(widths = anchos, col_names = nombres))
+
+adulto2017 <- adulto2017 %>% 
+  mutate(moderada=as.numeric(adulto2009$PE4_1))
