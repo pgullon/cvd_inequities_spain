@@ -8,10 +8,13 @@ library(lme4)
 library(broom.mixed)
 library(glmmTMB)
 library(mixedup)
-library(xlsx)
 library(tidyverse)
 library(openxlsx)
 library(haven)
+library(sf)
+library(rgdal)
+library(broom)
+
 
 rm(list=ls())
 
@@ -337,6 +340,47 @@ fig_CCAA <- ggplot(rii_sedentario_CCAA, aes(x=encuesta, y=rii, ymin=rii_infci, y
 
 fig_CCAA
 
+#Comunidades Autónomas Mapa RII Sedentarismo#
+
+shapefile_ccaa <- rgdal::readOGR("Physical Activity/Maps/Comunidades_Autonomas_ETRS89_30N.shp") # Leemos los datos de capa
+
+data_ccaa <- broom::tidy(shapefile_ccaa) # Los convertimos en un dataframe
+
+#Test de mapa de ejjjpañita
+
+ggplot(data_ccaa, aes(x= long, y = lat, group = group)) + # Hacemos el mapa
+  geom_polygon(fill = "violetred4", color = "white") +
+  theme_minimal() +
+  theme(axis.line = element_blank(),
+        axis.text = element_blank(),
+        axis.title = element_blank(),
+        axis.ticks = element_blank())
+
+
+data_ccaa$id<-as.character(data_ccaa$id)
+
+rii_sedentario_map<-rii_sedentario_CCAA %>% 
+  mutate(id=ccaa-1)
+
+data_ccaa_map<-rii_sedentario_map %>% 
+  mutate(id=as.character(id)) %>%
+  right_join(data_ccaa, by= "id")%>% 
+  filter(id!=17 & id !=18)
+
+sedentarismo_map <- ggplot(data_ccaa_map, aes(x = long, y = lat, group = group)) +
+  geom_polygon(aes(fill=rii), color= "white", linewidth = 0.2) +
+  scale_fill_distiller(palette = "Blues", direction = 1) +
+  labs( title = "Desigualdades en sedentarismo por Comunidades Autónomas en 2020",
+        subtitle = "Unidades: Relative Index of Inequality",
+        caption = "Fuente: Mis cojones",
+        fill = "IRR Sedentarism") +
+  facet_wrap(~encuesta)+
+  theme_minimal() +
+  theme(axis.line = element_blank(),
+        axis.text = element_blank(),
+        axis.title = element_blank(),
+        axis.ticks = element_blank())
+sedentarismo_map  
 
 ############################################################################################################
 ##################################OBTENEMOS VARIABLES iPAQ PARA 2009-2020###################################
