@@ -14,6 +14,8 @@ library(haven)
 library(sf)
 library(rgdal)
 library(broom)
+library(summarytools)
+library(table1)
 
 
 rm(list=ls())
@@ -24,6 +26,11 @@ load("joined_dta.RData")
 #Lista CCAA
 ccaas <- read_delim("ccaas.csv", delim = ";", 
                     escape_double = FALSE, trim_ws = TRUE)
+
+#Duplicamos edad para tabla 1
+
+dta <- dta %>% 
+  mutate(edad_pura = edad)
 
 #Centramos edad
 dta <- dta %>%
@@ -102,6 +109,8 @@ rii_sedentario_education <-
   rbind(rii_sedentario_h) %>%
   rbind(rii_sedentario_m)
 
+save(rii_sedentario_education, file="Physical Activity/rii_sedentario_education.RData")
+
 
 #SII EDUCATION SEDENTARISM##
 
@@ -151,6 +160,8 @@ sii_sedentario_m <- dta_m %>%
 sii_sedentario_education <- sii_sedentario_overall %>%
   rbind(sii_sedentario_h) %>%
   rbind(sii_sedentario_m)
+
+save(sii_sedentario_education, file="Physical Activity/sii_sedentario_education.RData")
 
 sii_sedentario_education_temp <- sii_sedentario_education %>% 
   mutate(exp="sii")
@@ -367,6 +378,11 @@ data_ccaa_map<-rii_sedentario_map %>%
   right_join(data_ccaa, by= "id")%>% 
   filter(id!=17 & id !=18)
 
+data_ccaa_map$encuesta <- factor(data_ccaa_map$encuesta, levels = c("2001-01-01", "2003-01-01", "2006-01-01", "2009-01-01", "2011-01-01", "2014-01-01", "2017-01-01", "2020-01-01"),
+                                 labels=c("2001", "2003", "2006", "2009", "2011", "2014", "2017", "2020"))
+
+save(data_ccaa_map, file="Physical Activity/data_map.RData")
+
 sedentarismo_map <- ggplot(data_ccaa_map, aes(x = long, y = lat, group = group)) +
   geom_polygon(aes(fill=rii), color= "white", linewidth = 0.2) +
   scale_fill_distiller(palette = "Blues", direction = 1) +
@@ -374,13 +390,41 @@ sedentarismo_map <- ggplot(data_ccaa_map, aes(x = long, y = lat, group = group))
         subtitle = "Unidades: Relative Index of Inequality",
         caption = "Fuente: Mis cojones",
         fill = "IRR Sedentarism") +
-  facet_wrap(~encuesta)+
+  facet_wrap(~encuesta, nrow = 2, ncol=4)+
   theme_minimal() +
   theme(axis.line = element_blank(),
         axis.text = element_blank(),
         axis.title = element_blank(),
         axis.ticks = element_blank())
 sedentarismo_map  
+
+## Creamos Tabla 1 ##
+
+
+label(dta$edad_pura) <- "Age"
+label(dta$sexo) <- "Sex"
+label(dta$sedentario) <- "Sedentarismo"
+dta$sedentario <- factor(dta$sedentario, levels = c(0, 1),
+                         labels = c("No sedentario", "sedentario"))
+label(dta$education_3_tr) <- "Nivel Educativo"
+dta$sexo <- factor(dta$sexo, levels = c(0, 1),
+                   labels = c("Mujeres", "Hombres"))
+
+table1(~ edad_pura + education_3_tr + sedentario | sexo,
+       render.continuous=c(.="Median", "(IQR)"="(Q1, Q3)"),
+       render.categorical=c(.="Freq (Pct%)"),
+       data=dta)
+
+dta %>% 
+  tbl_summary(
+    by = trt,
+    statistic = list(
+      all_continuous() ~ "{mean} ({sd})",
+      all_categorical() ~ "{n} / {N} ({p}%)"
+    ),
+    missing_text = "(Missing)"
+  )
+
 
 ############################################################################################################
 ##################################OBTENEMOS VARIABLES iPAQ PARA 2009-2020###################################

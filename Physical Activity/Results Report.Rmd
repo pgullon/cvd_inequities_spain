@@ -1,0 +1,109 @@
+
+---
+title: "Physical Inactivity Inequities trends"
+subtitle: "Resultados preliminares"
+author: "Luis Cereijo"
+output: 
+html_document:
+  fig_caption: yes
+  latex_engine: xelatex
+date: "2023-05-05"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+load("data_map.RData")
+load("rii_sedentario_education.RData")
+load("sii_sedentario_education.RData")
+
+```
+## Objective
+
+To describe social inequities in sedentarism in women and men by autonomous regions in Spain.
+
+## Methods
+
+**Sample:** Data from 167,581 adults (aged 18 or older) were obtained from the Spanish National Health Survey and the Spanish Module of the European Health Survey from 2001, 2003, 2006, 2009, 2011, 2014, 2017, and 2020. 
+**Exposure:** Socioeconomic position was measured using the educational level operationalized into three categories (low, middle, high).  
+**Outcome:** Sedentarism was defined as the practice of no physical activity in leisure time. 
+
+**Analysis:** Poisson regression models were carried out to assess the relative risk of inequality (RRI) and the slope index of inequality (SII). We adjusted analyses by age and presented results overall and stratified by sex and region.
+
+## Results
+
+### RRI of sedentarism in Spain 2001 and 2020
+
+```{r fig1, fig.height = 5, fig.width = 8, echo=FALSE}
+
+theme_fis<-  theme(axis.text=element_text(size=10, color="black"),
+                   axis.title=element_text(size=10, face="bold", color="black"),
+                   strip.text = element_text(size=10, face="bold", color="black"),
+                   legend.text=element_text(size=10, color="black"),
+                   panel.grid.major.x = element_blank(),
+                   panel.grid.minor.x = element_blank(),
+                   axis.text.x = element_text(color="black", size=10),
+                   axis.text.y = element_text(color="black", size=10),
+                   legend.position="bottom")
+
+ggplot(rii_sedentario_education, aes(x=encuesta, y=rii, ymin=rii_infci, ymax=rii_supci)) +
+geom_hline(yintercept = 1, lty=2)+
+geom_ribbon(alpha=0.3, aes(fill=sexo))+
+geom_line(aes(color=sexo)) +
+scale_y_continuous(trans="log",
+                                     breaks=c(0.75, 1, 1.5, 2, 4, 8, 16, 32))+
+                  labs(x="", y="RII (95% CI)")+
+                  theme_bw()+
+                  theme_fis+
+                  theme()
+
+
+```
+
+### SSI of sedentarism in Spain 2001 and 2020
+
+```{r fig2, fig.height = 5, fig.width = 8, echo=FALSE}
+
+theme_fis<-  theme(axis.text=element_text(size=10, color="black"),
+                   axis.title=element_text(size=10, face="bold", color="black"),
+                   strip.text = element_text(size=10, face="bold", color="black"),
+                   legend.text=element_text(size=10, color="black"),
+                   panel.grid.major.x = element_blank(),
+                   panel.grid.minor.x = element_blank(),
+                   axis.text.x = element_text(color="black", size=10),
+                   axis.text.y = element_text(color="black", size=10),
+                   legend.position="bottom")
+
+ggplot(sii_sedentario_education, aes(x=encuesta, y=sii, ymin=sii_infci, ymax=sii_supci)) +
+                      geom_hline(yintercept = 1, lty=2)+
+                      geom_ribbon(alpha=0.3, aes(fill=sexo))+
+                      geom_line(aes(color=sexo)) +
+                      # scale_y_continuous(trans="log",
+                      #                    breaks=c(0.75, 1, 1.5, 2, 4, 8, 16, 32))+
+                      labs(x="", y="SII (95% CI)")+
+                      theme_bw()+
+                      theme_fis+
+                      theme()
+
+
+```
+
+### RRI of sedentarism in Spanish Autonomous Regions between 2001 and 2020
+
+```{r fig3, fig.height = 5, fig.width = 10, echo=FALSE}
+
+ggplot(data_ccaa_map, aes(x = long, y = lat, group = group)) +
+  geom_polygon(aes(fill=rii), color= "white", linewidth = 0.2) +
+  scale_fill_distiller(palette = "Blues", direction = 1) +
+  labs( title = "RRI of sedentarism in Spanish Autonomous Regions between 2001 and 2020",
+        caption = "Source: Spanish National Health Survey and the Spanish Module of the European Health Survey from 2001, 2003, 2006, 2009, 2011, 2014, 2017, and 2020",
+        fill = "IRR Sedentarism") +
+  facet_wrap(~encuesta, nrow = 2, ncol=4)+
+  theme_minimal() +
+  theme(axis.line = element_blank(),
+        axis.text = element_blank(),
+        axis.title = element_blank(),
+        axis.ticks = element_blank())
+
+
+```
