@@ -29,7 +29,7 @@ rm(list=ls())
 # Tabaquismo=smoking
 # Consumo de alcohol=alcohol
 # Sedentarismo=sedentario
-# Alimentación=fruta (por ahora solo fruta y verdura diaria en dicotómico con 0 si no consume) 
+# Alimentación=fruta (por ahora solo fruta y verdura diaria en dicotómico con 0 si consume) 
 
 
 
