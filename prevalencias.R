@@ -57,8 +57,9 @@ prevalencias_peso_ccaa_sexo <- dta %>%
   left_join(ccaas)
 
 
-prevalencias_ccaa <- prevalencias_peso_ccaa_overall %>%
-  rbind(prevalencias_peso_ccaa_sexo)
+prevalencias_ccaa <- prevalencias_peso_ccaa_sexo %>%
+  mutate(sexo=as.character(sexo)) %>%
+  rbind(prevalencias_peso_ccaa_overall)
 
 write.csv(prevalencias_ccaa, "prevalencias_ccaa.csv")
 
@@ -93,8 +94,9 @@ prevalencias_peso_spain_sexo <- dta %>%
             fruta_verdura = survey_mean(fruta_verdura, na.rm = T, vartype = "ci"))
 
 
-prevalencias_spain <- prevalencias_peso_spain_overall %>%
-  rbind(prevalencias_peso_spain_sexo)
+prevalencias_spain <- prevalencias_peso_spain_sexo %>%
+  mutate(sexo=as.character(sexo)) %>%
+  rbind(prevalencias_peso_spain_overall)
 
 write.csv(prevalencias_spain, "prevalencias_spain.csv")
 

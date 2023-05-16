@@ -8,6 +8,7 @@ library(lme4)
 library(broom.mixed)
 library(mixedup)
 library(glmmTMB)
+library(srvyr)
 
 
 rm(list=ls())
@@ -55,6 +56,7 @@ rii_diabetes_overall <- dta %>%
   select(rii, rii_infci, rii_supci, encuesta) %>% 
   mutate(risk_factor="diabetes", 
          sexo="overall")
+
 
 dta_h<- subset(dta, sexo==1)
 rii_diabetes_h <- dta_h %>%
@@ -932,8 +934,6 @@ rii_alcohol <- rii_alcohol %>%
   mutate(fr="alcohol")
 
 
-dta_h <- dta_h %>%
-  mutate(alcohol=(alcohol-1)*-1)
 
 rii_alcohol_h <- glmmTMB(alcohol~education_3_tr+edad+(1+education_3_tr|encuesta) + (1+education_3_tr|encuesta: ccaa), data=subset(dta_h, encuesta!=2001),
                          family="poisson")
@@ -952,8 +952,6 @@ rii_alcohol_h <- rii_alcohol_h %>%
   left_join(ccaas) %>%
   mutate(fr="alcohol")
 
-dta_m <- dta_m %>%
-  mutate(alcohol=(alcohol-1)*-1)
 
 rii_alcohol_m <- glmmTMB(alcohol~education_3_tr+edad+(1+education_3_tr|encuesta) + (1+education_3_tr|encuesta: ccaa), data=subset(dta_m, encuesta!=2001),
                          family="poisson")
