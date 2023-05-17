@@ -16,10 +16,22 @@ library(rgdal)
 library(broom)
 library(summarytools)
 library(table1)
+library(cowplot)
+library(lpSolve)
+library(irr)
 
 
 rm(list=ls())
 
+theme_fis<-  theme(axis.text=element_text(size=10, color="black"),
+                   axis.title=element_text(size=10, face="bold", color="black"),
+                   strip.text = element_text(size=10, face="bold", color="black"),
+                   legend.text=element_text(size=10, color="black"),
+                   panel.grid.major.x = element_blank(),
+                   panel.grid.minor.x = element_blank(),
+                   axis.text.x = element_text(color="black", size=10),
+                   axis.text.y = element_text(color="black", size=10),
+                   legend.position="bottom")
 
 load("joined_dta.RData")
 
@@ -54,9 +66,9 @@ rii_sedentario_overall <- dta %>%
 
 # RII EDUCACIÓN OVERALL - SEDENTARISMO
 
-rii_sedentario_overall <- dta %>%
+rii_sedentario_overall_weighted <- dta %>%
   nest(data=-encuesta) %>%
-  mutate(model=map(data, ~glm(formula=sedentario~education_3_tr+edad+sexo, data=.x, 
+  mutate(model=map(data, ~glm(formula=sedentario~education_3_tr+edad+sexo, weights = factor, data=.x, 
                               family="poisson")), 
          tidied=map(model, tidy)) %>%
   unnest(tidied) %>%
@@ -86,6 +98,21 @@ rii_sedentario_h <- dta_h %>%
   mutate(risk_factor="Sedentarismo", 
          sexo="Hombres")
 
+dta_h_weighted<- subset(dta, sexo==1)
+rii_sedentario_h_weighted <- dta_h %>%
+  nest(data=-encuesta) %>%
+  mutate(model=map(data, ~glm(formula=sedentario~education_3_tr+edad, weights = factor, data=.x, 
+                              family="poisson")), 
+         tidied=map(model, tidy)) %>%
+  unnest(tidied) %>%
+  mutate(rii=exp(estimate), 
+         rii_infci=exp(estimate-1.96*std.error),
+         rii_supci=exp(estimate+1.96*std.error)) %>% 
+  filter(term=="education_3_tr") %>% 
+  select(rii, rii_infci, rii_supci, encuesta) %>% 
+  mutate(risk_factor="Sedentarismo", 
+         sexo="Hombres")
+
 # RII EDUCACIÓN MUJER - SEDENTARISMO
 
 dta_m<- subset(dta, sexo==0)
@@ -104,12 +131,31 @@ rii_sedentario_m <- dta_m %>%
          sexo="Mujeres")
 
 
+dta_m_weighted<- subset(dta, sexo==0)
+rii_sedentario_m_weighted <- dta_m %>%
+  nest(data=-encuesta) %>%
+  mutate(model=map(data, ~glm(formula=sedentario~education_3_tr+edad, weights = factor, data=.x, 
+                              family="poisson")), 
+         tidied=map(model, tidy)) %>%
+  unnest(tidied) %>%
+  mutate(rii=exp(estimate), 
+         rii_infci=exp(estimate-1.96*std.error),
+         rii_supci=exp(estimate+1.96*std.error)) %>% 
+  filter(term=="education_3_tr") %>% 
+  select(rii, rii_infci, rii_supci, encuesta) %>% 
+  mutate(risk_factor="Sedentarismo", 
+         sexo="Mujeres")
+
+
 rii_sedentario_education <- 
   rii_sedentario_overall %>%
   rbind(rii_sedentario_h) %>%
   rbind(rii_sedentario_m)
 
-save(rii_sedentario_education, file="Physical Activity/rii_sedentario_education.RData")
+rii_sedentario_education_weighted <- 
+  rii_sedentario_overall_weighted %>%
+  rbind(rii_sedentario_h_weighted) %>%
+  rbind(rii_sedentario_m_weighted)
 
 
 #SII EDUCATION SEDENTARISM##
@@ -127,7 +173,6 @@ sii_sedentario_overall <- dta %>%
   select(sii, sii_infci, sii_supci, encuesta) %>% 
   mutate(risk_factor="Sedentarismo", 
          sexo="Overall")
-
 
 sii_sedentario_h <- dta_h %>%
   nest(data=-encuesta) %>%
@@ -236,6 +281,29 @@ rii_sedentario_CCAA <- rii_sedentario_CCAA %>%
   rbind(rii_sedentario_CCAA_m)
 
 
+##HALLAMOS ICC PARA CADA AÑO ENTRE LAS CCAAS##
+
+#Creamos tabla
+
+rii_ccaa_icc_2001 <- rii_sedentario_CCAA %>%
+  filter(sexo=="Overall") %>% 
+  filter(encuesta=="2001-01-01") %>% 
+  select(rii, ccaa, encuesta) %>% 
+  pivot_wider(names_from = encuesta, values_from = rii)
+
+rii_ccaa_icc_2001 <- rii_ccaa_icc %>% 
+  filter(encuesta=="01-01-2001")
+
+results_icc_ccaa_2001 <- icc(rii_ccaa_icc, model = "twoway", type = "agreement", unit = "single", conf.level = 0.95)
+
+results_icc_ccaa_2001
+
+results_icc_ccaa <- results_icc_ccaa_2001 %>% 
+  mutate(icc=value, 
+         infci=lbound,
+         supci=ubound,
+         encuesta=2001)
+  
 ############################################################################################################
 ####################################VISUALIZACIÓN DE TODOS LOS ANÁLISIS#####################################
 ############################################################################################################
@@ -250,18 +318,64 @@ theme_fis<-  theme(axis.text=element_text(size=10, color="black"),
                    axis.text.y = element_text(color="black", size=10),
                    legend.position="bottom")
 
+
+#Hacemos figura de RII en sedentarismo comparando con y sin peso
+
+fig_rii_sedentario_sinpeso <-  ggplot(rii_sedentario_education, aes(x=encuesta, y=rii, ymin=rii_infci, ymax=rii_supci)) +
+  geom_hline(yintercept = 1, lty=2)+
+  geom_ribbon(alpha=0.3, aes(fill=sexo))+
+  geom_line(aes(color=sexo)) +
+  labs(x="", y="RII (95% CI)")+
+  scale_y_continuous(trans="log",
+                     breaks=c(-1, 0, 1, 1.5, 2, 2.5, 3, 4, 5))+
+  scale_x_continuous(breaks=c(2001, 2003, 2006, 2009, 2011, 2014, 2017, 2020))+
+  ylim(-1, 5.5)+
+  theme_bw()+
+  theme_fis+
+  theme()+
+  labs( title = "Inequalities on sedentarism between 2001-2020",
+        subtitle = "(Unweighted)")
+
+fig_rii_sedentario_sinpeso
+
+
+fig_rii_sedentario_weighted <-  ggplot(rii_sedentario_education_weighted, aes(x=encuesta, y=rii, ymin=rii_infci, ymax=rii_supci)) +
+  geom_hline(yintercept = 1, lty=2)+
+  geom_ribbon(alpha=0.3, aes(fill=sexo))+
+  geom_line(aes(color=sexo)) +
+  labs(x="", y="RII (95% CI)")+
+  scale_y_continuous(trans="log",
+                     breaks=c(-1, 0, 1, 1.5, 2, 2.5, 3, 4, 5))+
+  scale_x_continuous(breaks=c(2001, 2003, 2006, 2009, 2011, 2014, 2017, 2020))+
+  ylim(-1, 5.5)+
+  theme_bw()+
+  theme_fis+
+  theme()+
+  labs( title = "Inequalities on sedentarism between 2001-2020",
+        subtitle = "(Weighted)")
+
+fig_rii_sedentario_weighted
+
+plot_weighted <- plot_grid(fig_rii_sedentario_sinpeso, fig_rii_sedentario_weighted, nrow = 2)
+
+plot_weighted
+
+save(rii_sedentario_education, file="Physical Activity/rii_sedentario_education.RData")
+
+
 ####FIGURA RII (EDUCACIÓN) HOMBRES, MUJERES, OVERALL####
 
 fig_rii_junto <-  ggplot(rii_sedentario_education, aes(x=encuesta, y=rii, ymin=rii_infci, ymax=rii_supci)) +
-                  geom_hline(yintercept = 1, lty=2)+
-                  geom_ribbon(alpha=0.3, aes(fill=sexo))+
-                  geom_line(aes(color=sexo)) +
-                  scale_y_continuous(trans="log",
-                                     breaks=c(0.75, 1, 1.5, 2, 4, 8, 16, 32))+
-                  labs(x="", y="RII (95% CI)")+
-                  theme_bw()+
-                  theme_fis+
-                  theme()
+  geom_hline(yintercept = 1, lty=2)+
+  geom_ribbon(alpha=0.3, aes(fill=sexo))+
+  geom_line(aes(color=sexo)) +
+  labs(x="", y="RII (95% CI)")+
+  scale_y_continuous(trans="log",
+                     breaks=c(-1, 0, 1, 1.5, 2, 2.5, 3, 4, 5))+
+  ylim(-1, 5.5)+
+  theme_bw()+
+  theme_fis+
+  theme()
 
 fig_rii_junto
 
@@ -280,6 +394,7 @@ fig_rii_separado <-  ggplot(rii_sedentario_education, aes(x=encuesta, y=rii, ymi
 
 fig_rii_separado
 
+
 ####FIGURA SII (EDUCACIÓN) HOMBRES, MUJERES, OVERALL####
 
 figura_sii_junto <-   ggplot(sii_sedentario_education, aes(x=encuesta, y=sii, ymin=sii_infci, ymax=sii_supci)) +
@@ -289,6 +404,7 @@ figura_sii_junto <-   ggplot(sii_sedentario_education, aes(x=encuesta, y=sii, ym
                       # scale_y_continuous(trans="log",
                       #                    breaks=c(0.75, 1, 1.5, 2, 4, 8, 16, 32))+
                       labs(x="", y="SII (95% CI)")+
+                      ylim(-20, 90)+
                       theme_bw()+
                       theme_fis+
                       theme()
@@ -311,6 +427,9 @@ figura_sii_separado <-  ggplot(sii_sedentario_education, aes(x=encuesta, y=sii, 
 figura_sii_separado
 
 ####FIGURA RII Y SII HOMBRES, MUJERES, OVERALL####
+
+sedentario_educacion$exp <- factor(sedentario_educacion$exp, levels = c("sii", "rii"),
+                                   labels = c("SII", "RII"))
 
 figura_sii_rii <-   ggplot(sedentario_educacion, aes(x=encuesta, y=est, ymin=infci, ymax=supci)) +
                     geom_hline(yintercept = 1, lty=2)+
@@ -407,25 +526,92 @@ label(dta$sedentario) <- "Sedentarismo"
 dta$sedentario <- factor(dta$sedentario, levels = c(0, 1),
                          labels = c("No sedentario", "sedentario"))
 label(dta$education_3_tr) <- "Nivel Educativo"
+label(dta$education_3) <- "Nivel Educativo"
+dta$education_3 <- factor(dta$education_3, levels = c(1, 2, 3),
+                                          labels = c("Nivel Educativo Bajo", "Nivel Educativo Medio", "Nivel educativo Alto"))
 dta$sexo <- factor(dta$sexo, levels = c(0, 1),
                    labels = c("Mujeres", "Hombres"))
 
-table1(~ edad_pura + education_3_tr + sedentario | sexo,
+table1(~ edad_pura + education_3 + sedentario | sexo,
        render.continuous=c(.="Median", "(IQR)"="(Q1, Q3)"),
        render.categorical=c(.="Freq (Pct%)"),
        data=dta)
 
-dta %>% 
-  tbl_summary(
-    by = trt,
-    statistic = list(
-      all_continuous() ~ "{mean} ({sd})",
-      all_categorical() ~ "{n} / {N} ({p}%)"
-    ),
-    missing_text = "(Missing)"
-  )
+#Tendencias descriptivas de sedentarismo comparando nivel educativo y clase social
 
+desc_sedentario <- dta %>%
+  group_by(education_3, encuesta) %>%
+  summarize(
+    n = sum(sedentario == 1), 
+    n_t = sum(sedentario <2))%>%
+  pivot_wider(
+    id_cols = education_3,
+    names_from = encuesta,
+    values_from = c(n),
+    names_sep = "_")
 
+desc_sedentario_fig <- dta %>%
+  group_by(education_3, encuesta) %>%
+  summarize(
+    Sedentario = sum(sedentario == "sedentario"),
+    Sano = sum(sedentario=="No sedentario")) %>% 
+  mutate(Sedentarismo = Sedentario / (Sedentario + Sano) * 100)
+
+save(desc_sedentario_fig, file = "Physical Activity/desc_sedentario_fig.RData")
+
+#Hacemos figura para el descriptivo de sedentarismo
+
+fig_des_sedentario <-  ggplot(desc_sedentario_fig, aes(x=encuesta, y=Sedentarismo)) +
+  geom_hline(yintercept = 1, lty=2)+
+  geom_line(aes(color=as.factor(education_3)))+
+  scale_y_continuous(breaks = c(25, 50, 75, 100))+
+  scale_x_continuous(breaks = c(2001, 2003, 2006, 2009, 2011, 2014, 2017, 2020))+
+  labs(x="", y="RII (95% CI)")+
+  theme_bw()+
+  theme_fis+
+  theme()+
+  labs( title = "Inequalities on sedentarism between 2001-2020",
+        subtitle = "(Including 2009)")
+
+fig_des_sedentario
+
+fig_des_sedentario_sin2009 <-  ggplot(subset(desc_sedentario_fig, encuesta !=2009), aes(x=encuesta, y=Sedentarismo)) +
+  geom_hline(yintercept = 1, lty=2)+
+  geom_line(aes(color=education_3))+
+  scale_y_continuous(breaks = c(25, 50, 75, 100), limits = c(0, 100))+
+    scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
+  labs(x="", y="RII (95% CI)")+
+  theme_bw()+
+  theme_fis+
+  theme()+
+  labs( title = "Inequalities on sedentarism between 2001-2020",
+        subtitle = "(Excluding 2009)")
+
+fig_des_sedentario_sin2009
+
+plot2009_sin2009 <- plot_grid(fig_des_sedentario, fig_des_sedentario_sin2009, nrow = 2)
+
+plot2009_sin2009
+
+ggsave(descriptivo_sedentarismo.png)
+
+##############
+
+rii_sedentario_CCAA <- rii_sedentario_CCAA %>%
+  extract_random_coefs(re="encuesta:ccaa") %>%
+  mutate(rii=exp(value), 
+         rii_infci=exp(value-1.96*se),
+         rii_supci=exp(value+1.96*se)) %>% 
+  filter(effect=="education_3_tr") %>% 
+  select(rii, rii_infci, rii_supci, group) %>% 
+  mutate(sexo="Overall") %>%
+  separate(group, c('encuesta', 'ccaa')) %>%
+  mutate(encuesta=ymd(encuesta, truncated = 2L), 
+         ccaa=as.numeric(ccaa)) %>%
+  left_join(ccaas) %>%
+  mutate(fr="Sedentarismo")
+  
+  
 ############################################################################################################
 ##################################OBTENEMOS VARIABLES iPAQ PARA 2009-2020###################################
 ############################################################################################################
@@ -460,6 +646,18 @@ eese_2009 <- eese_2009 %>%
   mutate(caminar_horas=as.numeric(eese_2009$PE6_1)) %>% 
   mutate(caminar_min=as.numeric(eese_2009$PE6_2))
 
+#Corregimos nulos en minutos y/o horas si el día se recoge como "0"
+
+eese_2009 <- eese_2009 %>% 
+  mutate(moderada_horas = ifelse(moderada_dias == 0, 0, moderada_horas),
+         moderada_min = ifelse(moderada_dias == 0, 0, moderada_min),
+         intensa_horas = ifelse(intensa_dias == 0, 0, intensa_horas),
+         intensa_min = ifelse(intensa_dias == 0, 0, intensa_min),
+         caminar_horas = ifelse(caminar_dias == 0, 0, caminar_horas),
+         caminar_min = ifelse(caminar_dias == 0, 0, caminar_min))
+
+sum(is.na(eese_2009$moderada_horas) | is.na(eese_2009$moderada_min) | is.na(eese_2009$intensa_horas) | is.na(eese_2009$intensa_min) | is.na(eese_2009$caminar_horas) | is.na(eese_2009$caminar_min))
+
 #Pasamos a NA los no sabe no contesta
 eese_2009 <- eese_2009 %>% 
   mutate(moderada_dias = ifelse(moderada_dias>7, NA, moderada_dias),
@@ -488,7 +686,7 @@ eese_2009 <- eese_2009 %>%
 #Calculamos minutos de actividad física a la semana por intensidad
 eese_2009 <- eese_2009 %>%
   mutate(moderada_semana = moderada_min_dia*moderada_dias,
-         intensa_semana = moderada_min_dia*intensa_dias,
+         intensa_semana = intensa_min_dia*intensa_dias,
          caminar_semana = caminar_min_dia*caminar_dias,
          moderosa_semana = moderada_semana+intensa_semana)
 
@@ -592,6 +790,19 @@ ense_2011 <- ense_2011 %>%
   mutate(caminar_horas=as.numeric(ense_2011$U130_6a)) %>% 
   mutate(caminar_min=as.numeric(ense_2011$U130_6b))
 
+#Corregimos nulos en minutos y/o horas si el día se recoge como "0"
+
+ense_2011 <- ense_2011 %>% 
+  mutate(moderada_horas = ifelse(moderada_dias == 0, 0, moderada_horas),
+         moderada_min = ifelse(moderada_dias == 0, 0, moderada_min),
+         intensa_horas = ifelse(intensa_dias == 0, 0, intensa_horas),
+         intensa_min = ifelse(intensa_dias == 0, 0, intensa_min),
+         caminar_horas = ifelse(caminar_dias == 0, 0, caminar_horas),
+         caminar_min = ifelse(caminar_dias == 0, 0, caminar_min))
+
+sum(is.na(ense_2011$moderada_horas) | is.na(ense_2011$moderada_min) | is.na(ense_2011$intensa_horas) | is.na(ense_2011$intensa_min) | is.na(ense_2011$caminar_horas) | is.na(ense_2011$caminar_min))
+
+
 #Pasamos a NA los no sabe no contesta
 ense_2011 <- ense_2011 %>% 
   mutate(moderada_dias = ifelse(moderada_dias>7, NA, moderada_dias),
@@ -627,7 +838,7 @@ ense_2011 <- ense_2011 %>%
 #Calculamos minutos de actividad física a la semana por intensidad
 ense_2011 <- ense_2011 %>% 
   mutate(moderada_semana = moderada_min_dia*moderada_dias,
-         intensa_semana = moderada_min_dia*intensa_dias,
+         intensa_semana = intensa_min_dia*intensa_dias,
          caminar_semana = caminar_min_dia*caminar_dias,
          moderosa_semana = moderada_semana+intensa_semana)
 
@@ -741,6 +952,19 @@ ense_2017 <- ense_2017 %>%
   mutate(caminar_horas=as.numeric(ense_2017$T118_1)) %>% 
   mutate(caminar_min=as.numeric(ense_2017$T118_2))
 
+#Corregimos nulos en minutos y/o horas si el día se recoge como "0"
+
+ense_2017 <- ense_2017 %>% 
+  mutate(moderada_horas = ifelse(moderada_dias == 0, 0, moderada_horas),
+         moderada_min = ifelse(moderada_dias == 0, 0, moderada_min),
+         intensa_horas = ifelse(intensa_dias == 0, 0, intensa_horas),
+         intensa_min = ifelse(intensa_dias == 0, 0, intensa_min),
+         caminar_horas = ifelse(caminar_dias == 0, 0, caminar_horas),
+         caminar_min = ifelse(caminar_dias == 0, 0, caminar_min))
+
+sum(is.na(ense_2017$moderada_horas) | is.na(ense_2017$moderada_min) | is.na(ense_2017$intensa_horas) | is.na(ense_2017$intensa_min) | is.na(ense_2017$caminar_horas) | is.na(ense_2017$caminar_min))
+
+
 #Pasamos a NA los no sabe no contesta
 ense_2017 <- ense_2017 %>% 
   mutate(moderada_dias = ifelse(moderada_dias>7, NA, moderada_dias),
@@ -776,7 +1000,7 @@ ense_2017 <- ense_2017 %>%
 #Calculamos minutos de actividad física a la semana por intensidad
 ense_2017 <- ense_2017 %>% 
   mutate(moderada_semana = moderada_min_dia*moderada_dias,
-         intensa_semana = moderada_min_dia*intensa_dias,
+         intensa_semana = intensa_min_dia*intensa_dias,
          caminar_semana = caminar_min_dia*caminar_dias,
          moderosa_semana = moderada_semana+intensa_semana)
 
@@ -871,6 +1095,11 @@ dta_pa <- eese_2009 %>%
   rbind(ense_2011) %>%
   rbind(ense_2017)
 
+#Paso a NA en recomendaciones las observaciones que tienen NA en alguna de sus predictoras
+
+dta_pa <- dta_pa %>% 
+  mutate(recomendaciones = ifelse(is.na(moderada_semana) | is.na(moderosa_semana) | is.na(intensa_semana), NA, recomendaciones))
+
 save(dta_pa, file = "Physical Activity/joined_PA_dta.RData")
 
 
@@ -889,6 +1118,58 @@ save(dta_pa, file = "Physical Activity/joined_PA_dta.RData")
 #Centramos edad
 dta_pa <- dta_pa %>%
   mutate(edad=scale(edad, center=T, scale=F))
+
+#RII METs AF en el Tiempo Libre
+
+rii_mets_overall <- dta_pa %>%
+  nest(data=-encuesta) %>%
+  mutate(model=map(data, ~glm(formula=mets_semana~education_3_tr+edad+sexo, data=.x)), 
+         tidied=map(model, tidy)) %>%
+  unnest(tidied) %>%
+  mutate(rii=exp(estimate), 
+         rii_infci=exp(estimate-1.96*std.error),
+         rii_supci=exp(estimate+1.96*std.error)) %>% 
+  filter(term=="education_3_tr") %>% 
+  select(rii, rii_infci, rii_supci, encuesta) %>% 
+  mutate(risk_factor="METs semanales", 
+         sexo="Overall")
+
+
+# RII EDUCACIÓN HOMBRE - RECOMENDACIONES
+
+dta_h<- subset(dta_pa, sexo==1)
+rii_mets_h <- dta_h %>%
+  nest(data=-encuesta) %>%
+  mutate(model=map(data, ~glm(formula=mets_semana~education_3_tr+edad, data=.x)), 
+         tidied=map(model, tidy)) %>%
+  unnest(tidied) %>%
+  mutate(rii=exp(estimate), 
+         rii_infci=exp(estimate-1.96*std.error),
+         rii_supci=exp(estimate+1.96*std.error)) %>% 
+  filter(term=="education_3_tr") %>% 
+  select(rii, rii_infci, rii_supci, encuesta) %>% 
+  mutate(risk_factor="METs semanales", 
+         sexo="Hombres")
+
+# RII EDUCACIÓN MUJER - RECOMENDACIONES
+
+dta_m<- subset(dta_pa, sexo==0)
+rii_mets_m <- dta_m %>%
+  nest(data=-encuesta) %>%
+  mutate(model=map(data, ~glm(formula=mets_semana~education_3_tr+edad, data=.x)), 
+         tidied=map(model, tidy)) %>%
+  unnest(tidied) %>%
+  mutate(rii=exp(estimate), 
+         rii_infci=exp(estimate-1.96*std.error),
+         rii_supci=exp(estimate+1.96*std.error)) %>% 
+  filter(term=="education_3_tr") %>% 
+  select(rii, rii_infci, rii_supci, encuesta) %>% 
+  mutate(risk_factor="METs semanales", 
+         sexo="Mujeres")
+
+rii_mets_educacion <- rii_mets_overall %>% 
+  rbind(rii_mets_h) %>% 
+  rbind(rii_mets_m)
 
 #Dicotomizo recomendaciones OMS e invierto (0= cumple, 1=no cumple) para igualar a sedentario
 
@@ -952,6 +1233,7 @@ rii_recomendaciones_educacion <- rii_recomendaciones_overall %>%
   rbind(rii_recomendaciones_m)
 
 
+
 theme_fis<-  theme(axis.text=element_text(size=10, color="black"),
                    axis.title=element_text(size=10, face="bold", color="black"),
                    strip.text = element_text(size=10, face="bold", color="black"),
@@ -992,10 +1274,42 @@ fig_rii_WHO_separado <-  ggplot(rii_recomendaciones_educacion, aes(x=encuesta, y
 
 fig_rii_WHO_separado
 
-## TODO JUNTO AHORA (SEDENTARISMO Y RECOMENDACIONES)
+
+
+fig_rii_mets_separado <-  ggplot(rii_mets_educacion, aes(x=encuesta, y=rii, ymin=rii_infci, ymax=rii_supci)) +
+  geom_hline(yintercept = 1, lty=2)+
+  geom_ribbon(alpha=0.3, aes(fill=sexo))+
+  geom_line(aes(color=sexo)) +
+  facet_grid(cols=vars(sexo), scales = "free_y") +
+  scale_y_continuous(trans="log")+
+  scale_x_continuous(breaks = c(2009, 2011, 2017))+
+  labs(x="", y="RII (95% CI)")+
+  theme_bw()+
+  theme_fis+
+  theme()
+
+fig_rii_mets_separado
+
+## TODO JUNTO AHORA (SEDENTARISMO, METs Y RECOMENDACIONES)
 
 rii_pa_educacion <- rii_recomendaciones_educacion %>%
   rbind(rii_sedentario_education)
+
+save(rii_pa_educacion, file="Physical Activity/rii_pa_educacion.RData")
+
+fig_rii_PA <-  ggplot(rii_pa_educacion, aes(x=encuesta, y=rii, ymin=rii_infci, ymax=rii_supci)) +
+  geom_hline(yintercept = 1, lty=2)+
+  geom_ribbon(alpha=0.3, aes(fill=sexo))+
+  geom_line(aes(color=sexo)) +
+  facet_grid(cols=vars(sexo), rows = vars(risk_factor), scales = "free_y") +
+  scale_x_continuous(breaks = c(2001, 2003, 2006, 2009, 2011, 2014, 2017, 2020))+
+  labs(x="", y="RII (95% CI)")+
+  theme_bw()+
+  theme_fis+
+  theme()
+
+
+fig_rii_PA
 
 fig_rii_PA <-  ggplot(rii_pa_educacion, aes(x=encuesta, y=rii, ymin=rii_infci, ymax=rii_supci)) +
   geom_hline(yintercept = 1, lty=2)+
@@ -1010,6 +1324,3 @@ fig_rii_PA <-  ggplot(rii_pa_educacion, aes(x=encuesta, y=rii, ymin=rii_infci, y
   theme()
 
 
-fig_rii_PA
-
-ggsave("Physical Activity/fig_rri_PA.png", width = 3300, height = 2550, units = "px")

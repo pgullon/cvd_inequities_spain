@@ -13,9 +13,12 @@ date: "2023-05-05"
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(ggplot2)
+library(table1)
+load("desc_sedentario_fig.RData")
 load("data_map.RData")
 load("rii_sedentario_education.RData")
 load("sii_sedentario_education.RData")
+load("rii_pa_educacion.RData")
 
 ```
 ## Objective
@@ -25,12 +28,19 @@ To describe social inequities in sedentarism in women and men by autonomous regi
 ## Methods
 
 **Sample:** Data from 167,581 adults (aged 18 or older) were obtained from the Spanish National Health Survey and the Spanish Module of the European Health Survey from 2001, 2003, 2006, 2009, 2011, 2014, 2017, and 2020. 
+
 **Exposure:** Socioeconomic position was measured using the educational level operationalized into three categories (low, middle, high).  
+
 **Outcome:** Sedentarism was defined as the practice of no physical activity in leisure time. 
 
 **Analysis:** Poisson regression models were carried out to assess the relative risk of inequality (RRI) and the slope index of inequality (SII). We adjusted analyses by age and presented results overall and stratified by sex and region.
 
 ## Results
+
+### Table 1
+
+![](Table1.png)
+
 
 ### RRI of sedentarism in Spain 2001 and 2020
 
@@ -46,18 +56,19 @@ theme_fis<-  theme(axis.text=element_text(size=10, color="black"),
                    axis.text.y = element_text(color="black", size=10),
                    legend.position="bottom")
 
-ggplot(rii_sedentario_education, aes(x=encuesta, y=rii, ymin=rii_infci, ymax=rii_supci)) +
-geom_hline(yintercept = 1, lty=2)+
-geom_ribbon(alpha=0.3, aes(fill=sexo))+
-geom_line(aes(color=sexo)) +
-scale_y_continuous(trans="log",
-                                     breaks=c(0.75, 1, 1.5, 2, 4, 8, 16, 32))+
+fig_rii_junto <-  ggplot(rii_sedentario_education, aes(x=encuesta, y=rii, ymin=rii_infci, ymax=rii_supci)) +
+                  geom_hline(yintercept = 1, lty=2)+
+                  geom_ribbon(alpha=0.3, aes(fill=sexo))+
+                  geom_line(aes(color=sexo)) +
                   labs(x="", y="RII (95% CI)")+
+                  scale_y_continuous(trans="log",
+                                     breaks=c(0, 1, 1.5, 2, 2.5, 3, 4, 5))+
+                  ylim(0, 5.5)+
                   theme_bw()+
                   theme_fis+
                   theme()
 
-
+fig_rii_junto
 ```
 
 ### SSI of sedentarism in Spain 2001 and 2020
@@ -74,18 +85,19 @@ theme_fis<-  theme(axis.text=element_text(size=10, color="black"),
                    axis.text.y = element_text(color="black", size=10),
                    legend.position="bottom")
 
-ggplot(sii_sedentario_education, aes(x=encuesta, y=sii, ymin=sii_infci, ymax=sii_supci)) +
+figura_sii_junto <-   ggplot(sii_sedentario_education, aes(x=encuesta, y=sii, ymin=sii_infci, ymax=sii_supci)) +
                       geom_hline(yintercept = 1, lty=2)+
                       geom_ribbon(alpha=0.3, aes(fill=sexo))+
                       geom_line(aes(color=sexo)) +
                       # scale_y_continuous(trans="log",
                       #                    breaks=c(0.75, 1, 1.5, 2, 4, 8, 16, 32))+
                       labs(x="", y="SII (95% CI)")+
+                      ylim(-20, 90)+
                       theme_bw()+
                       theme_fis+
                       theme()
 
-
+figura_sii_junto
 ```
 
 ### RRI of sedentarism in Spanish Autonomous Regions between 2001 and 2020
@@ -103,7 +115,60 @@ ggplot(data_ccaa_map, aes(x = long, y = lat, group = group)) +
   theme(axis.line = element_blank(),
         axis.text = element_blank(),
         axis.title = element_blank(),
-        axis.ticks = element_blank())
+        axis.ticks = element_blank(),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        panel.grid.major.y = element_blank(),
+        panel.grid.minor.y = element_blank(),)
 
 
 ```
+
+### Main findings
+
+1. There is a clear inequality on physical inactivity for Spanish population, both women and men. In 2020, the RII of physical inactivity was 2.33 (CI 95%: 2.13-2.55), representing a 30% (+0.53) increase from 2001.
+
+2. Our study also found a sex inequity on physical inactivity. Women showed a higher increase (45%, +0.73), than men (15%, +0.30).
+
+3. Analysis by Autonomous Regions also showed several differences. Castilla y León showed the highest increase of RII: 18% (+0,32) from 2001 to 2020, while Galicia showed the greatest decrease in RII of sedentarism by a -15% (-0.30). Nevertheless, the analyses do not show a consistent trend over time.
+
+4. Similar findings were found in the SII; SII of sedentarism changed in Spain (+27%, +7.56) from 27.65 (CI 95%:22.28-33.02) in 2001 to 35.21 (CI 95%:31.62-38.80) in 2020; this increase was also greater in women than in men.
+
+***
+
+### ANÁLISIS SECUNDARIOS
+#### (Para debatir y ver si incluir o no)
+
+
+
+
+*(NOTA: Análisis metiéndonos en iPAQ de 2009, 2011, 2017 (los únicos años que se pueden comparar)*
+
+La muestra total de estos 3 años es de 167,391 (la final, tras  eliminar por nulos de otras variables, se queda en 67,036). De estos, se nos van a nulos cuando hacemos el scoring del iPAQ 154,723, el 92%. Sin embargo, si SOLAMENTE cuento como nulos los valores de horas y minutos que salen como nulos cuando TAMBIÉN la variable de días/semana es nula, solo perdemos 18,648 (11%). Y bueno, eso he hecho para obtener estos valores de RII para cumplimiento o no de recomendaciones de la OMS en actividad física.
+
+(Es difícil de explicar aquí, pero es bastante sencillo en realidad. Podemos hablarlo juntas.)
+
+
+### RRI of meeting WHO minimum physical activity recommendations in 2009, 2011 and 2017 (comparing )
+
+```{r fig4, fig.height = 7.5, fig.width = 12, echo=FALSE}
+
+fig_rii_PA <-  ggplot(rii_pa_educacion, aes(x=encuesta, y=rii, ymin=rii_infci, ymax=rii_supci)) +
+  geom_hline(yintercept = 1, lty=2)+
+  geom_ribbon(alpha=0.3, aes(fill=sexo))+
+  geom_line(aes(color=sexo)) +
+  facet_grid(cols=vars(sexo), rows = vars(risk_factor), scales = "free_y") +
+  scale_x_continuous(breaks = c(2001, 2003, 2006, 2009, 2011, 2014, 2017, 2020))+
+  labs(x="", y="RII (95% CI)")+
+  theme_bw()+
+  theme_fis+
+  theme()
+
+fig_rii_PA
+```
+
+### Main findings
+
+1. There is a clear inequality in compliance with the minimum physical activity recommendations in the Spanish population for the three years analysed. Moreover, this inequality is increasing over the years, reaching a RII of 1.46, representing a 28% (+0.33)increase since 2009 (RII=1.14).
+
+2. This increase in inequality shows a sex inequality. While both sexes show the same RII in 2009 (RII=1.14), inequalities in physical activity for men grow by 34% (+0.39) to reach an IIR of 1.53 in 2017, while for women this growth is 25% (+0.29), reaching an IIR of 1.43 in 2017.
