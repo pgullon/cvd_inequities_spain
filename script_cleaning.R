@@ -29,7 +29,7 @@ rm(list=ls())
 # Tabaquismo=smoking
 # Consumo de alcohol=alcohol
 # Sedentarismo=sedentario
-# Alimentación=fruta (por ahora solo fruta y verdura diaria en dicotómico con 0 si no consume) 
+# Alimentación=fruta (por ahora solo fruta y verdura diaria en dicotómico con 0 si consume) 
 
 
 
@@ -50,6 +50,7 @@ ense_2001 <-  ense_2001 %>%
     left_join(clase_2001) %>%
   mutate(id=NCUEST,
          factor=as.numeric(FACTOR),
+         factor2=rescale(factor, to=c(1,100)),
          edad=as.numeric(P4_01), 
          sexo=as.numeric(P3_01), sexo=na_if(sexo, 9), 
          sexo=case_when(sexo==1~1, sexo==2~0),
@@ -93,7 +94,7 @@ ense_2001 <-  ense_2001 %>%
                            (verdura==2 | verdura==3  | verdura==4 | verdura==5)~1), 
          fruta_verdura=case_when(fruta==1~1, verdura==1~1, 
                                  (fruta==0 | verdura==0)~0)) %>%
-  select(id, factor, edad, sexo, ccaa, nacionalidad, migration, clase, clase_tr,
+  select(id, factor, factor2, edad, sexo, ccaa, nacionalidad, migration, clase, clase_tr,
          education_3, education_3_tr, education_5, education_5_tr, diabetes, hta, 
          col, imc, obesity, sobrepeso, smoking, alcohol, sedentario, fruta, verdura, fruta_verdura) %>%
   filter(edad>17) %>%
@@ -113,6 +114,7 @@ load("2003/ense2003.RData")
 ense_2003 <-  ense_2003 %>% 
   mutate(id=NIDENTIF, 
          factor=as.numeric(FACTOR.x), 
+         factor2=rescale(factor, to=c(1,100)),
          edad=as.numeric(EDAD.x), 
          sexo=as.numeric(SEXO.x),
          sexo=case_when(sexo==1~1, sexo==6~0),
@@ -149,7 +151,7 @@ ense_2003 <-  ense_2003 %>%
                            (VERDURA==2 | VERDURA==3  | VERDURA==4 | VERDURA==5)~1), 
          fruta_verdura=case_when(fruta==1~1, verdura==1~1, 
                                  (fruta==0 | verdura==0)~0)) %>%
-  select(id, factor, edad, sexo, ccaa, nacionalidad, migration, clase, clase_tr,
+  select(id, factor, factor2, edad, sexo, ccaa, nacionalidad, migration, clase, clase_tr,
          education_3, education_3_tr, education_5, education_5_tr, diabetes, hta, 
          col, imc, obesity, sobrepeso, smoking, alcohol, sedentario, fruta, verdura, fruta_verdura) %>%
   filter(edad>17) %>%
@@ -171,6 +173,7 @@ load("2006/ense2006.RData")
 ense_2006 <-  ense_2006 %>% 
   mutate(id=NIDENTIF, 
          factor=as.numeric(FACTOR.x),
+         factor2=rescale(factor, to=c(1,100)),
          edad=as.numeric(EDAD.x), 
          sexo=as.numeric(SEXO.x), 
          sexo=case_when(sexo==1~1, sexo==6~0),
@@ -215,7 +218,7 @@ ense_2006 <-  ense_2006 %>%
                            (verdura==2 | verdura==3  | verdura==4 | verdura==5)~1), 
          fruta_verdura=case_when(fruta==1~1, verdura==1~1, 
                                  (fruta==0 | verdura==0)~0)) %>%
-  select(id, factor, edad, sexo, ccaa, nacionalidad, migration, clase, clase_tr,
+  select(id, factor, factor2, edad, sexo, ccaa, nacionalidad, migration, clase, clase_tr,
          education_3, education_3_tr, education_5, education_5_tr, diabetes, hta, 
          col, imc, obesity, sobrepeso, smoking, alcohol, sedentario, fruta, verdura, fruta_verdura) %>%
   filter(edad>17) %>%
@@ -239,6 +242,7 @@ load("2009/eese2009.RData")
 eese_2009 <-  eese_2009 %>% 
   mutate(id=IDENTHOGAR, 
          factor=as.numeric(FACTORADULTO),
+         factor2=rescale(factor, to=c(1,100)),
          edad=as.numeric(EDAD), 
          sexo=as.numeric(SEXO),
          sexo=case_when(sexo==1~1, sexo==2~0),
@@ -286,7 +290,7 @@ eese_2009 <-  eese_2009 %>%
                            (verdura==3 | verdura==4  | verdura==5 | verdura==6)~1), 
          fruta_verdura=case_when(fruta==1~1, verdura==1~1, 
                                  (fruta==0 | verdura==0)~0)) %>%
-  select(id, factor, edad, sexo, ccaa, nacionalidad, migration, clase, clase_tr,
+  select(id, factor, factor2, edad, sexo, ccaa, nacionalidad, migration, clase, clase_tr,
          education_3, education_3_tr, education_5, education_5_tr, diabetes, hta, 
          col, imc, obesity, sobrepeso, smoking, alcohol, sedentario, fruta, verdura, fruta_verdura) %>%
   filter(edad>17) %>%
@@ -307,6 +311,7 @@ load("2011/ense2011.RData")
 ense_2011 <-  ense_2011 %>% 
   mutate(id=IDENTHOGAR, 
          factor=as.numeric(FACTORADULTO), 
+         factor2=rescale(factor, to=c(1,100)),
          edad=as.numeric(EDADa), 
          sexo=as.numeric(SEXOa), 
          sexo=case_when(sexo==1~1, sexo==2~0),
@@ -351,7 +356,7 @@ ense_2011 <-  ense_2011 %>%
                            (verdura==2 | verdura==3  | verdura==4 | verdura==5)~1), 
          fruta_verdura=case_when(fruta==1~1, verdura==1~1, 
                                  (fruta==0 | verdura==0)~0)) %>%
-  select(id, factor, edad, sexo, ccaa, nacionalidad, migration, clase, clase_tr,
+  select(id, factor, factor2, edad, sexo, ccaa, nacionalidad, migration, clase, clase_tr,
          education_3, education_3_tr, education_5, education_5_tr, diabetes, hta, 
          col, imc, obesity, sobrepeso, smoking, alcohol, sedentario, fruta, verdura, fruta_verdura) %>%
   filter(edad>17) %>%
@@ -371,6 +376,7 @@ load("2014/eese2014.RData")
 eese_2014 <-  eese_2014 %>% 
   mutate(id=IDENTHOGAR, 
          factor=as.numeric(FACTORADULTO),
+         factor2=rescale(factor, to=c(1,100)),
          edad=as.numeric(EDADa), 
          sexo=as.numeric(SEXOa), 
          sexo=case_when(sexo==1~1, sexo==2~0),
@@ -417,7 +423,7 @@ eese_2014 <-  eese_2014 %>%
                            (verdura==2 | verdura==3  | verdura==4 | verdura==5 | verdura==6)~1), 
          fruta_verdura=case_when(fruta==1~1, verdura==1~1, 
                                  (fruta==0 | verdura==0)~0)) %>%
-  select(id, factor, edad, sexo, ccaa, nacionalidad, migration, clase, clase_tr,
+  select(id, factor, factor2, edad, sexo, ccaa, nacionalidad, migration, clase, clase_tr,
          education_3, education_3_tr, education_5, education_5_tr, diabetes, hta, 
          col, imc, obesity, sobrepeso, smoking, alcohol, sedentario, fruta, verdura, fruta_verdura) %>%
   filter(edad>17) %>%
@@ -436,6 +442,7 @@ load("2017/ense2017.RData")
 ense_2017 <-  ense_2017 %>% 
   mutate(id=IDENTHOGAR, 
          factor=as.numeric(FACTORADULTO),
+         factor2=rescale(factor, to=c(1,100)),
          edad=as.numeric(EDADa), 
          sexo=as.numeric(SEXOa), 
          sexo=case_when(sexo==1~1, sexo==2~0),
@@ -482,7 +489,7 @@ ense_2017 <-  ense_2017 %>%
                            (verdura==2 | verdura==3  | verdura==4 | verdura==5 | verdura==6)~1), 
          fruta_verdura=case_when(fruta==1~1, verdura==1~1, 
                                  (fruta==0 | verdura==0)~0)) %>%
-  select(id, factor, edad, sexo, ccaa, nacionalidad, migration, clase, clase_tr,
+  select(id, factor, factor2, edad, sexo, ccaa, nacionalidad, migration, clase, clase_tr,
          education_3, education_3_tr, education_5, education_5_tr, diabetes, hta, 
          col, imc, obesity, sobrepeso, smoking, alcohol, sedentario, fruta, verdura, fruta_verdura) %>%
   filter(edad>17) %>%
@@ -503,6 +510,7 @@ load("2020/eese2020.RData")
 eese_2020 <-  eese_2020 %>% 
   mutate(id=IDENTHOGAR, 
          factor=as.numeric(FACTORADULTO),
+         factor2=rescale(factor, to=c(1,100)),
          edad=as.numeric(EDADa), 
          sexo=as.numeric(SEXOa),
          sexo=case_when(sexo==1~1, sexo==2~0),
@@ -549,7 +557,7 @@ eese_2020 <-  eese_2020 %>%
                            (verdura==2 | verdura==3  | verdura==4 | verdura==5 | verdura==6)~1), 
          fruta_verdura=case_when(fruta==1~1, verdura==1~1, 
                                  (fruta==0 | verdura==0)~0)) %>%
-  select(id, factor, edad, sexo, ccaa, nacionalidad, migration, clase, clase_tr,
+  select(id, factor, factor2, edad, sexo, ccaa, nacionalidad, migration, clase, clase_tr,
          education_3, education_3_tr, education_5, education_5_tr, diabetes, hta, 
          col, imc, obesity, sobrepeso, smoking, alcohol, sedentario, fruta, verdura, fruta_verdura) %>%
   filter(edad>17) %>%
