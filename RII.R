@@ -981,6 +981,7 @@ rii_alcohol <- rii_alcohol %>%
 rii_sedentario <- glmmTMB(sedentario~education_3_tr+edad+sexo+(1+education_3_tr|encuesta) + (1+education_3_tr|encuesta: ccaa), data=subset(dta, encuesta!=2009),
                         family="poisson")
 
+
 rii_sedentario <- rii_sedentario %>%
   extract_random_coefs(re="encuesta:ccaa") %>%
   mutate(rii=exp(value), 
@@ -1090,7 +1091,7 @@ rii_food_m <- rii_food_m %>%
   mutate(encuesta=ymd(encuesta, truncated = 2L), 
          ccaa=as.numeric(ccaa)) %>%
   left_join(ccaas) %>%
-  mutate(fr="sedentario")
+  mutate(fr="food")
 
 rii_food <- rii_food %>%
   rbind(rii_food_h) %>%
