@@ -43,51 +43,59 @@ dta <- dta %>%
 # 1. Global para España. Poisson por encuesta (no multinivel)
 
 ################### DIABETES #################################################
-rii_diabetes_overall <- dta %>%
+rii_diabetes_overall <-  dta %>%
+  mutate(education_prueba=((cume_dist(education_3)-1))*-1) %>%
   nest(data=-encuesta) %>%
-  mutate(model=map(data, ~glm(formula=diabetes~education_3_tr+edad+sexo, data=.x, 
+  mutate(model=map(data, ~svyglm(formula=diabetes~education_prueba+edad+sexo, data=.x, 
+                                 design=svydesign(ids=~1,weights=~factor2,data=.), 
                               family="poisson")), 
          tidied=map(model, tidy)) %>%
   unnest(tidied) %>%
   mutate(rii=exp(estimate), 
          rii_infci=exp(estimate-1.96*std.error),
          rii_supci=exp(estimate+1.96*std.error)) %>% 
-  filter(term=="education_3_tr") %>% 
+  filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
   mutate(risk_factor="diabetes", 
          sexo="overall")
 
 
-dta_h<- subset(dta, sexo==1)
+
 rii_diabetes_h <- dta_h %>%
+  mutate(education_prueba=((cume_dist(education_3)-1))*-1) %>%
   nest(data=-encuesta) %>%
-  mutate(model=map(data, ~glm(formula=diabetes~education_3_tr+edad, data=.x, 
-                              family="poisson")), 
+  mutate(model=map(data, ~svyglm(formula=diabetes~education_prueba+edad+sexo, data=.x, 
+                                 design=svydesign(ids=~1,weights=~factor2,data=.), 
+                                 family="poisson")), 
          tidied=map(model, tidy)) %>%
   unnest(tidied) %>%
   mutate(rii=exp(estimate), 
          rii_infci=exp(estimate-1.96*std.error),
          rii_supci=exp(estimate+1.96*std.error)) %>% 
-  filter(term=="education_3_tr") %>% 
+  filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
   mutate(risk_factor="diabetes", 
-         sexo="Hombre")
+         sexo="overall")
 
 
-dta_m<- subset(dta, sexo==0)
+
+
 rii_diabetes_m <- dta_m %>%
+  mutate(education_prueba=((cume_dist(education_3)-1))*-1) %>%
   nest(data=-encuesta) %>%
-  mutate(model=map(data, ~glm(formula=diabetes~education_3_tr+edad, data=.x, 
-                              family="poisson")), 
+  mutate(model=map(data, ~svyglm(formula=diabetes~education_prueba+edad+sexo, data=.x, 
+                                 design=svydesign(ids=~1,weights=~factor2,data=.), 
+                                 family="poisson")), 
          tidied=map(model, tidy)) %>%
   unnest(tidied) %>%
   mutate(rii=exp(estimate), 
          rii_infci=exp(estimate-1.96*std.error),
          rii_supci=exp(estimate+1.96*std.error)) %>% 
-  filter(term=="education_3_tr") %>% 
+  filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
   mutate(risk_factor="diabetes", 
-         sexo="Mujeres")
+         sexo="overall")
+
 
 rii_diabetes <- 
   rii_diabetes_overall %>%
@@ -98,50 +106,58 @@ rii_diabetes <-
 
 
 ############################ HTA #################################################
-rii_hta_overall <- dta %>%
+rii_hta_overall <-  dta %>%
+  mutate(education_prueba=((cume_dist(education_3)-1))*-1) %>%
   nest(data=-encuesta) %>%
-  mutate(model=map(data, ~glm(formula=hta~education_3_tr+edad+sexo, data=.x, 
-                              family="poisson")), 
+  mutate(model=map(data, ~svyglm(formula=hta~education_prueba+edad+sexo, data=.x, 
+                                 design=svydesign(ids=~1,weights=~factor2,data=.), 
+                                 family="poisson")), 
          tidied=map(model, tidy)) %>%
   unnest(tidied) %>%
   mutate(rii=exp(estimate), 
          rii_infci=exp(estimate-1.96*std.error),
          rii_supci=exp(estimate+1.96*std.error)) %>% 
-  filter(term=="education_3_tr") %>% 
+  filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
   mutate(risk_factor="hta", 
-         sexo="Overall")
+         sexo="overall")
 
-dta_h<- subset(dta, sexo==1)
+
+
 rii_hta_h <- dta_h %>%
+  mutate(education_prueba=((cume_dist(education_3)-1))*-1) %>%
   nest(data=-encuesta) %>%
-  mutate(model=map(data, ~glm(formula=hta~education_3_tr+edad, data=.x, 
-                              family="poisson")), 
+  mutate(model=map(data, ~svyglm(formula=hta~education_prueba+edad+sexo, data=.x, 
+                                 design=svydesign(ids=~1,weights=~factor2,data=.), 
+                                 family="poisson")), 
          tidied=map(model, tidy)) %>%
   unnest(tidied) %>%
   mutate(rii=exp(estimate), 
          rii_infci=exp(estimate-1.96*std.error),
          rii_supci=exp(estimate+1.96*std.error)) %>% 
-  filter(term=="education_3_tr") %>% 
+  filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
   mutate(risk_factor="hta", 
-         sexo="Hombre")
+         sexo="overall")
 
 
-dta_m<- subset(dta, sexo==0)
+
+
 rii_hta_m <- dta_m %>%
+  mutate(education_prueba=((cume_dist(education_3)-1))*-1) %>%
   nest(data=-encuesta) %>%
-  mutate(model=map(data, ~glm(formula=hta~education_3_tr+edad, data=.x, 
-                              family="poisson")), 
+  mutate(model=map(data, ~svyglm(formula=hta~education_prueba+edad+sexo, data=.x, 
+                                 design=svydesign(ids=~1,weights=~factor2,data=.), 
+                                 family="poisson")), 
          tidied=map(model, tidy)) %>%
   unnest(tidied) %>%
   mutate(rii=exp(estimate), 
          rii_infci=exp(estimate-1.96*std.error),
          rii_supci=exp(estimate+1.96*std.error)) %>% 
-  filter(term=="education_3_tr") %>% 
+  filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
   mutate(risk_factor="hta", 
-         sexo="Mujeres")
+         sexo="overall")
 
 rii_hta <- 
   rii_hta_overall %>%
@@ -151,50 +167,61 @@ rii_hta <-
 
 
 ############################ COL #################################################
-rii_col_overall <- dta %>%
+rii_col_overall <-  dta %>%
   filter(encuesta!=2009) %>%
+  mutate(education_prueba=((cume_dist(education_3)-1))*-1) %>%
   nest(data=-encuesta) %>%
-  mutate(model=map(data, ~glm(formula=col~education_3_tr+edad+sexo, data=.x, 
-                              family="poisson")), 
+  mutate(model=map(data, ~svyglm(formula=col~education_prueba+edad+sexo, data=.x, 
+                                 design=svydesign(ids=~1,weights=~factor2,data=.), 
+                                 family="poisson")), 
          tidied=map(model, tidy)) %>%
   unnest(tidied) %>%
   mutate(rii=exp(estimate), 
          rii_infci=exp(estimate-1.96*std.error),
          rii_supci=exp(estimate+1.96*std.error)) %>% 
-  filter(term=="education_3_tr") %>% 
+  filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
   mutate(risk_factor="col", 
          sexo="overall")
 
+
+
 rii_col_h <- dta_h %>%
   filter(encuesta!=2009) %>%
+  mutate(education_prueba=((cume_dist(education_3)-1))*-1) %>%
   nest(data=-encuesta) %>%
-  mutate(model=map(data, ~glm(formula=col~education_3_tr+edad, data=.x, 
-                              family="poisson")), 
+  mutate(model=map(data, ~svyglm(formula=col~education_prueba+edad+sexo, data=.x, 
+                                 design=svydesign(ids=~1,weights=~factor2,data=.), 
+                                 family="poisson")), 
          tidied=map(model, tidy)) %>%
   unnest(tidied) %>%
   mutate(rii=exp(estimate), 
          rii_infci=exp(estimate-1.96*std.error),
          rii_supci=exp(estimate+1.96*std.error)) %>% 
-  filter(term=="education_3_tr") %>% 
+  filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
   mutate(risk_factor="col", 
-         sexo="men")
+         sexo="overall")
+
+
+
 
 rii_col_m <- dta_m %>%
   filter(encuesta!=2009) %>%
+  mutate(education_prueba=((cume_dist(education_3)-1))*-1) %>%
   nest(data=-encuesta) %>%
-  mutate(model=map(data, ~glm(formula=col~education_3_tr+edad, data=.x, 
-                              family="poisson")), 
+  mutate(model=map(data, ~svyglm(formula=col~education_prueba+edad+sexo, data=.x, 
+                                 design=svydesign(ids=~1,weights=~factor2,data=.), 
+                                 family="poisson")), 
          tidied=map(model, tidy)) %>%
   unnest(tidied) %>%
   mutate(rii=exp(estimate), 
          rii_infci=exp(estimate-1.96*std.error),
          rii_supci=exp(estimate+1.96*std.error)) %>% 
-  filter(term=="education_3_tr") %>% 
+  filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
   mutate(risk_factor="col", 
-         sexo="women")
+         sexo="overall")
 
 rii_col <- 
   rii_col_overall %>%
@@ -205,47 +232,58 @@ rii_col <-
 
 
 ############################ OBESIDAD #################################################
-rii_obesity_overall <- dta %>%
+rii_obesity_overall <-  dta %>%
+  mutate(education_prueba=((cume_dist(education_3)-1))*-1) %>%
   nest(data=-encuesta) %>%
-  mutate(model=map(data, ~glm(formula=obesity~education_3_tr+edad+sexo, data=.x, 
-                              family="poisson")), 
+  mutate(model=map(data, ~svyglm(formula=obesity~education_prueba+edad+sexo, data=.x, 
+                                 design=svydesign(ids=~1,weights=~factor2,data=.), 
+                                 family="poisson")), 
          tidied=map(model, tidy)) %>%
   unnest(tidied) %>%
   mutate(rii=exp(estimate), 
          rii_infci=exp(estimate-1.96*std.error),
          rii_supci=exp(estimate+1.96*std.error)) %>% 
-  filter(term=="education_3_tr") %>% 
+  filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
   mutate(risk_factor="obesity", 
-         sexo="Overall")
+         sexo="overall")
+
+
 
 rii_obesity_h <- dta_h %>%
+  mutate(education_prueba=((cume_dist(education_3)-1))*-1) %>%
   nest(data=-encuesta) %>%
-  mutate(model=map(data, ~glm(formula=obesity~education_3_tr+edad, data=.x, 
-                              family="poisson")), 
+  mutate(model=map(data, ~svyglm(formula=obesity~education_prueba+edad+sexo, data=.x, 
+                                 design=svydesign(ids=~1,weights=~factor2,data=.), 
+                                 family="poisson")), 
          tidied=map(model, tidy)) %>%
   unnest(tidied) %>%
   mutate(rii=exp(estimate), 
          rii_infci=exp(estimate-1.96*std.error),
          rii_supci=exp(estimate+1.96*std.error)) %>% 
-  filter(term=="education_3_tr") %>% 
+  filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
   mutate(risk_factor="obesity", 
-         sexo="Hombre")
+         sexo="overall")
+
+
+
 
 rii_obesity_m <- dta_m %>%
+  mutate(education_prueba=((cume_dist(education_3)-1))*-1) %>%
   nest(data=-encuesta) %>%
-  mutate(model=map(data, ~glm(formula=obesity~education_3_tr+edad, data=.x, 
-                              family="poisson")), 
+  mutate(model=map(data, ~svyglm(formula=obesity~education_prueba+edad+sexo, data=.x, 
+                                 design=svydesign(ids=~1,weights=~factor2,data=.), 
+                                 family="poisson")), 
          tidied=map(model, tidy)) %>%
   unnest(tidied) %>%
   mutate(rii=exp(estimate), 
          rii_infci=exp(estimate-1.96*std.error),
          rii_supci=exp(estimate+1.96*std.error)) %>% 
-  filter(term=="education_3_tr") %>% 
+  filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
   mutate(risk_factor="obesity", 
-         sexo="Mujeres")
+         sexo="overall")
 
 rii_obesity <- 
   rii_obesity_overall %>%
@@ -255,47 +293,58 @@ rii_obesity <-
 
 
 ############################ sobrepeso #################################################
-rii_sobrepeso_overall <- dta %>%
+rii_sobrepeso_overall <-  dta %>%
+  mutate(education_prueba=((cume_dist(education_3)-1))*-1) %>%
   nest(data=-encuesta) %>%
-  mutate(model=map(data, ~glm(formula=sobrepeso~education_3_tr+edad+sexo, data=.x, 
-                              family="poisson")), 
+  mutate(model=map(data, ~svyglm(formula=sobrepeso~education_prueba+edad+sexo, data=.x, 
+                                 design=svydesign(ids=~1,weights=~factor2,data=.), 
+                                 family="poisson")), 
          tidied=map(model, tidy)) %>%
   unnest(tidied) %>%
   mutate(rii=exp(estimate), 
          rii_infci=exp(estimate-1.96*std.error),
          rii_supci=exp(estimate+1.96*std.error)) %>% 
-  filter(term=="education_3_tr") %>% 
+  filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
   mutate(risk_factor="sobrepeso", 
-         sexo="Overall")
+         sexo="overall")
+
+
 
 rii_sobrepeso_h <- dta_h %>%
+  mutate(education_prueba=((cume_dist(education_3)-1))*-1) %>%
   nest(data=-encuesta) %>%
-  mutate(model=map(data, ~glm(formula=sobrepeso~education_3_tr+edad, data=.x, 
-                              family="poisson")), 
+  mutate(model=map(data, ~svyglm(formula=sobrepeso~education_prueba+edad+sexo, data=.x, 
+                                 design=svydesign(ids=~1,weights=~factor2,data=.), 
+                                 family="poisson")), 
          tidied=map(model, tidy)) %>%
   unnest(tidied) %>%
   mutate(rii=exp(estimate), 
          rii_infci=exp(estimate-1.96*std.error),
          rii_supci=exp(estimate+1.96*std.error)) %>% 
-  filter(term=="education_3_tr") %>% 
+  filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
   mutate(risk_factor="sobrepeso", 
-         sexo="Hombre")
+         sexo="overall")
+
+
+
 
 rii_sobrepeso_m <- dta_m %>%
+  mutate(education_prueba=((cume_dist(education_3)-1))*-1) %>%
   nest(data=-encuesta) %>%
-  mutate(model=map(data, ~glm(formula=sobrepeso~education_3_tr+edad, data=.x, 
-                              family="poisson")), 
+  mutate(model=map(data, ~svyglm(formula=sobrepeso~education_prueba+edad+sexo, data=.x, 
+                                 design=svydesign(ids=~1,weights=~factor2,data=.), 
+                                 family="poisson")), 
          tidied=map(model, tidy)) %>%
   unnest(tidied) %>%
   mutate(rii=exp(estimate), 
          rii_infci=exp(estimate-1.96*std.error),
          rii_supci=exp(estimate+1.96*std.error)) %>% 
-  filter(term=="education_3_tr") %>% 
+  filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
   mutate(risk_factor="sobrepeso", 
-         sexo="Mujeres")
+         sexo="overall")
 
 rii_sobrepeso <- 
   rii_sobrepeso_overall %>%
@@ -305,47 +354,58 @@ rii_sobrepeso <-
 
 
 ############################## SMOKING #######################################
-rii_smoking_overall <- dta %>%
+rii_smoking_overall <-  dta %>%
+  mutate(education_prueba=((cume_dist(education_3)-1))*-1) %>%
   nest(data=-encuesta) %>%
-  mutate(model=map(data, ~glm(formula=smoking~education_3_tr+edad+sexo, data=.x, 
-                              family="poisson")), 
+  mutate(model=map(data, ~svyglm(formula=smoking~education_prueba+edad+sexo, data=.x, 
+                                 design=svydesign(ids=~1,weights=~factor2,data=.), 
+                                 family="poisson")), 
          tidied=map(model, tidy)) %>%
   unnest(tidied) %>%
   mutate(rii=exp(estimate), 
          rii_infci=exp(estimate-1.96*std.error),
          rii_supci=exp(estimate+1.96*std.error)) %>% 
-  filter(term=="education_3_tr") %>% 
+  filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
   mutate(risk_factor="smoking", 
-         sexo="Overall")
+         sexo="overall")
+
+
 
 rii_smoking_h <- dta_h %>%
+  mutate(education_prueba=((cume_dist(education_3)-1))*-1) %>%
   nest(data=-encuesta) %>%
-  mutate(model=map(data, ~glm(formula=smoking~education_3_tr+edad, data=.x, 
-                              family="poisson")), 
+  mutate(model=map(data, ~svyglm(formula=smoking~education_prueba+edad+sexo, data=.x, 
+                                 design=svydesign(ids=~1,weights=~factor2,data=.), 
+                                 family="poisson")), 
          tidied=map(model, tidy)) %>%
   unnest(tidied) %>%
   mutate(rii=exp(estimate), 
          rii_infci=exp(estimate-1.96*std.error),
          rii_supci=exp(estimate+1.96*std.error)) %>% 
-  filter(term=="education_3_tr") %>% 
+  filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
   mutate(risk_factor="smoking", 
-         sexo="Hombre")
+         sexo="overall")
+
+
+
 
 rii_smoking_m <- dta_m %>%
+  mutate(education_prueba=((cume_dist(education_3)-1))*-1) %>%
   nest(data=-encuesta) %>%
-  mutate(model=map(data, ~glm(formula=smoking~education_3_tr+edad, data=.x, 
-                              family="poisson")), 
+  mutate(model=map(data, ~svyglm(formula=smoking~education_prueba+edad+sexo, data=.x, 
+                                 design=svydesign(ids=~1,weights=~factor2,data=.), 
+                                 family="poisson")), 
          tidied=map(model, tidy)) %>%
   unnest(tidied) %>%
   mutate(rii=exp(estimate), 
          rii_infci=exp(estimate-1.96*std.error),
          rii_supci=exp(estimate+1.96*std.error)) %>% 
-  filter(term=="education_3_tr") %>% 
+  filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
   mutate(risk_factor="smoking", 
-         sexo="Mujeres")
+         sexo="overall")
 
 rii_smoking <- 
   rii_smoking_overall %>%
@@ -354,50 +414,62 @@ rii_smoking <-
 
 
 ################################# ALCOHOL #####################################
-rii_alcohol_overall <- dta %>%
+rii_alcohol_overall <-  dta %>%
   filter(encuesta!=2001) %>%
+  mutate(education_prueba=((cume_dist(education_3)-1))*-1) %>%
   nest(data=-encuesta) %>%
-  mutate(model=map(data, ~glm(formula=alcohol~education_3_tr+edad+sexo, data=.x, 
-                              family="poisson")), 
+  mutate(model=map(data, ~svyglm(formula=alcohol~education_prueba+edad+sexo, data=.x, 
+                                 design=svydesign(ids=~1,weights=~factor2,data=.), 
+                                 family="poisson")), 
          tidied=map(model, tidy)) %>%
   unnest(tidied) %>%
   mutate(rii=exp(estimate), 
          rii_infci=exp(estimate-1.96*std.error),
          rii_supci=exp(estimate+1.96*std.error)) %>% 
-  filter(term=="education_3_tr") %>% 
+  filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
   mutate(risk_factor="alcohol", 
          sexo="overall")
 
+
+
 rii_alcohol_h <- dta_h %>%
   filter(encuesta!=2001) %>%
+  mutate(education_prueba=((cume_dist(education_3)-1))*-1) %>%
   nest(data=-encuesta) %>%
-  mutate(model=map(data, ~glm(formula=alcohol~education_3_tr+edad, data=.x, 
-                              family="poisson")), 
+  mutate(model=map(data, ~svyglm(formula=alcohol~education_prueba+edad+sexo, data=.x, 
+                                 design=svydesign(ids=~1,weights=~factor2,data=.), 
+                                 family="poisson")), 
          tidied=map(model, tidy)) %>%
   unnest(tidied) %>%
   mutate(rii=exp(estimate), 
          rii_infci=exp(estimate-1.96*std.error),
          rii_supci=exp(estimate+1.96*std.error)) %>% 
-  filter(term=="education_3_tr") %>% 
+  filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
   mutate(risk_factor="alcohol", 
-         sexo="men")
+         sexo="overall")
+
+
+
 
 rii_alcohol_m <- dta_m %>%
   filter(encuesta!=2001) %>%
+  mutate(education_prueba=((cume_dist(education_3)-1))*-1) %>%
   nest(data=-encuesta) %>%
-  mutate(model=map(data, ~glm(formula=alcohol~education_3_tr+edad, data=.x, 
-                              family="poisson")), 
+  mutate(model=map(data, ~svyglm(formula=alcohol~education_prueba+edad+sexo, data=.x, 
+                                 design=svydesign(ids=~1,weights=~factor2,data=.), 
+                                 family="poisson")), 
          tidied=map(model, tidy)) %>%
   unnest(tidied) %>%
   mutate(rii=exp(estimate), 
          rii_infci=exp(estimate-1.96*std.error),
          rii_supci=exp(estimate+1.96*std.error)) %>% 
-  filter(term=="education_3_tr") %>% 
+  filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
   mutate(risk_factor="alcohol", 
-         sexo="women")
+         sexo="overall")
+
 
 rii_alcohol <- 
   rii_alcohol_overall %>%
@@ -408,50 +480,61 @@ rii_alcohol <-
 
 ################################# SEDENTARISMO #####################################
 
-rii_sedentario_overall <- dta %>%
+rii_sedentario_overall <-  dta %>%
   filter(encuesta!=2009) %>%
+  mutate(education_prueba=((cume_dist(education_3)-1))*-1) %>%
   nest(data=-encuesta) %>%
-  mutate(model=map(data, ~glm(formula=sedentario~education_3_tr+edad+sexo, data=.x, 
-                              family="poisson")), 
+  mutate(model=map(data, ~svyglm(formula=sedentario~education_prueba+edad+sexo, data=.x, 
+                                 design=svydesign(ids=~1,weights=~factor2,data=.), 
+                                 family="poisson")), 
          tidied=map(model, tidy)) %>%
   unnest(tidied) %>%
   mutate(rii=exp(estimate), 
          rii_infci=exp(estimate-1.96*std.error),
          rii_supci=exp(estimate+1.96*std.error)) %>% 
-  filter(term=="education_3_tr") %>% 
+  filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
   mutate(risk_factor="sedentario", 
          sexo="overall")
 
+
+
 rii_sedentario_h <- dta_h %>%
   filter(encuesta!=2009) %>%
+  mutate(education_prueba=((cume_dist(education_3)-1))*-1) %>%
   nest(data=-encuesta) %>%
-  mutate(model=map(data, ~glm(formula=sedentario~education_3_tr+edad, data=.x, 
-                              family="poisson")), 
+  mutate(model=map(data, ~svyglm(formula=sedentario~education_prueba+edad+sexo, data=.x, 
+                                 design=svydesign(ids=~1,weights=~factor2,data=.), 
+                                 family="poisson")), 
          tidied=map(model, tidy)) %>%
   unnest(tidied) %>%
   mutate(rii=exp(estimate), 
          rii_infci=exp(estimate-1.96*std.error),
          rii_supci=exp(estimate+1.96*std.error)) %>% 
-  filter(term=="education_3_tr") %>% 
+  filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
   mutate(risk_factor="sedentario", 
-         sexo="men")
+         sexo="overall")
+
+
+
 
 rii_sedentario_m <- dta_m %>%
   filter(encuesta!=2009) %>%
+  mutate(education_prueba=((cume_dist(education_3)-1))*-1) %>%
   nest(data=-encuesta) %>%
-  mutate(model=map(data, ~glm(formula=sedentario~education_3_tr+edad, data=.x, 
-                              family="poisson")), 
+  mutate(model=map(data, ~svyglm(formula=sedentario~education_prueba+edad+sexo, data=.x, 
+                                 design=svydesign(ids=~1,weights=~factor2,data=.), 
+                                 family="poisson")), 
          tidied=map(model, tidy)) %>%
   unnest(tidied) %>%
   mutate(rii=exp(estimate), 
          rii_infci=exp(estimate-1.96*std.error),
          rii_supci=exp(estimate+1.96*std.error)) %>% 
-  filter(term=="education_3_tr") %>% 
+  filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
   mutate(risk_factor="sedentario", 
-         sexo="women")
+         sexo="overall")
 
 rii_sedentario <- 
   rii_sedentario_overall %>%
@@ -462,52 +545,64 @@ rii_sedentario <-
 
 
 ################################# ALIMENTACIÓN #####################################
-rii_food_overall <- dta %>%
+rii_fruta_verdura_overall <-  dta %>%
+  mutate(education_prueba=((cume_dist(education_3)-1))*-1) %>%
   nest(data=-encuesta) %>%
-  mutate(model=map(data, ~glm(formula=fruta_verdura~education_3_tr+edad+sexo, data=.x, 
-                              family="poisson")), 
+  mutate(model=map(data, ~svyglm(formula=fruta_verdura~education_prueba+edad+sexo, data=.x, 
+                                 design=svydesign(ids=~1,weights=~factor2,data=.), 
+                                 family="poisson")), 
          tidied=map(model, tidy)) %>%
   unnest(tidied) %>%
   mutate(rii=exp(estimate), 
          rii_infci=exp(estimate-1.96*std.error),
          rii_supci=exp(estimate+1.96*std.error)) %>% 
-  filter(term=="education_3_tr") %>% 
+  filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
   mutate(risk_factor="fruta_verdura", 
-         sexo="Overall")
+         sexo="overall")
 
-rii_food_h <- dta_h %>%
-  nest(data=-encuesta) %>%
-  mutate(model=map(data, ~glm(formula=fruta_verdura~education_3_tr+edad, data=.x, 
-                              family="poisson")), 
-         tidied=map(model, tidy)) %>%
-  unnest(tidied) %>%
-  mutate(rii=exp(estimate), 
-         rii_infci=exp(estimate-1.96*std.error),
-         rii_supci=exp(estimate+1.96*std.error)) %>% 
-  filter(term=="education_3_tr") %>% 
-  select(rii, rii_infci, rii_supci, encuesta) %>% 
-  mutate(risk_factor="fruta_verdura", 
-         sexo="Hombre")
 
-rii_food_m <- dta_m %>%
+
+rii_fruta_verdura_h <- dta_h %>%
+  mutate(education_prueba=((cume_dist(education_3)-1))*-1) %>%
   nest(data=-encuesta) %>%
-  mutate(model=map(data, ~glm(formula=fruta_verdura~education_3_tr+edad, data=.x, 
-                              family="poisson")), 
+  mutate(model=map(data, ~svyglm(formula=fruta_verdura~education_prueba+edad+sexo, data=.x, 
+                                 design=svydesign(ids=~1,weights=~factor2,data=.), 
+                                 family="poisson")), 
          tidied=map(model, tidy)) %>%
   unnest(tidied) %>%
   mutate(rii=exp(estimate), 
          rii_infci=exp(estimate-1.96*std.error),
          rii_supci=exp(estimate+1.96*std.error)) %>% 
-  filter(term=="education_3_tr") %>% 
+  filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
   mutate(risk_factor="fruta_verdura", 
-         sexo="Mujeres")
+         sexo="overall")
+
+
+
+
+rii_fruta_verdura_m <- dta_m %>%
+  mutate(education_prueba=((cume_dist(education_3)-1))*-1) %>%
+  nest(data=-encuesta) %>%
+  mutate(model=map(data, ~svyglm(formula=fruta_verdura~education_prueba+edad+sexo, data=.x, 
+                                 design=svydesign(ids=~1,weights=~factor2,data=.), 
+                                 family="poisson")), 
+         tidied=map(model, tidy)) %>%
+  unnest(tidied) %>%
+  mutate(rii=exp(estimate), 
+         rii_infci=exp(estimate-1.96*std.error),
+         rii_supci=exp(estimate+1.96*std.error)) %>% 
+  filter(term=="education_prueba") %>% 
+  select(rii, rii_infci, rii_supci, encuesta) %>% 
+  mutate(risk_factor="fruta_verdura", 
+         sexo="overall")
+
 
 rii_food <- 
-  rii_food_overall %>%
-  rbind(rii_food_h) %>%
-  rbind(rii_food_m)
+  rii_fruta_verdura_overall %>%
+  rbind(rii_fruta_verdura_h) %>%
+  rbind(rii_fruta_verdura_m)
 
 
 
