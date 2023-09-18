@@ -17,6 +17,10 @@ rm(list=ls())
 load("joined_dta.RData")
 
 
+# Invertimos alcohol 
+dta <- dta %>%
+  mutate(alcohol=(alcohol-1)*-1)
+
 # Creamos bases para hombres y mujeres
 dta_h <- dta %>%
   filter(sexo==1)
@@ -34,9 +38,6 @@ ccaas <- read_delim("ccaas.csv", delim = ";",
 dta <- dta %>%
   mutate(edad=scale(edad, center=T, scale=F))
 
-# Invertimos alcohol 
-dta <- dta %>%
-  mutate(alcohol=(alcohol-1)*-1)
 
 
 ################### DESIGUALDADES POR EDUCACIÓN #########################
@@ -513,7 +514,7 @@ rii_sedentario_h <- dta_h %>%
          rii_supci=exp(estimate+1.96*std.error)) %>% 
   filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
-  mutate(risk_factor="sedentario", 
+  mutate(risk_factor="sedentarismo", 
          sexo="Hombres")
 
 
@@ -533,7 +534,7 @@ rii_sedentario_m <- dta_m %>%
          rii_supci=exp(estimate+1.96*std.error)) %>% 
   filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
-  mutate(risk_factor="sedentario", 
+  mutate(risk_factor="sedentarismo", 
          sexo="Mujeres")
 
 rii_sedentario <- 
