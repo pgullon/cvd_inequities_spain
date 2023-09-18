@@ -1,0 +1,512 @@
+---
+title: "Prevalencia y desigualdades sociales en factores de riesgo de enfermedad cardiovascular - `r nombre_ca[v]`"
+subtitle: "Proyecto PI21/01868" 
+output: powerpoint_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  message = FALSE,
+  warning = FALSE,
+  dev = "svg",
+  fig.width = 14,
+  fig.height = 10
+)
+```
+
+# Diabetes
+
+## Prevalencias población total
+
+```{r, echo=F}
+
+fig_1 + theme(text = element_text(size = 18),
+              axis.text.y = element_text(size = 18),
+              axis.title.y = element_text(size = 18),
+              axis.title.x = element_text(size = 18),
+              axis.text.x = element_text(size = 18),
+              legend.text = element_text(size = 20),
+              strip.text = element_text(size = 20),
+              legend.key.size = unit(3, "line"))
+
+```
+
+## Prevalencias por sexo
+
+```{r, echo=F}
+
+fig_2 + theme(text = element_text(size = 18),
+              axis.text.y = element_text(size = 18),
+              axis.title.y = element_text(size = 18),
+              axis.title.x = element_text(size = 18),
+              axis.text.x = element_text(size = 18),
+              legend.text = element_text(size = 20),
+              strip.text = element_text(size = 20),
+              legend.key.size = unit(3, "line"))
+
+```
+
+## Desigualdades población total
+
+```{r, echo=F}
+
+fig_3 + theme(text = element_text(size = 18),
+              axis.text.y = element_text(size = 18),
+              axis.title.y = element_text(size = 18),
+              axis.title.x = element_text(size = 18),
+              axis.text.x = element_text(size = 18),
+              legend.text = element_text(size = 20),
+              strip.text = element_text(size = 20),
+              legend.key.size = unit(3, "line"))
+
+```
+
+## Desigualdades por sexo
+
+```{r, echo=F}
+
+fig_4 + theme(text = element_text(size = 18),
+              axis.text.y = element_text(size = 18),
+              axis.title.y = element_text(size = 18),
+              axis.title.x = element_text(size = 18),
+              axis.text.x = element_text(size = 18),
+              legend.text = element_text(size = 20),
+              strip.text = element_text(size = 20),
+              legend.key.size = unit(3, "line"))
+
+```
+
+# Hipertensión arterial
+
+## Prevalencias población total
+
+```{r, echo=F}
+
+fig_5 + theme(text = element_text(size = 18),
+              axis.text.y = element_text(size = 18),
+              axis.title.y = element_text(size = 18),
+              axis.title.x = element_text(size = 18),
+              axis.text.x = element_text(size = 18),
+              legend.text = element_text(size = 20),
+              strip.text = element_text(size = 20),
+              legend.key.size = unit(3, "line"))
+
+```
+
+## Prevalencias por sexo
+
+```{r, echo=F}
+
+fig_6 + theme(text = element_text(size = 18),
+              axis.text.y = element_text(size = 18),
+              axis.title.y = element_text(size = 18),
+              axis.title.x = element_text(size = 18),
+              axis.text.x = element_text(size = 18),
+              legend.text = element_text(size = 20),
+              strip.text = element_text(size = 20),
+              legend.key.size = unit(3, "line"))
+
+```
+
+## Desigualdades población total
+
+```{r, echo=F}
+
+fig_7 + theme(text = element_text(size = 18),
+              axis.text.y = element_text(size = 18),
+              axis.title.y = element_text(size = 18),
+              axis.title.x = element_text(size = 18),
+              axis.text.x = element_text(size = 18),
+              legend.text = element_text(size = 20),
+              strip.text = element_text(size = 20),
+              legend.key.size = unit(3, "line"))
+
+```
+
+## Desigualdades por sexo
+
+```{r, echo=F}
+
+fig_8 + theme(text = element_text(size = 18),
+              axis.text.y = element_text(size = 18),
+              axis.title.y = element_text(size = 18),
+              axis.title.x = element_text(size = 18),
+              axis.text.x = element_text(size = 18),
+              legend.text = element_text(size = 20),
+              strip.text = element_text(size = 20),
+              legend.key.size = unit(3, "line"))
+
+```
+
+# Hipercolesterolemia
+
+## Prevalencias población total
+
+```{r, echo=F}
+
+fig_9 + theme(text = element_text(size = 18),
+              axis.text.y = element_text(size = 18),
+              axis.title.y = element_text(size = 18),
+              axis.title.x = element_text(size = 18),
+              axis.text.x = element_text(size = 18),
+              legend.text = element_text(size = 20),
+              strip.text = element_text(size = 20),
+              legend.key.size = unit(3, "line"))
+
+```
+
+## Prevalencias por sexo
+
+```{r, echo=F}
+
+fig_10 + theme(text = element_text(size = 18),
+              axis.text.y = element_text(size = 18),
+              axis.title.y = element_text(size = 18),
+              axis.title.x = element_text(size = 18),
+              axis.text.x = element_text(size = 18),
+              legend.text = element_text(size = 20),
+              strip.text = element_text(size = 20),
+              legend.key.size = unit(3, "line"))
+
+```
+
+## Desigualdades población total
+
+```{r, echo=F}
+
+fig_11 + theme(text = element_text(size = 18),
+              axis.text.y = element_text(size = 18),
+              axis.title.y = element_text(size = 18),
+              axis.title.x = element_text(size = 18),
+              axis.text.x = element_text(size = 18),
+              legend.text = element_text(size = 20),
+              strip.text = element_text(size = 20),
+              legend.key.size = unit(3, "line"))
+
+```
+
+## Desigualdades por sexo
+
+```{r, echo=F}
+
+fig_12 + theme(text = element_text(size = 18),
+              axis.text.y = element_text(size = 18),
+              axis.title.y = element_text(size = 18),
+              axis.title.x = element_text(size = 18),
+              axis.text.x = element_text(size = 18),
+              legend.text = element_text(size = 20),
+              strip.text = element_text(size = 20),
+              legend.key.size = unit(3, "line"))
+
+```
+
+# Obesidad
+
+## Prevalencias población total
+
+```{r, echo=F}
+
+fig_13 + theme(text = element_text(size = 18),
+              axis.text.y = element_text(size = 18),
+              axis.title.y = element_text(size = 18),
+              axis.title.x = element_text(size = 18),
+              axis.text.x = element_text(size = 18),
+              legend.text = element_text(size = 20),
+              strip.text = element_text(size = 20),
+              legend.key.size = unit(3, "line"))
+
+```
+
+## Prevalencias por sexo
+
+```{r, echo=F}
+
+fig_14 + theme(text = element_text(size = 18),
+              axis.text.y = element_text(size = 18),
+              axis.title.y = element_text(size = 18),
+              axis.title.x = element_text(size = 18),
+              axis.text.x = element_text(size = 18),
+              legend.text = element_text(size = 20),
+              strip.text = element_text(size = 20),
+              legend.key.size = unit(3, "line"))
+
+```
+
+## Desigualdades población total
+
+```{r, echo=F}
+
+fig_15 + theme(text = element_text(size = 18),
+              axis.text.y = element_text(size = 18),
+              axis.title.y = element_text(size = 18),
+              axis.title.x = element_text(size = 18),
+              axis.text.x = element_text(size = 18),
+              legend.text = element_text(size = 20),
+              strip.text = element_text(size = 20),
+              legend.key.size = unit(3, "line"))
+
+```
+
+## Desigualdades por sexo
+
+```{r, echo=F}
+
+fig_16 + theme(text = element_text(size = 18),
+              axis.text.y = element_text(size = 18),
+              axis.title.y = element_text(size = 18),
+              axis.title.x = element_text(size = 18),
+              axis.text.x = element_text(size = 18),
+              legend.text = element_text(size = 20),
+              strip.text = element_text(size = 20),
+              legend.key.size = unit(3, "line"))
+
+```
+
+# Sedentarismo
+
+## Prevalencias población total
+
+```{r, echo=F}
+
+fig_17 + theme(text = element_text(size = 18),
+              axis.text.y = element_text(size = 18),
+              axis.title.y = element_text(size = 18),
+              axis.title.x = element_text(size = 18),
+              axis.text.x = element_text(size = 18),
+              legend.text = element_text(size = 20),
+              strip.text = element_text(size = 20),
+              legend.key.size = unit(3, "line"))
+
+```
+
+## Prevalencias por sexo
+
+```{r, echo=F}
+
+fig_18 + theme(text = element_text(size = 18),
+              axis.text.y = element_text(size = 18),
+              axis.title.y = element_text(size = 18),
+              axis.title.x = element_text(size = 18),
+              axis.text.x = element_text(size = 18),
+              legend.text = element_text(size = 20),
+              strip.text = element_text(size = 20),
+              legend.key.size = unit(3, "line"))
+
+```
+
+## Desigualdades población total
+
+```{r, echo=F}
+
+fig_19 + theme(text = element_text(size = 18),
+              axis.text.y = element_text(size = 18),
+              axis.title.y = element_text(size = 18),
+              axis.title.x = element_text(size = 18),
+              axis.text.x = element_text(size = 18),
+              legend.text = element_text(size = 20),
+              strip.text = element_text(size = 20),
+              legend.key.size = unit(3, "line"))
+
+```
+
+## Desigualdades por sexo
+
+```{r, echo=F}
+
+fig_20 + theme(text = element_text(size = 18),
+              axis.text.y = element_text(size = 18),
+              axis.title.y = element_text(size = 18),
+              axis.title.x = element_text(size = 18),
+              axis.text.x = element_text(size = 18),
+              legend.text = element_text(size = 20),
+              strip.text = element_text(size = 20),
+              legend.key.size = unit(3, "line"))
+
+```
+
+# Tabaquismo
+
+## Prevalencias población total
+
+```{r, echo=F}
+
+fig_21 + theme(text = element_text(size = 18),
+              axis.text.y = element_text(size = 18),
+              axis.title.y = element_text(size = 18),
+              axis.title.x = element_text(size = 18),
+              axis.text.x = element_text(size = 18),
+              legend.text = element_text(size = 20),
+              strip.text = element_text(size = 20),
+              legend.key.size = unit(3, "line"))
+
+```
+
+## Prevalencias por sexo
+
+```{r, echo=F}
+
+fig_22 + theme(text = element_text(size = 18),
+              axis.text.y = element_text(size = 18),
+              axis.title.y = element_text(size = 18),
+              axis.title.x = element_text(size = 18),
+              axis.text.x = element_text(size = 18),
+              legend.text = element_text(size = 20),
+              strip.text = element_text(size = 20),
+              legend.key.size = unit(3, "line"))
+
+```
+
+## Desigualdades población total
+
+```{r, echo=F}
+
+fig_23 + theme(text = element_text(size = 18),
+              axis.text.y = element_text(size = 18),
+              axis.title.y = element_text(size = 18),
+              axis.title.x = element_text(size = 18),
+              axis.text.x = element_text(size = 18),
+              legend.text = element_text(size = 20),
+              strip.text = element_text(size = 20),
+              legend.key.size = unit(3, "line"))
+
+```
+
+## Desigualdades por sexo
+
+```{r, echo=F}
+
+fig_24 + theme(text = element_text(size = 18),
+              axis.text.y = element_text(size = 18),
+              axis.title.y = element_text(size = 18),
+              axis.title.x = element_text(size = 18),
+              axis.text.x = element_text(size = 18),
+              legend.text = element_text(size = 20),
+              strip.text = element_text(size = 20),
+              legend.key.size = unit(3, "line"))
+
+```
+
+# Consumo de Alcohol
+
+## Prevalencias población total
+
+```{r, echo=F}
+
+fig_25 + theme(text = element_text(size = 18),
+              axis.text.y = element_text(size = 18),
+              axis.title.y = element_text(size = 18),
+              axis.title.x = element_text(size = 18),
+              axis.text.x = element_text(size = 18),
+              legend.text = element_text(size = 20),
+              strip.text = element_text(size = 20),
+              legend.key.size = unit(3, "line"))
+
+```
+
+## Prevalencias por sexo
+
+```{r, echo=F}
+
+fig_26 + theme(text = element_text(size = 18),
+              axis.text.y = element_text(size = 18),
+              axis.title.y = element_text(size = 18),
+              axis.title.x = element_text(size = 18),
+              axis.text.x = element_text(size = 18),
+              legend.text = element_text(size = 20),
+              strip.text = element_text(size = 20),
+              legend.key.size = unit(3, "line"))
+
+```
+
+## Desigualdades población total
+
+```{r, echo=F}
+
+fig_27 + theme(text = element_text(size = 18),
+              axis.text.y = element_text(size = 18),
+              axis.title.y = element_text(size = 18),
+              axis.title.x = element_text(size = 18),
+              axis.text.x = element_text(size = 18),
+              legend.text = element_text(size = 20),
+              strip.text = element_text(size = 20),
+              legend.key.size = unit(3, "line"))
+
+```
+
+## Desigualdades por sexo
+
+```{r, echo=F}
+
+fig_28 + theme(text = element_text(size = 18),
+              axis.text.y = element_text(size = 18),
+              axis.title.y = element_text(size = 18),
+              axis.title.x = element_text(size = 18),
+              axis.text.x = element_text(size = 18),
+              legend.text = element_text(size = 20),
+              strip.text = element_text(size = 20),
+              legend.key.size = unit(3, "line"))
+
+```
+
+# Alimentación
+
+## Prevalencias población total
+
+```{r, echo=F}
+
+fig_29 + theme(text = element_text(size = 18),
+              axis.text.y = element_text(size = 18),
+              axis.title.y = element_text(size = 18),
+              axis.title.x = element_text(size = 18),
+              axis.text.x = element_text(size = 18),
+              legend.text = element_text(size = 20),
+              strip.text = element_text(size = 20),
+              legend.key.size = unit(3, "line"))
+
+```
+
+## Prevalencias por sexo
+
+```{r, echo=F}
+
+fig_30 + theme(text = element_text(size = 18),
+              axis.text.y = element_text(size = 18),
+              axis.title.y = element_text(size = 18),
+              axis.title.x = element_text(size = 18),
+              axis.text.x = element_text(size = 18),
+              legend.text = element_text(size = 20),
+              strip.text = element_text(size = 20),
+              legend.key.size = unit(3, "line"))
+
+```
+
+## Desigualdades población total
+
+```{r, echo=F}
+
+fig_31 + theme(text = element_text(size = 18),
+              axis.text.y = element_text(size = 18),
+              axis.title.y = element_text(size = 18),
+              axis.title.x = element_text(size = 18),
+              axis.text.x = element_text(size = 18),
+              legend.text = element_text(size = 20),
+              strip.text = element_text(size = 20),
+              legend.key.size = unit(3, "line"))
+
+```
+
+## Desigualdades por sexo
+
+```{r, echo=F}
+
+fig_32 + theme(text = element_text(size = 18),
+              axis.text.y = element_text(size = 18),
+              axis.title.y = element_text(size = 18),
+              axis.title.x = element_text(size = 18),
+              axis.text.x = element_text(size = 18),
+              legend.text = element_text(size = 20),
+              strip.text = element_text(size = 20),
+              legend.key.size = unit(3, "line"))
+
+```

@@ -1,0 +1,2417 @@
+---
+title: "Informe desigualdades sociales en factores de riesgo de enfermedad cardiovascular - `r nombre_ca[v]`"
+subtitle: "Proyecto PI21/01868"
+output: 
+  html_document:
+    toc: true
+    toc_depth: 2
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      fig.width = 8,
+  fig.height = 6)
+library(tidyverse)
+library(readxl)
+library(ggplot2)
+setwd(getwd())
+
+```
+
+```{=html}
+<style>
+body, p {
+font-family: Arial;
+}
+</style>
+```
+
+El presente informe muestra la evolución de la prevalencia y el índice relativo de desigualdad (RII por sus siglas en inglés), en función del nivel educativo, para diferentes factores de riesgo de enfermedad cardiovascular (FRECV) en `r nombre_ca[v]` desde el año 2001 hasta el 2020*, utilizando los datos de la Encuesta Nacional de Salud en España/Encuesta Europea de Salud en España.
+
+Los FRECV incluidos en este informe son la diabetes, la hipertensión arterial, la hipercolesterolemia, la obesidad, el sedentarismo, el tabaquismo, el consumo de alcohol y la alimentación (ver definiciones en la sección "Nota metodológica" al final del informe)
+
+Este informe se enmarca dentro del Proyecto PI21/01868 financiado por el Instituto de Salud Carlos III y cofinanciado por la Unión Europea.
+
+***
+
+*_Los datos de los FRECV referidos a los años 2001 y 2009 fueron omitidos de las gráficas debido a cambios en las preguntas de las encuestas que dificultaron la intepretación de los resultados_
+
+```{r, echo=F}
+
+load("prevalencias_informes.RData")
+load("RII_informes.RData")
+
+```
+
+# Diabetes {.tabset .tabset-fade .tabset-pills}
+
+
+## Prevalencias población total
+
+
+```{r, echo=F}
+fig_1 <-  
+  prevalencias %>%
+  filter((nombre_ccaa == nombre_ca[1]  | nombre_ccaa == nombre_ca[v]), sexo=="Global") %>% 
+  ggplot(aes(x=encuesta, y=(diabetes*100), ymin=(diabetes_low*100), ymax=(diabetes_upp*100), color=as.factor(education_3), linetype=as.factor(nombre_ccaa), group=interaction(education_3, nombre_ccaa)))+
+  geom_line(size=1.5)+
+  facet_grid(cols = vars(sexo))+
+  scale_y_continuous(breaks = c(10, 20, 40, 60, 100))+
+  scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
+  labs(x="", y="Prevalencia (95% IC)")+
+  scale_color_discrete(name="Nivel Educativo",
+                      labels=c("Bajo", "Medio", "Alto"))+
+  scale_linetype_manual(values = c("España" = "dashed",
+                                   "Andalucía" = "solid",
+                                   "Aragón" = "solid",
+                                   "Principado de Asturias" = "solid", 
+                                   "Illes Balears" = "solid", 
+                                   "Canarias" = "solid", 
+                                   "Cantabria" = "solid", 
+                                   "Castilla y León" = "solid", 
+                                   "Castilla-La Mancha" = "solid", 
+                                   "Cataluña" = "solid", 
+                                   "Comunitat Valenciana" = "solid", 
+                                   "Extremadura" = "solid", 
+                                   "Galicia" = "solid", 
+                                   "La Rioja" = "solid", 
+                                   "Comunidad de Madrid" = "solid",
+                                   "Región de Murcia" = "solid", 
+                                   "Comunidad Foral de Navarra" = "solid", 
+                                   "País Vasco" = "solid"),
+                        name="Nivel Territorial")+
+  theme_bw()+
+  theme(axis.text=element_text(size=15, color="black"),
+        axis.title=element_text(size=15, face="bold", color="black"),
+        strip.text = element_text(size=20, face="bold", color="black"),
+        legend.text=element_text(size=20, color="black"),
+        legend.title = element_text(size=20, color="black", face="bold"),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        axis.text.x = element_text(color="black", size=12),
+        axis.text.y = element_text(color="black", size=12),
+        legend.position="bottom",
+        legend.key.size = unit(3, "line"),         legend.box="vertical")+
+  labs( title = "Prevalencia de diabetes por nivel educativo en el período 2003-2020")
+
+fig_1
+
+```
+
+
+## Prevalencias por sexo
+
+
+```{r, echo=F}
+fig_2 <-  
+  prevalencias %>%
+  filter((nombre_ccaa == nombre_ca[1]  | nombre_ccaa == nombre_ca[v]), sexo!="Global") %>% 
+  ggplot(aes(x=encuesta, y=(diabetes*100), ymin=(diabetes_low*100), ymax=(diabetes_upp*100), color=as.factor(education_3), linetype=as.factor(nombre_ccaa), group=interaction(education_3, nombre_ccaa)))+
+  geom_line(size=1.5)+
+  facet_grid(cols = vars(sexo))+
+  scale_y_continuous(breaks = c(10, 20, 40, 60, 100))+
+  scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
+  labs(x="", y="Prevalencia (95% IC)")+
+  scale_color_discrete(name="Nivel Educativo",
+                      labels=c("Bajo", "Medio", "Alto"))+
+  scale_linetype_manual(values = c("España" = "dashed",
+                                   "Andalucía" = "solid",
+                                   "Aragón" = "solid",
+                                   "Principado de Asturias" = "solid", 
+                                   "Illes Balears" = "solid", 
+                                   "Canarias" = "solid", 
+                                   "Cantabria" = "solid", 
+                                   "Castilla y León" = "solid", 
+                                   "Castilla-La Mancha" = "solid", 
+                                   "Cataluña" = "solid", 
+                                   "Comunitat Valenciana" = "solid", 
+                                   "Extremadura" = "solid", 
+                                   "Galicia" = "solid", 
+                                   "La Rioja" = "solid", 
+                                   "Comunidad de Madrid" = "solid",
+                                   "Región de Murcia" = "solid", 
+                                   "Comunidad Foral de Navarra" = "solid", 
+                                   "País Vasco" = "solid"),
+                        name="Nivel Territorial")+
+  theme_bw()+
+  theme(axis.text=element_text(size=15, color="black"),
+        axis.title=element_text(size=15, face="bold", color="black"),
+        strip.text = element_text(size=20, face="bold", color="black"),
+        legend.text=element_text(size=20, color="black"),
+        legend.title = element_text(size=20, color="black", face="bold"),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        axis.text.x = element_text(color="black", size=12),
+        axis.text.y = element_text(color="black", size=12),
+        legend.position="bottom",
+        legend.key.size = unit(3, "line"),         legend.box="vertical")+
+  labs( title = "Prevalencia de diabetes por nivel educativo en el período 2003-2020")
+
+fig_2
+
+```
+
+## Desigualdades población total
+
+```{r, echo=F}
+
+  fig_3 <-  
+  rii %>%
+  filter(fr=="diabetes", (nombre_ccaa == nombre_ca[1]  | nombre_ccaa == nombre_ca[v]), sexo=="Global") %>% 
+  ggplot(aes(x=as.numeric(encuesta), y=rii, ymin=rii_infci, ymax=rii_supci), linetype=as.factor(nombre_ccaa), group=nombre_ccaa) +
+  geom_hline(yintercept = 1, lty=2)+
+  geom_ribbon(alpha=0.07, aes(fill=nombre_ccaa))+
+  facet_grid(cols = vars(sexo))+
+  geom_line(aes(color=nombre_ccaa, linetype=nombre_ccaa), size=1.5)+
+  scale_y_continuous(trans="log",
+                     breaks=c(0, 1, 1.5, 2, 4, 8, 16, 32, 64))+
+  scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
+  labs(x="", y="RII (95% CI)")+
+  scale_color_manual(values=c("España" =  "dimgray",
+                             "Andalucía" = "#CC0033", 
+                             "Aragón" = "#CC0033", 
+                             "Principado de Asturias" = "#CC0033", 
+                             "Illes Balears" = "#CC0033", 
+                             "Canarias" = "#CC0033", 
+                             "Cantabria" = "#CC0033", 
+                             "Castilla y León" = "#CC0033", 
+                             "Castilla-La Mancha" = "#CC0033", 
+                             "Cataluña" = "#CC0033", 
+                             "Comunitat Valenciana" = "#CC0033", 
+                             "Extremadura" = "#CC0033", 
+                             "Galicia" = "#CC0033", 
+                             "La Rioja" = "#CC0033", 
+                             "Comunidad de Madrid" = "#CC0033",
+                             "Región de Murcia" = "#CC0033", 
+                             "Comunidad Foral de Navarra" = "#CC0033", 
+                             "País Vasco" = "#CC0033"),
+                     guide="none")+
+  scale_fill_manual(values=c("España" =  "dimgray",
+                             "Andalucía" = "#CC0033", 
+                             "Aragón" = "#CC0033", 
+                             "Principado de Asturias" = "#CC0033", 
+                             "Illes Balears" = "#CC0033", 
+                             "Canarias" = "#CC0033", 
+                             "Cantabria" = "#CC0033", 
+                             "Castilla y León" = "#CC0033", 
+                             "Castilla-La Mancha" = "#CC0033", 
+                             "Cataluña" = "#CC0033", 
+                             "Comunitat Valenciana" = "#CC0033", 
+                             "Extremadura" = "#CC0033", 
+                             "Galicia" = "#CC0033", 
+                             "La Rioja" = "#CC0033", 
+                             "Comunidad de Madrid" = "#CC0033",
+                             "Región de Murcia" = "#CC0033", 
+                             "Comunidad Foral de Navarra" = "#CC0033", 
+                             "País Vasco" = "#CC0033"),
+                    guide="none")+
+  scale_linetype_manual(values = c("España" = "dashed",
+                                   "Andalucía" = "solid", 
+                                   "Aragón" = "solid", 
+                                   "Principado de Asturias" = "solid", 
+                                   "Illes Balears" = "solid", 
+                                   "Canarias" = "solid", 
+                                   "Cantabria" = "solid", 
+                                   "Castilla y León" = "solid", 
+                                   "Castilla-La Mancha" = "solid", 
+                                   "Cataluña" = "solid", 
+                                   "Comunitat Valenciana" = "solid", 
+                                   "Extremadura" = "solid", 
+                                   "Galicia" = "solid", 
+                                   "La Rioja" = "solid", 
+                                   "Comunidad de Madrid" = "solid",
+                                   "Región de Murcia" = "solid", 
+                                   "Comunidad Foral de Navarra" = "solid", 
+                                   "País Vasco" = "solid"),
+                        name="Nivel Territorial")+
+  theme_bw()+
+  theme(axis.text=element_text(size=15, color="black"),
+        axis.title=element_text(size=15, face="bold", color="black"),
+        strip.text = element_text(size=20, face="bold", color="black"),
+        legend.text=element_text(size=20, color="black"),
+        legend.title=element_text(size=20, color="black", face="bold"),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        axis.text.x = element_text(color="black", size=12),
+        axis.text.y = element_text(color="black", size=12),
+        legend.position="bottom",
+        legend.key.size=unit(3, "line"))+
+  labs( title = "Índice Relativo de Desigualdad (RII) en diabetes en el período 2003-2020")
+
+fig_3
+
+
+```
+
+## Desigualdades por sexo
+
+```{r, echo=F}
+
+  fig_4 <-  
+  rii %>%
+  filter(fr=="diabetes", (nombre_ccaa == nombre_ca[1]  | nombre_ccaa == nombre_ca[v]), sexo!="Global") %>% 
+  ggplot(aes(x=as.numeric(encuesta), y=rii, ymin=rii_infci, ymax=rii_supci), linetype=as.factor(nombre_ccaa), group=nombre_ccaa) +
+  geom_hline(yintercept = 1, lty=2)+
+  geom_ribbon(alpha=0.07, aes(fill=nombre_ccaa))+
+  facet_grid(cols = vars(sexo))+
+  geom_line(aes(color=nombre_ccaa, linetype=nombre_ccaa), size=1.5)+
+  scale_y_continuous(trans="log",
+                     breaks=c(0, 1, 1.5, 2, 4, 8, 16, 32, 64))+
+  scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
+  labs(x="", y="RII (95% CI)")+
+  scale_color_manual(values=c("España" =  "dimgray",
+                             "Andalucía" = "#CC0033", 
+                             "Aragón" = "#CC0033", 
+                             "Principado de Asturias" = "#CC0033", 
+                             "Illes Balears" = "#CC0033", 
+                             "Canarias" = "#CC0033", 
+                             "Cantabria" = "#CC0033", 
+                             "Castilla y León" = "#CC0033", 
+                             "Castilla-La Mancha" = "#CC0033", 
+                             "Cataluña" = "#CC0033", 
+                             "Comunitat Valenciana" = "#CC0033", 
+                             "Extremadura" = "#CC0033", 
+                             "Galicia" = "#CC0033", 
+                             "La Rioja" = "#CC0033", 
+                             "Comunidad de Madrid" = "#CC0033",
+                             "Región de Murcia" = "#CC0033", 
+                             "Comunidad Foral de Navarra" = "#CC0033", 
+                             "País Vasco" = "#CC0033"),
+                     guide="none")+
+  scale_fill_manual(values=c("España" =  "dimgray",
+                             "Andalucía" = "#CC0033", 
+                             "Aragón" = "#CC0033", 
+                             "Principado de Asturias" = "#CC0033", 
+                             "Illes Balears" = "#CC0033", 
+                             "Canarias" = "#CC0033", 
+                             "Cantabria" = "#CC0033", 
+                             "Castilla y León" = "#CC0033", 
+                             "Castilla-La Mancha" = "#CC0033", 
+                             "Cataluña" = "#CC0033", 
+                             "Comunitat Valenciana" = "#CC0033", 
+                             "Extremadura" = "#CC0033", 
+                             "Galicia" = "#CC0033", 
+                             "La Rioja" = "#CC0033", 
+                             "Comunidad de Madrid" = "#CC0033",
+                             "Región de Murcia" = "#CC0033", 
+                             "Comunidad Foral de Navarra" = "#CC0033", 
+                             "País Vasco" = "#CC0033"),
+                    guide="none")+
+  scale_linetype_manual(values = c("España" = "dashed",
+                                   "Andalucía" = "solid", 
+                                   "Aragón" = "solid", 
+                                   "Principado de Asturias" = "solid", 
+                                   "Illes Balears" = "solid", 
+                                   "Canarias" = "solid", 
+                                   "Cantabria" = "solid", 
+                                   "Castilla y León" = "solid", 
+                                   "Castilla-La Mancha" = "solid", 
+                                   "Cataluña" = "solid", 
+                                   "Comunitat Valenciana" = "solid", 
+                                   "Extremadura" = "solid", 
+                                   "Galicia" = "solid", 
+                                   "La Rioja" = "solid", 
+                                   "Comunidad de Madrid" = "solid",
+                                   "Región de Murcia" = "solid", 
+                                   "Comunidad Foral de Navarra" = "solid", 
+                                   "País Vasco" = "solid"),
+                        name="Nivel Territorial")+
+  theme_bw()+
+  theme(axis.text=element_text(size=15, color="black"),
+        axis.title=element_text(size=15, face="bold", color="black"),
+        strip.text = element_text(size=20, face="bold", color="black"),
+        legend.text=element_text(size=20, color="black"),
+        legend.title=element_text(size=20, color="black", face="bold"),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        axis.text.x = element_text(color="black", size=12),
+        axis.text.y = element_text(color="black", size=12),
+        legend.position="bottom",
+        legend.key.size=unit(3, "line"))+
+  labs( title = "Índice Relativo de Desigualdad (RII) en diabetes por sexo en el período 2003-2020")
+
+fig_4
+
+
+```
+
+
+# Hipertensión Arterial {.tabset .tabset-fade .tabset-pills}
+
+
+## Prevalencias población total
+
+
+```{r, echo=F}
+fig_5 <-  
+  prevalencias %>%
+  filter((nombre_ccaa == nombre_ca[1]  | nombre_ccaa == nombre_ca[v]), sexo=="Global") %>% 
+  ggplot(aes(x=encuesta, y=(hta*100), ymin=(hta_low*100), ymax=(hta_upp*100), color=as.factor(education_3), linetype=as.factor(nombre_ccaa), group=interaction(education_3, nombre_ccaa)))+
+  geom_line(size=1.5)+
+  facet_grid(cols = vars(sexo))+
+  scale_y_continuous(breaks = c(10, 20, 40, 60, 100))+
+  scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
+  labs(x="", y="Prevalencia (95% IC)")+
+  scale_color_discrete(name="Nivel Educativo",
+                      labels=c("Bajo", "Medio", "Alto"))+
+  scale_linetype_manual(values = c("España" = "dashed",
+                                   "Andalucía" = "solid",
+                                   "Aragón" = "solid",
+                                   "Principado de Asturias" = "solid", 
+                                   "Illes Balears" = "solid", 
+                                   "Canarias" = "solid", 
+                                   "Cantabria" = "solid", 
+                                   "Castilla y León" = "solid", 
+                                   "Castilla-La Mancha" = "solid", 
+                                   "Cataluña" = "solid", 
+                                   "Comunitat Valenciana" = "solid", 
+                                   "Extremadura" = "solid", 
+                                   "Galicia" = "solid", 
+                                   "La Rioja" = "solid", 
+                                   "Comunidad de Madrid" = "solid",
+                                   "Región de Murcia" = "solid", 
+                                   "Comunidad Foral de Navarra" = "solid", 
+                                   "País Vasco" = "solid"),
+                        name="Nivel Territorial")+
+  theme_bw()+
+  theme(axis.text=element_text(size=15, color="black"),
+        axis.title=element_text(size=15, face="bold", color="black"),
+        strip.text = element_text(size=20, face="bold", color="black"),
+        legend.text=element_text(size=20, color="black"),
+        legend.title = element_text(size=20, color="black", face="bold"),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        axis.text.x = element_text(color="black", size=12),
+        axis.text.y = element_text(color="black", size=12),
+        legend.position="bottom",
+        legend.key.size = unit(3, "line"),         legend.box="vertical")+
+  labs( title = "Prevalencia de hipertensión arterial por nivel educativo en el período 2003-2020")
+
+fig_5
+
+```
+
+
+## Prevalencias por sexo
+
+
+```{r, echo=F}
+fig_6 <-  
+  prevalencias %>%
+  filter((nombre_ccaa == nombre_ca[1]  | nombre_ccaa == nombre_ca[v]), sexo!="Global") %>% 
+  ggplot(aes(x=encuesta, y=(hta*100), ymin=(hta_low*100), ymax=(hta_upp*100), color=as.factor(education_3), linetype=as.factor(nombre_ccaa), group=interaction(education_3, nombre_ccaa)))+
+  geom_line(size=1.5)+
+  facet_grid(cols = vars(sexo))+
+  scale_y_continuous(breaks = c(10, 20, 40, 60, 100))+
+  scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
+  labs(x="", y="Prevalencia (95% IC)")+
+  scale_color_discrete(name="Nivel Educativo",
+                      labels=c("Bajo", "Medio", "Alto"))+
+  scale_linetype_manual(values = c("España" = "dashed",
+                                   "Andalucía" = "solid",
+                                   "Aragón" = "solid",
+                                   "Principado de Asturias" = "solid", 
+                                   "Illes Balears" = "solid", 
+                                   "Canarias" = "solid", 
+                                   "Cantabria" = "solid", 
+                                   "Castilla y León" = "solid", 
+                                   "Castilla-La Mancha" = "solid", 
+                                   "Cataluña" = "solid", 
+                                   "Comunitat Valenciana" = "solid", 
+                                   "Extremadura" = "solid", 
+                                   "Galicia" = "solid", 
+                                   "La Rioja" = "solid", 
+                                   "Comunidad de Madrid" = "solid",
+                                   "Región de Murcia" = "solid", 
+                                   "Comunidad Foral de Navarra" = "solid", 
+                                   "País Vasco" = "solid"),
+                        name="Nivel Territorial")+
+  theme_bw()+
+  theme(axis.text=element_text(size=15, color="black"),
+        axis.title=element_text(size=15, face="bold", color="black"),
+        strip.text = element_text(size=20, face="bold", color="black"),
+        legend.text=element_text(size=20, color="black"),
+        legend.title = element_text(size=20, color="black", face="bold"),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        axis.text.x = element_text(color="black", size=12),
+        axis.text.y = element_text(color="black", size=12),
+        legend.position="bottom",
+        legend.key.size = unit(3, "line"),         legend.box="vertical")+
+  labs( title = "Prevalencia de hipertensión arterial por nivel educativo en el período 2003-2020")
+
+fig_6
+
+```
+
+## Desigualdades población total
+
+```{r, echo=F}
+
+  fig_7 <-  
+  rii %>%
+  filter(fr=="hta", (nombre_ccaa == nombre_ca[1]  | nombre_ccaa == nombre_ca[v]), sexo=="Global") %>% 
+  ggplot(aes(x=as.numeric(encuesta), y=rii, ymin=rii_infci, ymax=rii_supci), linetype=as.factor(nombre_ccaa), group=nombre_ccaa) +
+  geom_hline(yintercept = 1, lty=2)+
+  geom_ribbon(alpha=0.07, aes(fill=nombre_ccaa))+
+  facet_grid(cols = vars(sexo))+
+  geom_line(aes(color=nombre_ccaa, linetype=nombre_ccaa), size=1.5)+
+  scale_y_continuous(trans="log",
+                     breaks=c(0, 1, 1.5, 2, 4, 8, 16, 32, 64))+
+  scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
+  labs(x="", y="RII (95% CI)")+
+  scale_color_manual(values=c("España" =  "dimgray",
+                             "Andalucía" = "#CC0033", 
+                             "Aragón" = "#CC0033", 
+                             "Principado de Asturias" = "#CC0033", 
+                             "Illes Balears" = "#CC0033", 
+                             "Canarias" = "#CC0033", 
+                             "Cantabria" = "#CC0033", 
+                             "Castilla y León" = "#CC0033", 
+                             "Castilla-La Mancha" = "#CC0033", 
+                             "Cataluña" = "#CC0033", 
+                             "Comunitat Valenciana" = "#CC0033", 
+                             "Extremadura" = "#CC0033", 
+                             "Galicia" = "#CC0033", 
+                             "La Rioja" = "#CC0033", 
+                             "Comunidad de Madrid" = "#CC0033",
+                             "Región de Murcia" = "#CC0033", 
+                             "Comunidad Foral de Navarra" = "#CC0033", 
+                             "País Vasco" = "#CC0033"),
+                     guide="none")+
+  scale_fill_manual(values=c("España" =  "dimgray",
+                             "Andalucía" = "#CC0033", 
+                             "Aragón" = "#CC0033", 
+                             "Principado de Asturias" = "#CC0033", 
+                             "Illes Balears" = "#CC0033", 
+                             "Canarias" = "#CC0033", 
+                             "Cantabria" = "#CC0033", 
+                             "Castilla y León" = "#CC0033", 
+                             "Castilla-La Mancha" = "#CC0033", 
+                             "Cataluña" = "#CC0033", 
+                             "Comunitat Valenciana" = "#CC0033", 
+                             "Extremadura" = "#CC0033", 
+                             "Galicia" = "#CC0033", 
+                             "La Rioja" = "#CC0033", 
+                             "Comunidad de Madrid" = "#CC0033",
+                             "Región de Murcia" = "#CC0033", 
+                             "Comunidad Foral de Navarra" = "#CC0033", 
+                             "País Vasco" = "#CC0033"),
+                    guide="none")+
+  scale_linetype_manual(values = c("España" = "dashed",
+                                   "Andalucía" = "solid", 
+                                   "Aragón" = "solid", 
+                                   "Principado de Asturias" = "solid", 
+                                   "Illes Balears" = "solid", 
+                                   "Canarias" = "solid", 
+                                   "Cantabria" = "solid", 
+                                   "Castilla y León" = "solid", 
+                                   "Castilla-La Mancha" = "solid", 
+                                   "Cataluña" = "solid", 
+                                   "Comunitat Valenciana" = "solid", 
+                                   "Extremadura" = "solid", 
+                                   "Galicia" = "solid", 
+                                   "La Rioja" = "solid", 
+                                   "Comunidad de Madrid" = "solid",
+                                   "Región de Murcia" = "solid", 
+                                   "Comunidad Foral de Navarra" = "solid", 
+                                   "País Vasco" = "solid"),
+                        name="Nivel Territorial")+
+  theme_bw()+
+  theme(axis.text=element_text(size=15, color="black"),
+        axis.title=element_text(size=15, face="bold", color="black"),
+        strip.text = element_text(size=20, face="bold", color="black"),
+        legend.text=element_text(size=20, color="black"),
+        legend.title=element_text(size=20, color="black", face="bold"),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        axis.text.x = element_text(color="black", size=12),
+        axis.text.y = element_text(color="black", size=12),
+        legend.position="bottom",
+        legend.key.size=unit(3, "line"))+
+  labs( title = "Índice Relativo de Desigualdad (RII) en hipertensión arterial en el período 2003-2020")
+
+fig_7
+
+
+```
+
+## Desigualdades por sexo
+
+```{r, echo=F}
+
+  fig_8 <-  
+  rii %>%
+  filter(fr=="hta", (nombre_ccaa == nombre_ca[1]  | nombre_ccaa == nombre_ca[v]), sexo!="Global") %>% 
+  ggplot(aes(x=as.numeric(encuesta), y=rii, ymin=rii_infci, ymax=rii_supci), linetype=as.factor(nombre_ccaa), group=nombre_ccaa) +
+  geom_hline(yintercept = 1, lty=2)+
+  geom_ribbon(alpha=0.07, aes(fill=nombre_ccaa))+
+  facet_grid(cols = vars(sexo))+
+  geom_line(aes(color=nombre_ccaa, linetype=nombre_ccaa), size=1.5)+
+  scale_y_continuous(trans="log",
+                     breaks=c(0, 1, 1.5, 2, 4, 8, 16, 32, 64))+
+  scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
+  labs(x="", y="RII (95% CI)")+
+  scale_color_manual(values=c("España" =  "dimgray",
+                             "Andalucía" = "#CC0033", 
+                             "Aragón" = "#CC0033", 
+                             "Principado de Asturias" = "#CC0033", 
+                             "Illes Balears" = "#CC0033", 
+                             "Canarias" = "#CC0033", 
+                             "Cantabria" = "#CC0033", 
+                             "Castilla y León" = "#CC0033", 
+                             "Castilla-La Mancha" = "#CC0033", 
+                             "Cataluña" = "#CC0033", 
+                             "Comunitat Valenciana" = "#CC0033", 
+                             "Extremadura" = "#CC0033", 
+                             "Galicia" = "#CC0033", 
+                             "La Rioja" = "#CC0033", 
+                             "Comunidad de Madrid" = "#CC0033",
+                             "Región de Murcia" = "#CC0033", 
+                             "Comunidad Foral de Navarra" = "#CC0033", 
+                             "País Vasco" = "#CC0033"),
+                     guide="none")+
+  scale_fill_manual(values=c("España" =  "dimgray",
+                             "Andalucía" = "#CC0033", 
+                             "Aragón" = "#CC0033", 
+                             "Principado de Asturias" = "#CC0033", 
+                             "Illes Balears" = "#CC0033", 
+                             "Canarias" = "#CC0033", 
+                             "Cantabria" = "#CC0033", 
+                             "Castilla y León" = "#CC0033", 
+                             "Castilla-La Mancha" = "#CC0033", 
+                             "Cataluña" = "#CC0033", 
+                             "Comunitat Valenciana" = "#CC0033", 
+                             "Extremadura" = "#CC0033", 
+                             "Galicia" = "#CC0033", 
+                             "La Rioja" = "#CC0033", 
+                             "Comunidad de Madrid" = "#CC0033",
+                             "Región de Murcia" = "#CC0033", 
+                             "Comunidad Foral de Navarra" = "#CC0033", 
+                             "País Vasco" = "#CC0033"),
+                    guide="none")+
+  scale_linetype_manual(values = c("España" = "dashed",
+                                   "Andalucía" = "solid", 
+                                   "Aragón" = "solid", 
+                                   "Principado de Asturias" = "solid", 
+                                   "Illes Balears" = "solid", 
+                                   "Canarias" = "solid", 
+                                   "Cantabria" = "solid", 
+                                   "Castilla y León" = "solid", 
+                                   "Castilla-La Mancha" = "solid", 
+                                   "Cataluña" = "solid", 
+                                   "Comunitat Valenciana" = "solid", 
+                                   "Extremadura" = "solid", 
+                                   "Galicia" = "solid", 
+                                   "La Rioja" = "solid", 
+                                   "Comunidad de Madrid" = "solid",
+                                   "Región de Murcia" = "solid", 
+                                   "Comunidad Foral de Navarra" = "solid", 
+                                   "País Vasco" = "solid"),
+                        name="Nivel Territorial")+
+  theme_bw()+
+  theme(axis.text=element_text(size=15, color="black"),
+        axis.title=element_text(size=15, face="bold", color="black"),
+        strip.text = element_text(size=20, face="bold", color="black"),
+        legend.text=element_text(size=20, color="black"),
+        legend.title=element_text(size=20, color="black", face="bold"),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        axis.text.x = element_text(color="black", size=12),
+        axis.text.y = element_text(color="black", size=12),
+        legend.position="bottom",
+        legend.key.size=unit(3, "line"))+
+  labs( title = "Índice Relativo de Desigualdad (RII) en hipertensión arterial en el período 2003-2020")
+
+fig_8
+
+
+```
+
+
+# Hipercolesterolemia {.tabset .tabset-fade .tabset-pills}
+
+
+## Prevalencias población total
+
+
+```{r, echo=F}
+fig_9 <-  
+  prevalencias %>%
+  filter((nombre_ccaa == nombre_ca[1]  | nombre_ccaa == nombre_ca[v]), sexo=="Global") %>% 
+  ggplot(aes(x=encuesta, y=(col*100), ymin=(col_low*100), ymax=(col_upp*100), color=as.factor(education_3), linetype=as.factor(nombre_ccaa), group=interaction(education_3, nombre_ccaa)))+
+  geom_line(size=1.5)+
+  facet_grid(cols = vars(sexo))+
+  scale_y_continuous(breaks = c(10, 20, 40, 60, 100))+
+  scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
+  labs(x="", y="Prevalencia (95% IC)")+
+  scale_color_discrete(name="Nivel Educativo",
+                      labels=c("Bajo", "Medio", "Alto"))+
+  scale_linetype_manual(values = c("España" = "dashed",
+                                   "Andalucía" = "solid",
+                                   "Aragón" = "solid",
+                                   "Principado de Asturias" = "solid", 
+                                   "Illes Balears" = "solid", 
+                                   "Canarias" = "solid", 
+                                   "Cantabria" = "solid", 
+                                   "Castilla y León" = "solid", 
+                                   "Castilla-La Mancha" = "solid", 
+                                   "Cataluña" = "solid", 
+                                   "Comunitat Valenciana" = "solid", 
+                                   "Extremadura" = "solid", 
+                                   "Galicia" = "solid", 
+                                   "La Rioja" = "solid", 
+                                   "Comunidad de Madrid" = "solid",
+                                   "Región de Murcia" = "solid", 
+                                   "Comunidad Foral de Navarra" = "solid", 
+                                   "País Vasco" = "solid"),
+                        name="Nivel Territorial")+
+  theme_bw()+
+  theme(axis.text=element_text(size=15, color="black"),
+        axis.title=element_text(size=15, face="bold", color="black"),
+        strip.text = element_text(size=20, face="bold", color="black"),
+        legend.text=element_text(size=20, color="black"),
+        legend.title = element_text(size=20, color="black", face="bold"),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        axis.text.x = element_text(color="black", size=12),
+        axis.text.y = element_text(color="black", size=12),
+        legend.position="bottom",
+        legend.key.size = unit(3, "line"),         legend.box="vertical")+
+  labs( title = "Prevalencia de hipercolesterolemia por nivel educativo en el período 2003-2020")
+
+fig_9
+
+```
+
+
+## Prevalencias por sexo
+
+
+```{r, echo=F}
+fig_10 <-  
+  prevalencias %>%
+  filter((nombre_ccaa == nombre_ca[1]  | nombre_ccaa == nombre_ca[v]), sexo!="Global") %>% 
+  ggplot(aes(x=encuesta, y=(col*100), ymin=(col_low*100), ymax=(col_upp*100), color=as.factor(education_3), linetype=as.factor(nombre_ccaa), group=interaction(education_3, nombre_ccaa)))+
+  geom_line(size=1.5)+
+  facet_grid(cols = vars(sexo))+
+  scale_y_continuous(breaks = c(10, 20, 40, 60, 100))+
+  scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
+  labs(x="", y="Prevalencia (95% IC)")+
+  scale_color_discrete(name="Nivel Educativo",
+                      labels=c("Bajo", "Medio", "Alto"))+
+  scale_linetype_manual(values = c("España" = "dashed",
+                                   "Andalucía" = "solid",
+                                   "Aragón" = "solid",
+                                   "Principado de Asturias" = "solid", 
+                                   "Illes Balears" = "solid", 
+                                   "Canarias" = "solid", 
+                                   "Cantabria" = "solid", 
+                                   "Castilla y León" = "solid", 
+                                   "Castilla-La Mancha" = "solid", 
+                                   "Cataluña" = "solid", 
+                                   "Comunitat Valenciana" = "solid", 
+                                   "Extremadura" = "solid", 
+                                   "Galicia" = "solid", 
+                                   "La Rioja" = "solid", 
+                                   "Comunidad de Madrid" = "solid",
+                                   "Región de Murcia" = "solid", 
+                                   "Comunidad Foral de Navarra" = "solid", 
+                                   "País Vasco" = "solid"),
+                        name="Nivel Territorial")+
+  theme_bw()+
+  theme(axis.text=element_text(size=15, color="black"),
+        axis.title=element_text(size=15, face="bold", color="black"),
+        strip.text = element_text(size=20, face="bold", color="black"),
+        legend.text=element_text(size=20, color="black"),
+        legend.title = element_text(size=20, color="black", face="bold"),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        axis.text.x = element_text(color="black", size=12),
+        axis.text.y = element_text(color="black", size=12),
+        legend.position="bottom",
+        legend.key.size = unit(3, "line"),         legend.box="vertical")+
+  labs( title = "Prevalencia de hipercolesterolemia por nivel educativo en el período 2003-2020")
+
+fig_10
+
+```
+
+## Desigualdades población total
+
+```{r, echo=F}
+
+  fig_11 <-  
+  rii %>%
+  filter(fr=="col", (nombre_ccaa == nombre_ca[1]  | nombre_ccaa == nombre_ca[v]), sexo=="Global") %>% 
+  ggplot(aes(x=as.numeric(encuesta), y=rii, ymin=rii_infci, ymax=rii_supci), linetype=as.factor(nombre_ccaa), group=nombre_ccaa) +
+  geom_hline(yintercept = 1, lty=2)+
+  geom_ribbon(alpha=0.07, aes(fill=nombre_ccaa))+
+  facet_grid(cols = vars(sexo))+
+  geom_line(aes(color=nombre_ccaa, linetype=nombre_ccaa), size=1.5)+
+  scale_y_continuous(trans="log",
+                     breaks=c(0, 1, 1.5, 2, 4, 8, 16, 32, 64))+
+  scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
+  labs(x="", y="RII (95% CI)")+
+  scale_color_manual(values=c("España" =  "dimgray",
+                             "Andalucía" = "#CC0033", 
+                             "Aragón" = "#CC0033", 
+                             "Principado de Asturias" = "#CC0033", 
+                             "Illes Balears" = "#CC0033", 
+                             "Canarias" = "#CC0033", 
+                             "Cantabria" = "#CC0033", 
+                             "Castilla y León" = "#CC0033", 
+                             "Castilla-La Mancha" = "#CC0033", 
+                             "Cataluña" = "#CC0033", 
+                             "Comunitat Valenciana" = "#CC0033", 
+                             "Extremadura" = "#CC0033", 
+                             "Galicia" = "#CC0033", 
+                             "La Rioja" = "#CC0033", 
+                             "Comunidad de Madrid" = "#CC0033",
+                             "Región de Murcia" = "#CC0033", 
+                             "Comunidad Foral de Navarra" = "#CC0033", 
+                             "País Vasco" = "#CC0033"),
+                     guide="none")+
+  scale_fill_manual(values=c("España" =  "dimgray",
+                             "Andalucía" = "#CC0033", 
+                             "Aragón" = "#CC0033", 
+                             "Principado de Asturias" = "#CC0033", 
+                             "Illes Balears" = "#CC0033", 
+                             "Canarias" = "#CC0033", 
+                             "Cantabria" = "#CC0033", 
+                             "Castilla y León" = "#CC0033", 
+                             "Castilla-La Mancha" = "#CC0033", 
+                             "Cataluña" = "#CC0033", 
+                             "Comunitat Valenciana" = "#CC0033", 
+                             "Extremadura" = "#CC0033", 
+                             "Galicia" = "#CC0033", 
+                             "La Rioja" = "#CC0033", 
+                             "Comunidad de Madrid" = "#CC0033",
+                             "Región de Murcia" = "#CC0033", 
+                             "Comunidad Foral de Navarra" = "#CC0033", 
+                             "País Vasco" = "#CC0033"),
+                    guide="none")+
+  scale_linetype_manual(values = c("España" = "dashed",
+                                   "Andalucía" = "solid", 
+                                   "Aragón" = "solid", 
+                                   "Principado de Asturias" = "solid", 
+                                   "Illes Balears" = "solid", 
+                                   "Canarias" = "solid", 
+                                   "Cantabria" = "solid", 
+                                   "Castilla y León" = "solid", 
+                                   "Castilla-La Mancha" = "solid", 
+                                   "Cataluña" = "solid", 
+                                   "Comunitat Valenciana" = "solid", 
+                                   "Extremadura" = "solid", 
+                                   "Galicia" = "solid", 
+                                   "La Rioja" = "solid", 
+                                   "Comunidad de Madrid" = "solid",
+                                   "Región de Murcia" = "solid", 
+                                   "Comunidad Foral de Navarra" = "solid", 
+                                   "País Vasco" = "solid"),
+                        name="Nivel Territorial")+
+  theme_bw()+
+  theme(axis.text=element_text(size=15, color="black"),
+        axis.title=element_text(size=15, face="bold", color="black"),
+        strip.text = element_text(size=20, face="bold", color="black"),
+        legend.text=element_text(size=20, color="black"),
+        legend.title=element_text(size=20, color="black", face="bold"),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        axis.text.x = element_text(color="black", size=12),
+        axis.text.y = element_text(color="black", size=12),
+        legend.position="bottom",
+        legend.key.size=unit(3, "line"))+
+  labs( title = "Índice Relativo de Desigualdad (RII) en hipercolesterolemia en el período 2003-2020")
+
+fig_11
+
+
+```
+
+## Desigualdades por sexo
+
+```{r, echo=F}
+
+  fig_12 <-  
+  rii %>%
+  filter(fr=="col", (nombre_ccaa == nombre_ca[1]  | nombre_ccaa == nombre_ca[v]), sexo!="Global") %>% 
+  ggplot(aes(x=as.numeric(encuesta), y=rii, ymin=rii_infci, ymax=rii_supci), linetype=as.factor(nombre_ccaa), group=nombre_ccaa) +
+  geom_hline(yintercept = 1, lty=2)+
+  geom_ribbon(alpha=0.07, aes(fill=nombre_ccaa))+
+  facet_grid(cols = vars(sexo))+
+  geom_line(aes(color=nombre_ccaa, linetype=nombre_ccaa), size=1.5)+
+  scale_y_continuous(trans="log",
+                     breaks=c(0, 1, 1.5, 2, 4, 8, 16, 32, 64))+
+  scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
+  labs(x="", y="RII (95% CI)")+
+  scale_color_manual(values=c("España" =  "dimgray",
+                             "Andalucía" = "#CC0033", 
+                             "Aragón" = "#CC0033", 
+                             "Principado de Asturias" = "#CC0033", 
+                             "Illes Balears" = "#CC0033", 
+                             "Canarias" = "#CC0033", 
+                             "Cantabria" = "#CC0033", 
+                             "Castilla y León" = "#CC0033", 
+                             "Castilla-La Mancha" = "#CC0033", 
+                             "Cataluña" = "#CC0033", 
+                             "Comunitat Valenciana" = "#CC0033", 
+                             "Extremadura" = "#CC0033", 
+                             "Galicia" = "#CC0033", 
+                             "La Rioja" = "#CC0033", 
+                             "Comunidad de Madrid" = "#CC0033",
+                             "Región de Murcia" = "#CC0033", 
+                             "Comunidad Foral de Navarra" = "#CC0033", 
+                             "País Vasco" = "#CC0033"),
+                     guide="none")+
+  scale_fill_manual(values=c("España" =  "dimgray",
+                             "Andalucía" = "#CC0033", 
+                             "Aragón" = "#CC0033", 
+                             "Principado de Asturias" = "#CC0033", 
+                             "Illes Balears" = "#CC0033", 
+                             "Canarias" = "#CC0033", 
+                             "Cantabria" = "#CC0033", 
+                             "Castilla y León" = "#CC0033", 
+                             "Castilla-La Mancha" = "#CC0033", 
+                             "Cataluña" = "#CC0033", 
+                             "Comunitat Valenciana" = "#CC0033", 
+                             "Extremadura" = "#CC0033", 
+                             "Galicia" = "#CC0033", 
+                             "La Rioja" = "#CC0033", 
+                             "Comunidad de Madrid" = "#CC0033",
+                             "Región de Murcia" = "#CC0033", 
+                             "Comunidad Foral de Navarra" = "#CC0033", 
+                             "País Vasco" = "#CC0033"),
+                    guide="none")+
+  scale_linetype_manual(values = c("España" = "dashed",
+                                   "Andalucía" = "solid", 
+                                   "Aragón" = "solid", 
+                                   "Principado de Asturias" = "solid", 
+                                   "Illes Balears" = "solid", 
+                                   "Canarias" = "solid", 
+                                   "Cantabria" = "solid", 
+                                   "Castilla y León" = "solid", 
+                                   "Castilla-La Mancha" = "solid", 
+                                   "Cataluña" = "solid", 
+                                   "Comunitat Valenciana" = "solid", 
+                                   "Extremadura" = "solid", 
+                                   "Galicia" = "solid", 
+                                   "La Rioja" = "solid", 
+                                   "Comunidad de Madrid" = "solid",
+                                   "Región de Murcia" = "solid", 
+                                   "Comunidad Foral de Navarra" = "solid", 
+                                   "País Vasco" = "solid"),
+                        name="Nivel Territorial")+
+  theme_bw()+
+  theme(axis.text=element_text(size=15, color="black"),
+        axis.title=element_text(size=15, face="bold", color="black"),
+        strip.text = element_text(size=20, face="bold", color="black"),
+        legend.text=element_text(size=20, color="black"),
+        legend.title=element_text(size=20, color="black", face="bold"),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        axis.text.x = element_text(color="black", size=12),
+        axis.text.y = element_text(color="black", size=12),
+        legend.position="bottom",
+        legend.key.size=unit(3, "line"))+
+  labs( title = "Índice Relativo de Desigualdad (RII) en hipercolesterolemia en el período 2003-2020")
+
+fig_12
+
+
+```
+
+# Obesidad {.tabset .tabset-fade .tabset-pills}
+
+
+## Prevalencias población total
+
+
+```{r, echo=F}
+fig_13 <-  
+  prevalencias %>%
+  filter((nombre_ccaa == nombre_ca[1]  | nombre_ccaa == nombre_ca[v]), sexo=="Global") %>% 
+  ggplot(aes(x=encuesta, y=(obesity*100), ymin=(obesity_low*100), ymax=(obesity_upp*100), color=as.factor(education_3), linetype=as.factor(nombre_ccaa), group=interaction(education_3, nombre_ccaa)))+
+  geom_line(size=1.5)+
+  facet_grid(cols = vars(sexo))+
+  scale_y_continuous(breaks = c(10, 20, 40, 60, 100))+
+  scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
+  labs(x="", y="Prevalencia (95% IC)")+
+  scale_color_discrete(name="Nivel Educativo",
+                      labels=c("Bajo", "Medio", "Alto"))+
+  scale_linetype_manual(values = c("España" = "dashed",
+                                   "Andalucía" = "solid",
+                                   "Aragón" = "solid",
+                                   "Principado de Asturias" = "solid", 
+                                   "Illes Balears" = "solid", 
+                                   "Canarias" = "solid", 
+                                   "Cantabria" = "solid", 
+                                   "Castilla y León" = "solid", 
+                                   "Castilla-La Mancha" = "solid", 
+                                   "Cataluña" = "solid", 
+                                   "Comunitat Valenciana" = "solid", 
+                                   "Extremadura" = "solid", 
+                                   "Galicia" = "solid", 
+                                   "La Rioja" = "solid", 
+                                   "Comunidad de Madrid" = "solid",
+                                   "Región de Murcia" = "solid", 
+                                   "Comunidad Foral de Navarra" = "solid", 
+                                   "País Vasco" = "solid"),
+                        name="Nivel Territorial")+
+  theme_bw()+
+  theme(axis.text=element_text(size=15, color="black"),
+        axis.title=element_text(size=15, face="bold", color="black"),
+        strip.text = element_text(size=20, face="bold", color="black"),
+        legend.text=element_text(size=20, color="black"),
+        legend.title = element_text(size=20, color="black", face="bold"),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        axis.text.x = element_text(color="black", size=12),
+        axis.text.y = element_text(color="black", size=12),
+        legend.position="bottom",
+        legend.key.size = unit(3, "line"),         legend.box="vertical")+
+  labs( title = "Prevalencia de obesidad por nivel educativo en el período 2003-2020")
+
+fig_13
+
+```
+
+
+## Prevalencias por sexo
+
+
+```{r, echo=F}
+fig_14 <-  
+    prevalencias %>%
+  filter((nombre_ccaa == nombre_ca[1]  | nombre_ccaa == nombre_ca[v]), sexo!="Global") %>% 
+  ggplot(aes(x=encuesta, y=(obesity*100), ymin=(obesity_low*100), ymax=(obesity_upp*100), color=as.factor(education_3), linetype=as.factor(nombre_ccaa), group=interaction(education_3, nombre_ccaa)))+
+  geom_line(size=1.5)+
+  facet_grid(cols = vars(sexo))+
+  scale_y_continuous(breaks = c(10, 20, 40, 60, 100))+
+  scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
+  labs(x="", y="Prevalencia (95% IC)")+
+  scale_color_discrete(name="Nivel Educativo",
+                      labels=c("Bajo", "Medio", "Alto"))+
+  scale_linetype_manual(values = c("España" = "dashed",
+                                   "Andalucía" = "solid",
+                                   "Aragón" = "solid",
+                                   "Principado de Asturias" = "solid", 
+                                   "Illes Balears" = "solid", 
+                                   "Canarias" = "solid", 
+                                   "Cantabria" = "solid", 
+                                   "Castilla y León" = "solid", 
+                                   "Castilla-La Mancha" = "solid", 
+                                   "Cataluña" = "solid", 
+                                   "Comunitat Valenciana" = "solid", 
+                                   "Extremadura" = "solid", 
+                                   "Galicia" = "solid", 
+                                   "La Rioja" = "solid", 
+                                   "Comunidad de Madrid" = "solid",
+                                   "Región de Murcia" = "solid", 
+                                   "Comunidad Foral de Navarra" = "solid", 
+                                   "País Vasco" = "solid"),
+                        name="Nivel Territorial")+
+  theme_bw()+
+  theme(axis.text=element_text(size=15, color="black"),
+        axis.title=element_text(size=15, face="bold", color="black"),
+        strip.text = element_text(size=20, face="bold", color="black"),
+        legend.text=element_text(size=20, color="black"),
+        legend.title = element_text(size=20, color="black", face="bold"),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        axis.text.x = element_text(color="black", size=12),
+        axis.text.y = element_text(color="black", size=12),
+        legend.position="bottom",
+        legend.key.size = unit(3, "line"),         legend.box="vertical")+
+  labs( title = "Prevalencia de obesidad por nivel educativo en el período 2003-2020")
+
+fig_14
+
+```
+
+## Desigualdades población total
+
+```{r, echo=F}
+
+  fig_15 <-  
+  rii %>%
+  filter(fr=="obesity", (nombre_ccaa == nombre_ca[1]  | nombre_ccaa == nombre_ca[v]), sexo=="Global") %>% 
+  ggplot(aes(x=as.numeric(encuesta), y=rii, ymin=rii_infci, ymax=rii_supci), linetype=as.factor(nombre_ccaa), group=nombre_ccaa) +
+  geom_hline(yintercept = 1, lty=2)+
+  geom_ribbon(alpha=0.07, aes(fill=nombre_ccaa))+
+  facet_grid(cols = vars(sexo))+
+  geom_line(aes(color=nombre_ccaa, linetype=nombre_ccaa), size=1.5)+
+  scale_y_continuous(trans="log",
+                     breaks=c(0, 1, 1.5, 2, 4, 8, 16, 32, 64))+
+  scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
+  labs(x="", y="RII (95% CI)")+
+  scale_color_manual(values=c("España" =  "dimgray",
+                             "Andalucía" = "#CC0033", 
+                             "Aragón" = "#CC0033", 
+                             "Principado de Asturias" = "#CC0033", 
+                             "Illes Balears" = "#CC0033", 
+                             "Canarias" = "#CC0033", 
+                             "Cantabria" = "#CC0033", 
+                             "Castilla y León" = "#CC0033", 
+                             "Castilla-La Mancha" = "#CC0033", 
+                             "Cataluña" = "#CC0033", 
+                             "Comunitat Valenciana" = "#CC0033", 
+                             "Extremadura" = "#CC0033", 
+                             "Galicia" = "#CC0033", 
+                             "La Rioja" = "#CC0033", 
+                             "Comunidad de Madrid" = "#CC0033",
+                             "Región de Murcia" = "#CC0033", 
+                             "Comunidad Foral de Navarra" = "#CC0033", 
+                             "País Vasco" = "#CC0033"),
+                     guide="none")+
+  scale_fill_manual(values=c("España" =  "dimgray",
+                             "Andalucía" = "#CC0033", 
+                             "Aragón" = "#CC0033", 
+                             "Principado de Asturias" = "#CC0033", 
+                             "Illes Balears" = "#CC0033", 
+                             "Canarias" = "#CC0033", 
+                             "Cantabria" = "#CC0033", 
+                             "Castilla y León" = "#CC0033", 
+                             "Castilla-La Mancha" = "#CC0033", 
+                             "Cataluña" = "#CC0033", 
+                             "Comunitat Valenciana" = "#CC0033", 
+                             "Extremadura" = "#CC0033", 
+                             "Galicia" = "#CC0033", 
+                             "La Rioja" = "#CC0033", 
+                             "Comunidad de Madrid" = "#CC0033",
+                             "Región de Murcia" = "#CC0033", 
+                             "Comunidad Foral de Navarra" = "#CC0033", 
+                             "País Vasco" = "#CC0033"),
+                    guide="none")+
+  scale_linetype_manual(values = c("España" = "dashed",
+                                   "Andalucía" = "solid", 
+                                   "Aragón" = "solid", 
+                                   "Principado de Asturias" = "solid", 
+                                   "Illes Balears" = "solid", 
+                                   "Canarias" = "solid", 
+                                   "Cantabria" = "solid", 
+                                   "Castilla y León" = "solid", 
+                                   "Castilla-La Mancha" = "solid", 
+                                   "Cataluña" = "solid", 
+                                   "Comunitat Valenciana" = "solid", 
+                                   "Extremadura" = "solid", 
+                                   "Galicia" = "solid", 
+                                   "La Rioja" = "solid", 
+                                   "Comunidad de Madrid" = "solid",
+                                   "Región de Murcia" = "solid", 
+                                   "Comunidad Foral de Navarra" = "solid", 
+                                   "País Vasco" = "solid"),
+                        name="Nivel Territorial")+
+  theme_bw()+
+  theme(axis.text=element_text(size=15, color="black"),
+        axis.title=element_text(size=15, face="bold", color="black"),
+        strip.text = element_text(size=20, face="bold", color="black"),
+        legend.text=element_text(size=20, color="black"),
+        legend.title=element_text(size=20, color="black", face="bold"),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        axis.text.x = element_text(color="black", size=12),
+        axis.text.y = element_text(color="black", size=12),
+        legend.position="bottom",
+        legend.key.size=unit(3, "line"))+
+  labs( title = "Índice Relativo de Desigualdad (RII) en obesidad en el período 2003-2020")
+
+fig_15
+
+
+```
+
+## Desigualdades por sexo
+
+```{r, echo=F}
+
+  fig_16 <-  
+  rii %>%
+  filter(fr=="col", (nombre_ccaa == nombre_ca[1]  | nombre_ccaa == nombre_ca[v]), sexo!="Global") %>% 
+  ggplot(aes(x=as.numeric(encuesta), y=rii, ymin=rii_infci, ymax=rii_supci), linetype=as.factor(nombre_ccaa), group=nombre_ccaa) +
+  geom_hline(yintercept = 1, lty=2)+
+  geom_ribbon(alpha=0.07, aes(fill=nombre_ccaa))+
+  facet_grid(cols = vars(sexo))+
+  geom_line(aes(color=nombre_ccaa, linetype=nombre_ccaa), size=1.5)+
+  scale_y_continuous(trans="log",
+                     breaks=c(0, 1, 1.5, 2, 4, 8, 16, 32, 64))+
+  scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
+  labs(x="", y="RII (95% CI)")+
+  scale_color_manual(values=c("España" =  "dimgray",
+                             "Andalucía" = "#CC0033", 
+                             "Aragón" = "#CC0033", 
+                             "Principado de Asturias" = "#CC0033", 
+                             "Illes Balears" = "#CC0033", 
+                             "Canarias" = "#CC0033", 
+                             "Cantabria" = "#CC0033", 
+                             "Castilla y León" = "#CC0033", 
+                             "Castilla-La Mancha" = "#CC0033", 
+                             "Cataluña" = "#CC0033", 
+                             "Comunitat Valenciana" = "#CC0033", 
+                             "Extremadura" = "#CC0033", 
+                             "Galicia" = "#CC0033", 
+                             "La Rioja" = "#CC0033", 
+                             "Comunidad de Madrid" = "#CC0033",
+                             "Región de Murcia" = "#CC0033", 
+                             "Comunidad Foral de Navarra" = "#CC0033", 
+                             "País Vasco" = "#CC0033"),
+                     guide="none")+
+  scale_fill_manual(values=c("España" =  "dimgray",
+                             "Andalucía" = "#CC0033", 
+                             "Aragón" = "#CC0033", 
+                             "Principado de Asturias" = "#CC0033", 
+                             "Illes Balears" = "#CC0033", 
+                             "Canarias" = "#CC0033", 
+                             "Cantabria" = "#CC0033", 
+                             "Castilla y León" = "#CC0033", 
+                             "Castilla-La Mancha" = "#CC0033", 
+                             "Cataluña" = "#CC0033", 
+                             "Comunitat Valenciana" = "#CC0033", 
+                             "Extremadura" = "#CC0033", 
+                             "Galicia" = "#CC0033", 
+                             "La Rioja" = "#CC0033", 
+                             "Comunidad de Madrid" = "#CC0033",
+                             "Región de Murcia" = "#CC0033", 
+                             "Comunidad Foral de Navarra" = "#CC0033", 
+                             "País Vasco" = "#CC0033"),
+                    guide="none")+
+  scale_linetype_manual(values = c("España" = "dashed",
+                                   "Andalucía" = "solid", 
+                                   "Aragón" = "solid", 
+                                   "Principado de Asturias" = "solid", 
+                                   "Illes Balears" = "solid", 
+                                   "Canarias" = "solid", 
+                                   "Cantabria" = "solid", 
+                                   "Castilla y León" = "solid", 
+                                   "Castilla-La Mancha" = "solid", 
+                                   "Cataluña" = "solid", 
+                                   "Comunitat Valenciana" = "solid", 
+                                   "Extremadura" = "solid", 
+                                   "Galicia" = "solid", 
+                                   "La Rioja" = "solid", 
+                                   "Comunidad de Madrid" = "solid",
+                                   "Región de Murcia" = "solid", 
+                                   "Comunidad Foral de Navarra" = "solid", 
+                                   "País Vasco" = "solid"),
+                        name="Nivel Territorial")+
+  theme_bw()+
+  theme(axis.text=element_text(size=15, color="black"),
+        axis.title=element_text(size=15, face="bold", color="black"),
+        strip.text = element_text(size=20, face="bold", color="black"),
+        legend.text=element_text(size=20, color="black"),
+        legend.title=element_text(size=20, color="black", face="bold"),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        axis.text.x = element_text(color="black", size=12),
+        axis.text.y = element_text(color="black", size=12),
+        legend.position="bottom",
+        legend.key.size=unit(3, "line"))+
+  labs( title = "Índice Relativo de Desigualdad (RII) en obesidad en el período 2003-2020")
+
+fig_16
+
+
+```
+
+
+# Sedentarismo {.tabset .tabset-fade .tabset-pills}
+
+
+## Prevalencias población total
+
+
+```{r, echo=F}
+fig_17 <-  
+  prevalencias %>%
+  filter((nombre_ccaa == nombre_ca[1]  | nombre_ccaa == nombre_ca[v]), sexo=="Global") %>% 
+  ggplot(aes(x=encuesta, y=(Sedentarismo*100), ymin=(sedentarismo_low*100), ymax=(sedentarismo_upp*100), color=as.factor(education_3), linetype=as.factor(nombre_ccaa), group=interaction(education_3, nombre_ccaa)))+
+  geom_line(size=1.5)+
+  facet_grid(cols = vars(sexo))+
+  scale_y_continuous(breaks = c(10, 20, 40, 60, 100))+
+  scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
+  labs(x="", y="Prevalencia (95% IC)")+
+  scale_color_discrete(name="Nivel Educativo",
+                      labels=c("Bajo", "Medio", "Alto"))+
+  scale_linetype_manual(values = c("España" = "dashed",
+                                   "Andalucía" = "solid",
+                                   "Aragón" = "solid",
+                                   "Principado de Asturias" = "solid", 
+                                   "Illes Balears" = "solid", 
+                                   "Canarias" = "solid", 
+                                   "Cantabria" = "solid", 
+                                   "Castilla y León" = "solid", 
+                                   "Castilla-La Mancha" = "solid", 
+                                   "Cataluña" = "solid", 
+                                   "Comunitat Valenciana" = "solid", 
+                                   "Extremadura" = "solid", 
+                                   "Galicia" = "solid", 
+                                   "La Rioja" = "solid", 
+                                   "Comunidad de Madrid" = "solid",
+                                   "Región de Murcia" = "solid", 
+                                   "Comunidad Foral de Navarra" = "solid", 
+                                   "País Vasco" = "solid"),
+                        name="Nivel Territorial")+
+  theme_bw()+
+  theme(axis.text=element_text(size=15, color="black"),
+        axis.title=element_text(size=15, face="bold", color="black"),
+        strip.text = element_text(size=20, face="bold", color="black"),
+        legend.text=element_text(size=20, color="black"),
+        legend.title = element_text(size=20, color="black", face="bold"),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        axis.text.x = element_text(color="black", size=12),
+        axis.text.y = element_text(color="black", size=12),
+        legend.position="bottom",
+        legend.key.size = unit(3, "line"),         legend.box="vertical")+
+  labs( title = "Prevalencia de sedentarismo por nivel educativo en el período 2003-2020")
+
+fig_17
+
+```
+
+
+## Prevalencias por sexo
+
+
+```{r, echo=F}
+fig_18 <-  
+      prevalencias %>%
+  filter((nombre_ccaa == nombre_ca[1]  | nombre_ccaa == nombre_ca[v]), sexo!="Global") %>% 
+  ggplot(aes(x=encuesta, y=(Sedentarismo*100), ymin=(sedentarismo_low*100), ymax=(sedentarismo_upp*100), color=as.factor(education_3), linetype=as.factor(nombre_ccaa), group=interaction(education_3, nombre_ccaa)))+
+  geom_line(size=1.5)+
+  facet_grid(cols = vars(sexo))+
+  scale_y_continuous(breaks = c(10, 20, 40, 60, 100))+
+  scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
+  labs(x="", y="Prevalencia (95% IC)")+
+  scale_color_discrete(name="Nivel Educativo",
+                      labels=c("Bajo", "Medio", "Alto"))+
+  scale_linetype_manual(values = c("España" = "dashed",
+                                   "Andalucía" = "solid",
+                                   "Aragón" = "solid",
+                                   "Principado de Asturias" = "solid", 
+                                   "Illes Balears" = "solid", 
+                                   "Canarias" = "solid", 
+                                   "Cantabria" = "solid", 
+                                   "Castilla y León" = "solid", 
+                                   "Castilla-La Mancha" = "solid", 
+                                   "Cataluña" = "solid", 
+                                   "Comunitat Valenciana" = "solid", 
+                                   "Extremadura" = "solid", 
+                                   "Galicia" = "solid", 
+                                   "La Rioja" = "solid", 
+                                   "Comunidad de Madrid" = "solid",
+                                   "Región de Murcia" = "solid", 
+                                   "Comunidad Foral de Navarra" = "solid", 
+                                   "País Vasco" = "solid"),
+                        name="Nivel Territorial")+
+  theme_bw()+
+  theme(axis.text=element_text(size=15, color="black"),
+        axis.title=element_text(size=15, face="bold", color="black"),
+        strip.text = element_text(size=20, face="bold", color="black"),
+        legend.text=element_text(size=20, color="black"),
+        legend.title = element_text(size=20, color="black", face="bold"),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        axis.text.x = element_text(color="black", size=12),
+        axis.text.y = element_text(color="black", size=12),
+        legend.position="bottom",
+        legend.key.size = unit(3, "line"),         legend.box="vertical")+
+  labs( title = "Prevalencia de sedentarismo por nivel educativo en el período 2003-2020")
+
+fig_18
+
+```
+
+## Desigualdades población total
+
+```{r, echo=F}
+
+  fig_19 <-  
+  rii %>%
+  filter(fr=="sedentarismo", (nombre_ccaa == nombre_ca[1]  | nombre_ccaa == nombre_ca[v]), sexo=="Global") %>% 
+  ggplot(aes(x=as.numeric(encuesta), y=rii, ymin=rii_infci, ymax=rii_supci), linetype=as.factor(nombre_ccaa), group=nombre_ccaa) +
+  geom_hline(yintercept = 1, lty=2)+
+  geom_ribbon(alpha=0.07, aes(fill=nombre_ccaa))+
+  facet_grid(cols = vars(sexo))+
+  geom_line(aes(color=nombre_ccaa, linetype=nombre_ccaa), size=1.5)+
+  scale_y_continuous(trans="log",
+                     breaks=c(0, 1, 1.5, 2, 4, 8, 16, 32, 64))+
+  scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
+  labs(x="", y="RII (95% CI)")+
+  scale_color_manual(values=c("España" =  "dimgray",
+                             "Andalucía" = "#CC0033", 
+                             "Aragón" = "#CC0033", 
+                             "Principado de Asturias" = "#CC0033", 
+                             "Illes Balears" = "#CC0033", 
+                             "Canarias" = "#CC0033", 
+                             "Cantabria" = "#CC0033", 
+                             "Castilla y León" = "#CC0033", 
+                             "Castilla-La Mancha" = "#CC0033", 
+                             "Cataluña" = "#CC0033", 
+                             "Comunitat Valenciana" = "#CC0033", 
+                             "Extremadura" = "#CC0033", 
+                             "Galicia" = "#CC0033", 
+                             "La Rioja" = "#CC0033", 
+                             "Comunidad de Madrid" = "#CC0033",
+                             "Región de Murcia" = "#CC0033", 
+                             "Comunidad Foral de Navarra" = "#CC0033", 
+                             "País Vasco" = "#CC0033"),
+                     guide="none")+
+  scale_fill_manual(values=c("España" =  "dimgray",
+                             "Andalucía" = "#CC0033", 
+                             "Aragón" = "#CC0033", 
+                             "Principado de Asturias" = "#CC0033", 
+                             "Illes Balears" = "#CC0033", 
+                             "Canarias" = "#CC0033", 
+                             "Cantabria" = "#CC0033", 
+                             "Castilla y León" = "#CC0033", 
+                             "Castilla-La Mancha" = "#CC0033", 
+                             "Cataluña" = "#CC0033", 
+                             "Comunitat Valenciana" = "#CC0033", 
+                             "Extremadura" = "#CC0033", 
+                             "Galicia" = "#CC0033", 
+                             "La Rioja" = "#CC0033", 
+                             "Comunidad de Madrid" = "#CC0033",
+                             "Región de Murcia" = "#CC0033", 
+                             "Comunidad Foral de Navarra" = "#CC0033", 
+                             "País Vasco" = "#CC0033"),
+                    guide="none")+
+  scale_linetype_manual(values = c("España" = "dashed",
+                                   "Andalucía" = "solid", 
+                                   "Aragón" = "solid", 
+                                   "Principado de Asturias" = "solid", 
+                                   "Illes Balears" = "solid", 
+                                   "Canarias" = "solid", 
+                                   "Cantabria" = "solid", 
+                                   "Castilla y León" = "solid", 
+                                   "Castilla-La Mancha" = "solid", 
+                                   "Cataluña" = "solid", 
+                                   "Comunitat Valenciana" = "solid", 
+                                   "Extremadura" = "solid", 
+                                   "Galicia" = "solid", 
+                                   "La Rioja" = "solid", 
+                                   "Comunidad de Madrid" = "solid",
+                                   "Región de Murcia" = "solid", 
+                                   "Comunidad Foral de Navarra" = "solid", 
+                                   "País Vasco" = "solid"),
+                        name="Nivel Territorial")+
+  theme_bw()+
+  theme(axis.text=element_text(size=15, color="black"),
+        axis.title=element_text(size=15, face="bold", color="black"),
+        strip.text = element_text(size=20, face="bold", color="black"),
+        legend.text=element_text(size=20, color="black"),
+        legend.title=element_text(size=20, color="black", face="bold"),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        axis.text.x = element_text(color="black", size=12),
+        axis.text.y = element_text(color="black", size=12),
+        legend.position="bottom",
+        legend.key.size=unit(3, "line"))+
+  labs( title = "Índice Relativo de Desigualdad (RII) en sedentarismo en el período 2003-2020")
+
+fig_19
+
+
+```
+
+## Desigualdades por sexo
+
+```{r, echo=F}
+
+  fig_20 <-  
+  rii %>%
+  filter(fr=="sedentarismo", (nombre_ccaa == nombre_ca[1]  | nombre_ccaa == nombre_ca[v]), sexo!="Global") %>% 
+  ggplot(aes(x=as.numeric(encuesta), y=rii, ymin=rii_infci, ymax=rii_supci), linetype=as.factor(nombre_ccaa), group=nombre_ccaa) +
+  geom_hline(yintercept = 1, lty=2)+
+  geom_ribbon(alpha=0.07, aes(fill=nombre_ccaa))+
+  facet_grid(cols = vars(sexo))+
+  geom_line(aes(color=nombre_ccaa, linetype=nombre_ccaa), size=1.5)+
+  scale_y_continuous(trans="log",
+                     breaks=c(0, 1, 1.5, 2, 4, 8, 16, 32, 64))+
+  scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
+  labs(x="", y="RII (95% CI)")+
+  scale_color_manual(values=c("España" =  "dimgray",
+                             "Andalucía" = "#CC0033", 
+                             "Aragón" = "#CC0033", 
+                             "Principado de Asturias" = "#CC0033", 
+                             "Illes Balears" = "#CC0033", 
+                             "Canarias" = "#CC0033", 
+                             "Cantabria" = "#CC0033", 
+                             "Castilla y León" = "#CC0033", 
+                             "Castilla-La Mancha" = "#CC0033", 
+                             "Cataluña" = "#CC0033", 
+                             "Comunitat Valenciana" = "#CC0033", 
+                             "Extremadura" = "#CC0033", 
+                             "Galicia" = "#CC0033", 
+                             "La Rioja" = "#CC0033", 
+                             "Comunidad de Madrid" = "#CC0033",
+                             "Región de Murcia" = "#CC0033", 
+                             "Comunidad Foral de Navarra" = "#CC0033", 
+                             "País Vasco" = "#CC0033"),
+                     guide="none")+
+  scale_fill_manual(values=c("España" =  "dimgray",
+                             "Andalucía" = "#CC0033", 
+                             "Aragón" = "#CC0033", 
+                             "Principado de Asturias" = "#CC0033", 
+                             "Illes Balears" = "#CC0033", 
+                             "Canarias" = "#CC0033", 
+                             "Cantabria" = "#CC0033", 
+                             "Castilla y León" = "#CC0033", 
+                             "Castilla-La Mancha" = "#CC0033", 
+                             "Cataluña" = "#CC0033", 
+                             "Comunitat Valenciana" = "#CC0033", 
+                             "Extremadura" = "#CC0033", 
+                             "Galicia" = "#CC0033", 
+                             "La Rioja" = "#CC0033", 
+                             "Comunidad de Madrid" = "#CC0033",
+                             "Región de Murcia" = "#CC0033", 
+                             "Comunidad Foral de Navarra" = "#CC0033", 
+                             "País Vasco" = "#CC0033"),
+                    guide="none")+
+  scale_linetype_manual(values = c("España" = "dashed",
+                                   "Andalucía" = "solid", 
+                                   "Aragón" = "solid", 
+                                   "Principado de Asturias" = "solid", 
+                                   "Illes Balears" = "solid", 
+                                   "Canarias" = "solid", 
+                                   "Cantabria" = "solid", 
+                                   "Castilla y León" = "solid", 
+                                   "Castilla-La Mancha" = "solid", 
+                                   "Cataluña" = "solid", 
+                                   "Comunitat Valenciana" = "solid", 
+                                   "Extremadura" = "solid", 
+                                   "Galicia" = "solid", 
+                                   "La Rioja" = "solid", 
+                                   "Comunidad de Madrid" = "solid",
+                                   "Región de Murcia" = "solid", 
+                                   "Comunidad Foral de Navarra" = "solid", 
+                                   "País Vasco" = "solid"),
+                        name="Nivel Territorial")+
+  theme_bw()+
+  theme(axis.text=element_text(size=15, color="black"),
+        axis.title=element_text(size=15, face="bold", color="black"),
+        strip.text = element_text(size=20, face="bold", color="black"),
+        legend.text=element_text(size=20, color="black"),
+        legend.title=element_text(size=20, color="black", face="bold"),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        axis.text.x = element_text(color="black", size=12),
+        axis.text.y = element_text(color="black", size=12),
+        legend.position="bottom",
+        legend.key.size=unit(3, "line"))+
+  labs( title = "Índice Relativo de Desigualdad (RII) en sedentarismo en el período 2003-2020")
+
+fig_20
+
+
+```
+
+
+# Tabaquismo {.tabset .tabset-fade .tabset-pills}
+
+
+## Prevalencias población total
+
+
+```{r, echo=F}
+fig_21 <-  
+  prevalencias %>%
+  filter((nombre_ccaa == nombre_ca[1]  | nombre_ccaa == nombre_ca[v]), sexo=="Global") %>% 
+  ggplot(aes(x=encuesta, y=(smoking*100), ymin=(smoking_low*100), ymax=(smoking_upp*100), color=as.factor(education_3), linetype=as.factor(nombre_ccaa), group=interaction(education_3, nombre_ccaa)))+
+  geom_line(size=1.5)+
+  facet_grid(cols = vars(sexo))+
+  scale_y_continuous(breaks = c(10, 20, 40, 60, 100))+
+  scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
+  labs(x="", y="Prevalencia (95% IC)")+
+  scale_color_discrete(name="Nivel Educativo",
+                      labels=c("Bajo", "Medio", "Alto"))+
+  scale_linetype_manual(values = c("España" = "dashed",
+                                   "Andalucía" = "solid",
+                                   "Aragón" = "solid",
+                                   "Principado de Asturias" = "solid", 
+                                   "Illes Balears" = "solid", 
+                                   "Canarias" = "solid", 
+                                   "Cantabria" = "solid", 
+                                   "Castilla y León" = "solid", 
+                                   "Castilla-La Mancha" = "solid", 
+                                   "Cataluña" = "solid", 
+                                   "Comunitat Valenciana" = "solid", 
+                                   "Extremadura" = "solid", 
+                                   "Galicia" = "solid", 
+                                   "La Rioja" = "solid", 
+                                   "Comunidad de Madrid" = "solid",
+                                   "Región de Murcia" = "solid", 
+                                   "Comunidad Foral de Navarra" = "solid", 
+                                   "País Vasco" = "solid"),
+                        name="Nivel Territorial")+
+  theme_bw()+
+  theme(axis.text=element_text(size=15, color="black"),
+        axis.title=element_text(size=15, face="bold", color="black"),
+        strip.text = element_text(size=20, face="bold", color="black"),
+        legend.text=element_text(size=20, color="black"),
+        legend.title = element_text(size=20, color="black", face="bold"),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        axis.text.x = element_text(color="black", size=12),
+        axis.text.y = element_text(color="black", size=12),
+        legend.position="bottom",
+        legend.key.size = unit(3, "line"),         legend.box="vertical")+
+  labs( title = "Prevalencia de tabaquismo por nivel educativo en el período 2003-2020")
+
+fig_21
+
+```
+
+
+## Prevalencias por sexo
+
+
+```{r, echo=F}
+fig_22 <-  
+        prevalencias %>%
+  filter((nombre_ccaa == nombre_ca[1]  | nombre_ccaa == nombre_ca[v]), sexo!="Global") %>% 
+  ggplot(aes(x=encuesta, y=(smoking*100), ymin=(smoking_low*100), ymax=(smoking_upp*100), color=as.factor(education_3), linetype=as.factor(nombre_ccaa), group=interaction(education_3, nombre_ccaa)))+
+  geom_line(size=1.5)+
+  facet_grid(cols = vars(sexo))+
+  scale_y_continuous(breaks = c(10, 20, 40, 60, 100))+
+  scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
+  labs(x="", y="Prevalencia (95% IC)")+
+  scale_color_discrete(name="Nivel Educativo",
+                      labels=c("Bajo", "Medio", "Alto"))+
+  scale_linetype_manual(values = c("España" = "dashed",
+                                   "Andalucía" = "solid",
+                                   "Aragón" = "solid",
+                                   "Principado de Asturias" = "solid", 
+                                   "Illes Balears" = "solid", 
+                                   "Canarias" = "solid", 
+                                   "Cantabria" = "solid", 
+                                   "Castilla y León" = "solid", 
+                                   "Castilla-La Mancha" = "solid", 
+                                   "Cataluña" = "solid", 
+                                   "Comunitat Valenciana" = "solid", 
+                                   "Extremadura" = "solid", 
+                                   "Galicia" = "solid", 
+                                   "La Rioja" = "solid", 
+                                   "Comunidad de Madrid" = "solid",
+                                   "Región de Murcia" = "solid", 
+                                   "Comunidad Foral de Navarra" = "solid", 
+                                   "País Vasco" = "solid"),
+                        name="Nivel Territorial")+
+  theme_bw()+
+  theme(axis.text=element_text(size=15, color="black"),
+        axis.title=element_text(size=15, face="bold", color="black"),
+        strip.text = element_text(size=20, face="bold", color="black"),
+        legend.text=element_text(size=20, color="black"),
+        legend.title = element_text(size=20, color="black", face="bold"),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        axis.text.x = element_text(color="black", size=12),
+        axis.text.y = element_text(color="black", size=12),
+        legend.position="bottom",
+        legend.key.size = unit(3, "line"),         legend.box="vertical")+
+  labs( title = "Prevalencia de tabaquismo por nivel educativo en el período 2003-2020")
+
+fig_22
+
+```
+
+## Desigualdades población total
+
+```{r, echo=F}
+
+  fig_23 <-  
+  rii %>%
+  filter(fr=="smoking", (nombre_ccaa == nombre_ca[1]  | nombre_ccaa == nombre_ca[v]), sexo=="Global") %>% 
+  ggplot(aes(x=as.numeric(encuesta), y=rii, ymin=rii_infci, ymax=rii_supci), linetype=as.factor(nombre_ccaa), group=nombre_ccaa) +
+  geom_hline(yintercept = 1, lty=2)+
+  geom_ribbon(alpha=0.07, aes(fill=nombre_ccaa))+
+  facet_grid(cols = vars(sexo))+
+  geom_line(aes(color=nombre_ccaa, linetype=nombre_ccaa), size=1.5)+
+  scale_y_continuous(trans="log",
+                     breaks=c(0, 1, 1.5, 2, 4, 8, 16, 32, 64))+
+  scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
+  labs(x="", y="RII (95% CI)")+
+  scale_color_manual(values=c("España" =  "dimgray",
+                             "Andalucía" = "#CC0033", 
+                             "Aragón" = "#CC0033", 
+                             "Principado de Asturias" = "#CC0033", 
+                             "Illes Balears" = "#CC0033", 
+                             "Canarias" = "#CC0033", 
+                             "Cantabria" = "#CC0033", 
+                             "Castilla y León" = "#CC0033", 
+                             "Castilla-La Mancha" = "#CC0033", 
+                             "Cataluña" = "#CC0033", 
+                             "Comunitat Valenciana" = "#CC0033", 
+                             "Extremadura" = "#CC0033", 
+                             "Galicia" = "#CC0033", 
+                             "La Rioja" = "#CC0033", 
+                             "Comunidad de Madrid" = "#CC0033",
+                             "Región de Murcia" = "#CC0033", 
+                             "Comunidad Foral de Navarra" = "#CC0033", 
+                             "País Vasco" = "#CC0033"),
+                     guide="none")+
+  scale_fill_manual(values=c("España" =  "dimgray",
+                             "Andalucía" = "#CC0033", 
+                             "Aragón" = "#CC0033", 
+                             "Principado de Asturias" = "#CC0033", 
+                             "Illes Balears" = "#CC0033", 
+                             "Canarias" = "#CC0033", 
+                             "Cantabria" = "#CC0033", 
+                             "Castilla y León" = "#CC0033", 
+                             "Castilla-La Mancha" = "#CC0033", 
+                             "Cataluña" = "#CC0033", 
+                             "Comunitat Valenciana" = "#CC0033", 
+                             "Extremadura" = "#CC0033", 
+                             "Galicia" = "#CC0033", 
+                             "La Rioja" = "#CC0033", 
+                             "Comunidad de Madrid" = "#CC0033",
+                             "Región de Murcia" = "#CC0033", 
+                             "Comunidad Foral de Navarra" = "#CC0033", 
+                             "País Vasco" = "#CC0033"),
+                    guide="none")+
+  scale_linetype_manual(values = c("España" = "dashed",
+                                   "Andalucía" = "solid", 
+                                   "Aragón" = "solid", 
+                                   "Principado de Asturias" = "solid", 
+                                   "Illes Balears" = "solid", 
+                                   "Canarias" = "solid", 
+                                   "Cantabria" = "solid", 
+                                   "Castilla y León" = "solid", 
+                                   "Castilla-La Mancha" = "solid", 
+                                   "Cataluña" = "solid", 
+                                   "Comunitat Valenciana" = "solid", 
+                                   "Extremadura" = "solid", 
+                                   "Galicia" = "solid", 
+                                   "La Rioja" = "solid", 
+                                   "Comunidad de Madrid" = "solid",
+                                   "Región de Murcia" = "solid", 
+                                   "Comunidad Foral de Navarra" = "solid", 
+                                   "País Vasco" = "solid"),
+                        name="Nivel Territorial")+
+  theme_bw()+
+  theme(axis.text=element_text(size=15, color="black"),
+        axis.title=element_text(size=15, face="bold", color="black"),
+        strip.text = element_text(size=20, face="bold", color="black"),
+        legend.text=element_text(size=20, color="black"),
+        legend.title=element_text(size=20, color="black", face="bold"),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        axis.text.x = element_text(color="black", size=12),
+        axis.text.y = element_text(color="black", size=12),
+        legend.position="bottom",
+        legend.key.size=unit(3, "line"))+
+  labs( title = "Índice Relativo de Desigualdad (RII) en tabaquismo en el período 2003-2020")
+
+fig_23
+
+
+```
+
+## Desigualdades por sexo
+
+```{r, echo=F}
+
+  fig_24 <-  
+   rii %>%
+  filter(fr=="smoking", (nombre_ccaa == nombre_ca[1]  | nombre_ccaa == nombre_ca[v]), sexo!="Global") %>% 
+  ggplot(aes(x=as.numeric(encuesta), y=rii, ymin=rii_infci, ymax=rii_supci), linetype=as.factor(nombre_ccaa), group=nombre_ccaa) +
+  geom_hline(yintercept = 1, lty=2)+
+  geom_ribbon(alpha=0.07, aes(fill=nombre_ccaa))+
+  facet_grid(cols = vars(sexo))+
+  geom_line(aes(color=nombre_ccaa, linetype=nombre_ccaa), size=1.5)+
+  scale_y_continuous(trans="log",
+                     breaks=c(0, 1, 1.5, 2, 4, 8, 16, 32, 64))+
+  scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
+  labs(x="", y="RII (95% CI)")+
+  scale_color_manual(values=c("España" =  "dimgray",
+                             "Andalucía" = "#CC0033", 
+                             "Aragón" = "#CC0033", 
+                             "Principado de Asturias" = "#CC0033", 
+                             "Illes Balears" = "#CC0033", 
+                             "Canarias" = "#CC0033", 
+                             "Cantabria" = "#CC0033", 
+                             "Castilla y León" = "#CC0033", 
+                             "Castilla-La Mancha" = "#CC0033", 
+                             "Cataluña" = "#CC0033", 
+                             "Comunitat Valenciana" = "#CC0033", 
+                             "Extremadura" = "#CC0033", 
+                             "Galicia" = "#CC0033", 
+                             "La Rioja" = "#CC0033", 
+                             "Comunidad de Madrid" = "#CC0033",
+                             "Región de Murcia" = "#CC0033", 
+                             "Comunidad Foral de Navarra" = "#CC0033", 
+                             "País Vasco" = "#CC0033"),
+                     guide="none")+
+  scale_fill_manual(values=c("España" =  "dimgray",
+                             "Andalucía" = "#CC0033", 
+                             "Aragón" = "#CC0033", 
+                             "Principado de Asturias" = "#CC0033", 
+                             "Illes Balears" = "#CC0033", 
+                             "Canarias" = "#CC0033", 
+                             "Cantabria" = "#CC0033", 
+                             "Castilla y León" = "#CC0033", 
+                             "Castilla-La Mancha" = "#CC0033", 
+                             "Cataluña" = "#CC0033", 
+                             "Comunitat Valenciana" = "#CC0033", 
+                             "Extremadura" = "#CC0033", 
+                             "Galicia" = "#CC0033", 
+                             "La Rioja" = "#CC0033", 
+                             "Comunidad de Madrid" = "#CC0033",
+                             "Región de Murcia" = "#CC0033", 
+                             "Comunidad Foral de Navarra" = "#CC0033", 
+                             "País Vasco" = "#CC0033"),
+                    guide="none")+
+  scale_linetype_manual(values = c("España" = "dashed",
+                                   "Andalucía" = "solid", 
+                                   "Aragón" = "solid", 
+                                   "Principado de Asturias" = "solid", 
+                                   "Illes Balears" = "solid", 
+                                   "Canarias" = "solid", 
+                                   "Cantabria" = "solid", 
+                                   "Castilla y León" = "solid", 
+                                   "Castilla-La Mancha" = "solid", 
+                                   "Cataluña" = "solid", 
+                                   "Comunitat Valenciana" = "solid", 
+                                   "Extremadura" = "solid", 
+                                   "Galicia" = "solid", 
+                                   "La Rioja" = "solid", 
+                                   "Comunidad de Madrid" = "solid",
+                                   "Región de Murcia" = "solid", 
+                                   "Comunidad Foral de Navarra" = "solid", 
+                                   "País Vasco" = "solid"),
+                        name="Nivel Territorial")+
+  theme_bw()+
+  theme(axis.text=element_text(size=15, color="black"),
+        axis.title=element_text(size=15, face="bold", color="black"),
+        strip.text = element_text(size=20, face="bold", color="black"),
+        legend.text=element_text(size=20, color="black"),
+        legend.title=element_text(size=20, color="black", face="bold"),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        axis.text.x = element_text(color="black", size=12),
+        axis.text.y = element_text(color="black", size=12),
+        legend.position="bottom",
+        legend.key.size=unit(3, "line"))+
+  labs( title = "Índice Relativo de Desigualdad (RII) en tabaquismo en el período 2003-2020")
+
+fig_24
+
+
+```
+
+
+# Consumo de alcohol {.tabset .tabset-fade .tabset-pills}
+
+
+## Prevalencias población total
+
+
+```{r, echo=F}
+fig_25 <-  
+  prevalencias %>%
+  filter((nombre_ccaa == nombre_ca[1]  | nombre_ccaa == nombre_ca[v]), sexo=="Global") %>% 
+  ggplot(aes(x=encuesta, y=(alcohol*100), ymin=(alcohol_low*100), ymax=(alcohol_upp*100), color=as.factor(education_3), linetype=as.factor(nombre_ccaa), group=interaction(education_3, nombre_ccaa)))+
+  geom_line(size=1.5)+
+  facet_grid(cols = vars(sexo))+
+  scale_y_continuous(breaks = c(10, 20, 40, 60, 100))+
+  scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
+  labs(x="", y="Prevalencia (95% IC)")+
+  scale_color_discrete(name="Nivel Educativo",
+                      labels=c("Bajo", "Medio", "Alto"))+
+  scale_linetype_manual(values = c("España" = "dashed",
+                                   "Andalucía" = "solid",
+                                   "Aragón" = "solid",
+                                   "Principado de Asturias" = "solid", 
+                                   "Illes Balears" = "solid", 
+                                   "Canarias" = "solid", 
+                                   "Cantabria" = "solid", 
+                                   "Castilla y León" = "solid", 
+                                   "Castilla-La Mancha" = "solid", 
+                                   "Cataluña" = "solid", 
+                                   "Comunitat Valenciana" = "solid", 
+                                   "Extremadura" = "solid", 
+                                   "Galicia" = "solid", 
+                                   "La Rioja" = "solid", 
+                                   "Comunidad de Madrid" = "solid",
+                                   "Región de Murcia" = "solid", 
+                                   "Comunidad Foral de Navarra" = "solid", 
+                                   "País Vasco" = "solid"),
+                        name="Nivel Territorial")+
+  theme_bw()+
+  theme(axis.text=element_text(size=15, color="black"),
+        axis.title=element_text(size=15, face="bold", color="black"),
+        strip.text = element_text(size=20, face="bold", color="black"),
+        legend.text=element_text(size=20, color="black"),
+        legend.title = element_text(size=20, color="black", face="bold"),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        axis.text.x = element_text(color="black", size=12),
+        axis.text.y = element_text(color="black", size=12),
+        legend.position="bottom",
+        legend.key.size = unit(3, "line"),         legend.box="vertical")+
+  labs( title = "Prevalencia de consumo de alcohol por nivel educativo en el período 2003-2020")
+
+fig_25
+
+```
+
+
+## Prevalencias por sexo
+
+
+```{r, echo=F}
+fig_26 <-  
+    prevalencias %>%
+  filter((nombre_ccaa == nombre_ca[1]  | nombre_ccaa == nombre_ca[v]), sexo!="Global") %>% 
+  ggplot(aes(x=encuesta, y=(alcohol*100), ymin=(alcohol_low*100), ymax=(alcohol_upp*100), color=as.factor(education_3), linetype=as.factor(nombre_ccaa), group=interaction(education_3, nombre_ccaa)))+
+  geom_line(size=1.5)+
+  facet_grid(cols = vars(sexo))+
+  scale_y_continuous(breaks = c(10, 20, 40, 60, 100))+
+  scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
+  labs(x="", y="Prevalencia (95% IC)")+
+  scale_color_discrete(name="Nivel Educativo",
+                      labels=c("Bajo", "Medio", "Alto"))+
+  scale_linetype_manual(values = c("España" = "dashed",
+                                   "Andalucía" = "solid",
+                                   "Aragón" = "solid",
+                                   "Principado de Asturias" = "solid", 
+                                   "Illes Balears" = "solid", 
+                                   "Canarias" = "solid", 
+                                   "Cantabria" = "solid", 
+                                   "Castilla y León" = "solid", 
+                                   "Castilla-La Mancha" = "solid", 
+                                   "Cataluña" = "solid", 
+                                   "Comunitat Valenciana" = "solid", 
+                                   "Extremadura" = "solid", 
+                                   "Galicia" = "solid", 
+                                   "La Rioja" = "solid", 
+                                   "Comunidad de Madrid" = "solid",
+                                   "Región de Murcia" = "solid", 
+                                   "Comunidad Foral de Navarra" = "solid", 
+                                   "País Vasco" = "solid"),
+                        name="Nivel Territorial")+
+  theme_bw()+
+  theme(axis.text=element_text(size=15, color="black"),
+        axis.title=element_text(size=15, face="bold", color="black"),
+        strip.text = element_text(size=20, face="bold", color="black"),
+        legend.text=element_text(size=20, color="black"),
+        legend.title = element_text(size=20, color="black", face="bold"),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        axis.text.x = element_text(color="black", size=12),
+        axis.text.y = element_text(color="black", size=12),
+        legend.position="bottom",
+        legend.key.size = unit(3, "line"),         legend.box="vertical")+
+  labs( title = "Prevalencia de consumo de alcohol por nivel educativo en el período 2003-2020")
+
+fig_26
+
+```
+
+## Desigualdades población total
+
+```{r, echo=F}
+
+  fig_27 <-  
+  rii %>%
+  filter(fr=="alcohol", (nombre_ccaa == nombre_ca[1]  | nombre_ccaa == nombre_ca[v]), sexo=="Global") %>% 
+  ggplot(aes(x=as.numeric(encuesta), y=rii, ymin=rii_infci, ymax=rii_supci), linetype=as.factor(nombre_ccaa), group=nombre_ccaa) +
+  geom_hline(yintercept = 1, lty=2)+
+  geom_ribbon(alpha=0.07, aes(fill=nombre_ccaa))+
+  facet_grid(cols = vars(sexo))+
+  geom_line(aes(color=nombre_ccaa, linetype=nombre_ccaa), size=1.5)+
+  scale_y_continuous(trans="log",
+                     breaks=c(0, 1, 1.5, 2, 4, 8, 16, 32, 64))+
+  scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
+  labs(x="", y="RII (95% CI)")+
+  scale_color_manual(values=c("España" =  "dimgray",
+                             "Andalucía" = "#CC0033", 
+                             "Aragón" = "#CC0033", 
+                             "Principado de Asturias" = "#CC0033", 
+                             "Illes Balears" = "#CC0033", 
+                             "Canarias" = "#CC0033", 
+                             "Cantabria" = "#CC0033", 
+                             "Castilla y León" = "#CC0033", 
+                             "Castilla-La Mancha" = "#CC0033", 
+                             "Cataluña" = "#CC0033", 
+                             "Comunitat Valenciana" = "#CC0033", 
+                             "Extremadura" = "#CC0033", 
+                             "Galicia" = "#CC0033", 
+                             "La Rioja" = "#CC0033", 
+                             "Comunidad de Madrid" = "#CC0033",
+                             "Región de Murcia" = "#CC0033", 
+                             "Comunidad Foral de Navarra" = "#CC0033", 
+                             "País Vasco" = "#CC0033"),
+                     guide="none")+
+  scale_fill_manual(values=c("España" =  "dimgray",
+                             "Andalucía" = "#CC0033", 
+                             "Aragón" = "#CC0033", 
+                             "Principado de Asturias" = "#CC0033", 
+                             "Illes Balears" = "#CC0033", 
+                             "Canarias" = "#CC0033", 
+                             "Cantabria" = "#CC0033", 
+                             "Castilla y León" = "#CC0033", 
+                             "Castilla-La Mancha" = "#CC0033", 
+                             "Cataluña" = "#CC0033", 
+                             "Comunitat Valenciana" = "#CC0033", 
+                             "Extremadura" = "#CC0033", 
+                             "Galicia" = "#CC0033", 
+                             "La Rioja" = "#CC0033", 
+                             "Comunidad de Madrid" = "#CC0033",
+                             "Región de Murcia" = "#CC0033", 
+                             "Comunidad Foral de Navarra" = "#CC0033", 
+                             "País Vasco" = "#CC0033"),
+                    guide="none")+
+  scale_linetype_manual(values = c("España" = "dashed",
+                                   "Andalucía" = "solid", 
+                                   "Aragón" = "solid", 
+                                   "Principado de Asturias" = "solid", 
+                                   "Illes Balears" = "solid", 
+                                   "Canarias" = "solid", 
+                                   "Cantabria" = "solid", 
+                                   "Castilla y León" = "solid", 
+                                   "Castilla-La Mancha" = "solid", 
+                                   "Cataluña" = "solid", 
+                                   "Comunitat Valenciana" = "solid", 
+                                   "Extremadura" = "solid", 
+                                   "Galicia" = "solid", 
+                                   "La Rioja" = "solid", 
+                                   "Comunidad de Madrid" = "solid",
+                                   "Región de Murcia" = "solid", 
+                                   "Comunidad Foral de Navarra" = "solid", 
+                                   "País Vasco" = "solid"),
+                        name="Nivel Territorial")+
+  theme_bw()+
+  theme(axis.text=element_text(size=15, color="black"),
+        axis.title=element_text(size=15, face="bold", color="black"),
+        strip.text = element_text(size=20, face="bold", color="black"),
+        legend.text=element_text(size=20, color="black"),
+        legend.title=element_text(size=20, color="black", face="bold"),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        axis.text.x = element_text(color="black", size=12),
+        axis.text.y = element_text(color="black", size=12),
+        legend.position="bottom",
+        legend.key.size=unit(3, "line"))+
+  labs( title = "Índice Relativo de Desigualdad (RII) en consumo de alcohol en el período 2003-2020")
+
+fig_27
+
+
+```
+
+## Desigualdades por sexo
+
+```{r, echo=F}
+
+  fig_28 <-  
+  rii %>%
+  filter(fr=="alcohol", (nombre_ccaa == nombre_ca[1]  | nombre_ccaa == nombre_ca[v]), sexo!="Global") %>% 
+  ggplot(aes(x=as.numeric(encuesta), y=rii, ymin=rii_infci, ymax=rii_supci), linetype=as.factor(nombre_ccaa), group=nombre_ccaa) +
+  geom_hline(yintercept = 1, lty=2)+
+  geom_ribbon(alpha=0.07, aes(fill=nombre_ccaa))+
+  facet_grid(cols = vars(sexo))+
+  geom_line(aes(color=nombre_ccaa, linetype=nombre_ccaa), size=1.5)+
+  scale_y_continuous(trans="log",
+                     breaks=c(0, 1, 1.5, 2, 4, 8, 16, 32, 64))+
+  scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
+  labs(x="", y="RII (95% CI)")+
+  scale_color_manual(values=c("España" =  "dimgray",
+                             "Andalucía" = "#CC0033", 
+                             "Aragón" = "#CC0033", 
+                             "Principado de Asturias" = "#CC0033", 
+                             "Illes Balears" = "#CC0033", 
+                             "Canarias" = "#CC0033", 
+                             "Cantabria" = "#CC0033", 
+                             "Castilla y León" = "#CC0033", 
+                             "Castilla-La Mancha" = "#CC0033", 
+                             "Cataluña" = "#CC0033", 
+                             "Comunitat Valenciana" = "#CC0033", 
+                             "Extremadura" = "#CC0033", 
+                             "Galicia" = "#CC0033", 
+                             "La Rioja" = "#CC0033", 
+                             "Comunidad de Madrid" = "#CC0033",
+                             "Región de Murcia" = "#CC0033", 
+                             "Comunidad Foral de Navarra" = "#CC0033", 
+                             "País Vasco" = "#CC0033"),
+                     guide="none")+
+  scale_fill_manual(values=c("España" =  "dimgray",
+                             "Andalucía" = "#CC0033", 
+                             "Aragón" = "#CC0033", 
+                             "Principado de Asturias" = "#CC0033", 
+                             "Illes Balears" = "#CC0033", 
+                             "Canarias" = "#CC0033", 
+                             "Cantabria" = "#CC0033", 
+                             "Castilla y León" = "#CC0033", 
+                             "Castilla-La Mancha" = "#CC0033", 
+                             "Cataluña" = "#CC0033", 
+                             "Comunitat Valenciana" = "#CC0033", 
+                             "Extremadura" = "#CC0033", 
+                             "Galicia" = "#CC0033", 
+                             "La Rioja" = "#CC0033", 
+                             "Comunidad de Madrid" = "#CC0033",
+                             "Región de Murcia" = "#CC0033", 
+                             "Comunidad Foral de Navarra" = "#CC0033", 
+                             "País Vasco" = "#CC0033"),
+                    guide="none")+
+  scale_linetype_manual(values = c("España" = "dashed",
+                                   "Andalucía" = "solid", 
+                                   "Aragón" = "solid", 
+                                   "Principado de Asturias" = "solid", 
+                                   "Illes Balears" = "solid", 
+                                   "Canarias" = "solid", 
+                                   "Cantabria" = "solid", 
+                                   "Castilla y León" = "solid", 
+                                   "Castilla-La Mancha" = "solid", 
+                                   "Cataluña" = "solid", 
+                                   "Comunitat Valenciana" = "solid", 
+                                   "Extremadura" = "solid", 
+                                   "Galicia" = "solid", 
+                                   "La Rioja" = "solid", 
+                                   "Comunidad de Madrid" = "solid",
+                                   "Región de Murcia" = "solid", 
+                                   "Comunidad Foral de Navarra" = "solid", 
+                                   "País Vasco" = "solid"),
+                        name="Nivel Territorial")+
+  theme_bw()+
+  theme(axis.text=element_text(size=15, color="black"),
+        axis.title=element_text(size=15, face="bold", color="black"),
+        strip.text = element_text(size=20, face="bold", color="black"),
+        legend.text=element_text(size=20, color="black"),
+        legend.title=element_text(size=20, color="black", face="bold"),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        axis.text.x = element_text(color="black", size=12),
+        axis.text.y = element_text(color="black", size=12),
+        legend.position="bottom",
+        legend.key.size=unit(3, "line"))+
+  labs( title = "Índice Relativo de Desigualdad (RII) en consumo de alcohol en el período 2003-2020")
+
+fig_28
+
+
+```
+
+
+# Alimentación {.tabset .tabset-fade .tabset-pills}
+
+
+## Prevalencias población total
+
+
+```{r, echo=F}
+fig_29 <-  
+  prevalencias %>%
+  filter((nombre_ccaa == nombre_ca[1]  | nombre_ccaa == nombre_ca[v]), sexo=="Global") %>% 
+  ggplot(aes(x=encuesta, y=(fruta_verdura*100), ymin=(fruta_verdura_low*100), ymax=(fruta_verdura_upp*100), color=as.factor(education_3), linetype=as.factor(nombre_ccaa), group=interaction(education_3, nombre_ccaa)))+
+  geom_line(size=1.5)+
+  facet_grid(cols = vars(sexo))+
+  scale_y_continuous(breaks = c(10, 20, 40, 60, 100))+
+  scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
+  labs(x="", y="Prevalencia (95% IC)")+
+  scale_color_discrete(name="Nivel Educativo",
+                      labels=c("Bajo", "Medio", "Alto"))+
+  scale_linetype_manual(values = c("España" = "dashed",
+                                   "Andalucía" = "solid",
+                                   "Aragón" = "solid",
+                                   "Principado de Asturias" = "solid", 
+                                   "Illes Balears" = "solid", 
+                                   "Canarias" = "solid", 
+                                   "Cantabria" = "solid", 
+                                   "Castilla y León" = "solid", 
+                                   "Castilla-La Mancha" = "solid", 
+                                   "Cataluña" = "solid", 
+                                   "Comunitat Valenciana" = "solid", 
+                                   "Extremadura" = "solid", 
+                                   "Galicia" = "solid", 
+                                   "La Rioja" = "solid", 
+                                   "Comunidad de Madrid" = "solid",
+                                   "Región de Murcia" = "solid", 
+                                   "Comunidad Foral de Navarra" = "solid", 
+                                   "País Vasco" = "solid"),
+                        name="Nivel Territorial")+
+  theme_bw()+
+  theme(axis.text=element_text(size=15, color="black"),
+        axis.title=element_text(size=15, face="bold", color="black"),
+        strip.text = element_text(size=20, face="bold", color="black"),
+        legend.text=element_text(size=20, color="black"),
+        legend.title = element_text(size=20, color="black", face="bold"),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        axis.text.x = element_text(color="black", size=12),
+        axis.text.y = element_text(color="black", size=12),
+        legend.position="bottom",
+        legend.key.size = unit(3, "line"),         legend.box="vertical")+
+  labs( title = "Prevalencia de consumo de fruta y verdura por nivel educativo en el período 2003-2020")
+
+fig_29
+
+```
+
+
+## Prevalencias por sexo
+
+
+```{r, echo=F}
+fig_30 <-  
+  prevalencias %>%
+  filter((nombre_ccaa == nombre_ca[1]  | nombre_ccaa == nombre_ca[v]), sexo!="Global") %>% 
+  ggplot(aes(x=encuesta, y=(fruta_verdura*100), ymin=(fruta_verdura_low*100), ymax=(fruta_verdura_upp*100), color=as.factor(education_3), linetype=as.factor(nombre_ccaa), group=interaction(education_3, nombre_ccaa)))+
+  geom_line(size=1.5)+
+  facet_grid(cols = vars(sexo))+
+  scale_y_continuous(breaks = c(10, 20, 40, 60, 100))+
+  scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
+  labs(x="", y="Prevalencia (95% IC)")+
+  scale_color_discrete(name="Nivel Educativo",
+                      labels=c("Bajo", "Medio", "Alto"))+
+  scale_linetype_manual(values = c("España" = "dashed",
+                                   "Andalucía" = "solid",
+                                   "Aragón" = "solid",
+                                   "Principado de Asturias" = "solid", 
+                                   "Illes Balears" = "solid", 
+                                   "Canarias" = "solid", 
+                                   "Cantabria" = "solid", 
+                                   "Castilla y León" = "solid", 
+                                   "Castilla-La Mancha" = "solid", 
+                                   "Cataluña" = "solid", 
+                                   "Comunitat Valenciana" = "solid", 
+                                   "Extremadura" = "solid", 
+                                   "Galicia" = "solid", 
+                                   "La Rioja" = "solid", 
+                                   "Comunidad de Madrid" = "solid",
+                                   "Región de Murcia" = "solid", 
+                                   "Comunidad Foral de Navarra" = "solid", 
+                                   "País Vasco" = "solid"),
+                        name="Nivel Territorial")+
+  theme_bw()+
+  theme(axis.text=element_text(size=15, color="black"),
+        axis.title=element_text(size=15, face="bold", color="black"),
+        strip.text = element_text(size=20, face="bold", color="black"),
+        legend.text=element_text(size=20, color="black"),
+        legend.title = element_text(size=20, color="black", face="bold"),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        axis.text.x = element_text(color="black", size=12),
+        axis.text.y = element_text(color="black", size=12),
+        legend.position="bottom",
+        legend.key.size = unit(3, "line"),         legend.box="vertical")+
+  labs( title = "Prevalencia de consumo de fruta y verdura por nivel educativo en el período 2003-2020")
+
+fig_30
+
+```
+
+## Desigualdades población total
+
+```{r, echo=F}
+
+  fig_31 <-  
+  rii %>%
+  filter(fr=="food", (nombre_ccaa == nombre_ca[1]  | nombre_ccaa == nombre_ca[v]), sexo=="Global") %>% 
+  ggplot(aes(x=as.numeric(encuesta), y=rii, ymin=rii_infci, ymax=rii_supci), linetype=as.factor(nombre_ccaa), group=nombre_ccaa) +
+  geom_hline(yintercept = 1, lty=2)+
+  geom_ribbon(alpha=0.07, aes(fill=nombre_ccaa))+
+  facet_grid(cols = vars(sexo))+
+  geom_line(aes(color=nombre_ccaa, linetype=nombre_ccaa), size=1.5)+
+  scale_y_continuous(trans="log",
+                     breaks=c(0, 1, 1.5, 2, 4, 8, 16, 32, 64))+
+  scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
+  labs(x="", y="RII (95% CI)")+
+  scale_color_manual(values=c("España" =  "dimgray",
+                             "Andalucía" = "#CC0033", 
+                             "Aragón" = "#CC0033", 
+                             "Principado de Asturias" = "#CC0033", 
+                             "Illes Balears" = "#CC0033", 
+                             "Canarias" = "#CC0033", 
+                             "Cantabria" = "#CC0033", 
+                             "Castilla y León" = "#CC0033", 
+                             "Castilla-La Mancha" = "#CC0033", 
+                             "Cataluña" = "#CC0033", 
+                             "Comunitat Valenciana" = "#CC0033", 
+                             "Extremadura" = "#CC0033", 
+                             "Galicia" = "#CC0033", 
+                             "La Rioja" = "#CC0033", 
+                             "Comunidad de Madrid" = "#CC0033",
+                             "Región de Murcia" = "#CC0033", 
+                             "Comunidad Foral de Navarra" = "#CC0033", 
+                             "País Vasco" = "#CC0033"),
+                     guide="none")+
+  scale_fill_manual(values=c("España" =  "dimgray",
+                             "Andalucía" = "#CC0033", 
+                             "Aragón" = "#CC0033", 
+                             "Principado de Asturias" = "#CC0033", 
+                             "Illes Balears" = "#CC0033", 
+                             "Canarias" = "#CC0033", 
+                             "Cantabria" = "#CC0033", 
+                             "Castilla y León" = "#CC0033", 
+                             "Castilla-La Mancha" = "#CC0033", 
+                             "Cataluña" = "#CC0033", 
+                             "Comunitat Valenciana" = "#CC0033", 
+                             "Extremadura" = "#CC0033", 
+                             "Galicia" = "#CC0033", 
+                             "La Rioja" = "#CC0033", 
+                             "Comunidad de Madrid" = "#CC0033",
+                             "Región de Murcia" = "#CC0033", 
+                             "Comunidad Foral de Navarra" = "#CC0033", 
+                             "País Vasco" = "#CC0033"),
+                    guide="none")+
+  scale_linetype_manual(values = c("España" = "dashed",
+                                   "Andalucía" = "solid", 
+                                   "Aragón" = "solid", 
+                                   "Principado de Asturias" = "solid", 
+                                   "Illes Balears" = "solid", 
+                                   "Canarias" = "solid", 
+                                   "Cantabria" = "solid", 
+                                   "Castilla y León" = "solid", 
+                                   "Castilla-La Mancha" = "solid", 
+                                   "Cataluña" = "solid", 
+                                   "Comunitat Valenciana" = "solid", 
+                                   "Extremadura" = "solid", 
+                                   "Galicia" = "solid", 
+                                   "La Rioja" = "solid", 
+                                   "Comunidad de Madrid" = "solid",
+                                   "Región de Murcia" = "solid", 
+                                   "Comunidad Foral de Navarra" = "solid", 
+                                   "País Vasco" = "solid"),
+                        name="Nivel Territorial")+
+  theme_bw()+
+  theme(axis.text=element_text(size=15, color="black"),
+        axis.title=element_text(size=15, face="bold", color="black"),
+        strip.text = element_text(size=20, face="bold", color="black"),
+        legend.text=element_text(size=20, color="black"),
+        legend.title=element_text(size=20, color="black", face="bold"),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        axis.text.x = element_text(color="black", size=12),
+        axis.text.y = element_text(color="black", size=12),
+        legend.position="bottom",
+        legend.key.size=unit(3, "line"))+
+  labs( title = "Índice Relativo de Desigualdad (RII) en consumo de fruta y verdura en el período 2003-2020")
+
+fig_31
+
+
+```
+
+## Desigualdades por sexo
+
+```{r, echo=F}
+
+  fig_32 <-  
+  rii %>%
+  filter(fr=="food", (nombre_ccaa == nombre_ca[1]  | nombre_ccaa == nombre_ca[v]), sexo!="Global") %>% 
+  ggplot(aes(x=as.numeric(encuesta), y=rii, ymin=rii_infci, ymax=rii_supci), linetype=as.factor(nombre_ccaa), group=nombre_ccaa) +
+  geom_hline(yintercept = 1, lty=2)+
+  geom_ribbon(alpha=0.07, aes(fill=nombre_ccaa))+
+  facet_grid(cols = vars(sexo))+
+  geom_line(aes(color=nombre_ccaa, linetype=nombre_ccaa), size=1.5)+
+  scale_y_continuous(trans="log",
+                     breaks=c(0, 1, 1.5, 2, 4, 8, 16, 32, 64))+
+  scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
+  labs(x="", y="RII (95% CI)")+
+  scale_color_manual(values=c("España" =  "dimgray",
+                             "Andalucía" = "#CC0033", 
+                             "Aragón" = "#CC0033", 
+                             "Principado de Asturias" = "#CC0033", 
+                             "Illes Balears" = "#CC0033", 
+                             "Canarias" = "#CC0033", 
+                             "Cantabria" = "#CC0033", 
+                             "Castilla y León" = "#CC0033", 
+                             "Castilla-La Mancha" = "#CC0033", 
+                             "Cataluña" = "#CC0033", 
+                             "Comunitat Valenciana" = "#CC0033", 
+                             "Extremadura" = "#CC0033", 
+                             "Galicia" = "#CC0033", 
+                             "La Rioja" = "#CC0033", 
+                             "Comunidad de Madrid" = "#CC0033",
+                             "Región de Murcia" = "#CC0033", 
+                             "Comunidad Foral de Navarra" = "#CC0033", 
+                             "País Vasco" = "#CC0033"),
+                     guide="none")+
+  scale_fill_manual(values=c("España" =  "dimgray",
+                             "Andalucía" = "#CC0033", 
+                             "Aragón" = "#CC0033", 
+                             "Principado de Asturias" = "#CC0033", 
+                             "Illes Balears" = "#CC0033", 
+                             "Canarias" = "#CC0033", 
+                             "Cantabria" = "#CC0033", 
+                             "Castilla y León" = "#CC0033", 
+                             "Castilla-La Mancha" = "#CC0033", 
+                             "Cataluña" = "#CC0033", 
+                             "Comunitat Valenciana" = "#CC0033", 
+                             "Extremadura" = "#CC0033", 
+                             "Galicia" = "#CC0033", 
+                             "La Rioja" = "#CC0033", 
+                             "Comunidad de Madrid" = "#CC0033",
+                             "Región de Murcia" = "#CC0033", 
+                             "Comunidad Foral de Navarra" = "#CC0033", 
+                             "País Vasco" = "#CC0033"),
+                    guide="none")+
+  scale_linetype_manual(values = c("España" = "dashed",
+                                   "Andalucía" = "solid", 
+                                   "Aragón" = "solid", 
+                                   "Principado de Asturias" = "solid", 
+                                   "Illes Balears" = "solid", 
+                                   "Canarias" = "solid", 
+                                   "Cantabria" = "solid", 
+                                   "Castilla y León" = "solid", 
+                                   "Castilla-La Mancha" = "solid", 
+                                   "Cataluña" = "solid", 
+                                   "Comunitat Valenciana" = "solid", 
+                                   "Extremadura" = "solid", 
+                                   "Galicia" = "solid", 
+                                   "La Rioja" = "solid", 
+                                   "Comunidad de Madrid" = "solid",
+                                   "Región de Murcia" = "solid", 
+                                   "Comunidad Foral de Navarra" = "solid", 
+                                   "País Vasco" = "solid"),
+                        name="Nivel Territorial")+
+  theme_bw()+
+  theme(axis.text=element_text(size=15, color="black"),
+        axis.title=element_text(size=15, face="bold", color="black"),
+        strip.text = element_text(size=20, face="bold", color="black"),
+        legend.text=element_text(size=20, color="black"),
+        legend.title=element_text(size=20, color="black", face="bold"),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        axis.text.x = element_text(color="black", size=12),
+        axis.text.y = element_text(color="black", size=12),
+        legend.position="bottom",
+        legend.key.size=unit(3, "line"))+
+  labs( title = "Índice Relativo de Desigualdad (RII) en consumo de fruta y verdura en el período 2003-2020")
+
+fig_32
+
+
+```
+
+***
+# Nota metodológica
+
+A continuación, se detalla la información acerca de las variables relacionadas con los factores de riesgo de enfermedad cardiovascular incluidos, así como una breve explicación sobre los cálculos realizados para las gráficas presentadas en este informe.
+
+
+<ins>Definiciones de los FRECV</ins>
+
+* __Diabetes__: personas que respondieron afirmativamente a las preguntas "¿Ha tenido alguna vez diabetes?" o "¿Le han diagnosticado alguna vez diabetes?".
+
+* __Hipertensión arterial__: personas que respondieron afirmativamente a las preguntas "¿Ha tenido alguna vez hiptertensión?" o "¿Le han diagnosticado alguna vez hipertensión?".
+
+* __Hipercolesterolemia__: personas que respondieron afirmativamente a las preguntas "¿Ha tenido alguna vez hipercolesterolemia?" o "¿Le han diagnosticado alguna vez hipercolesterolemia?".
+
+* __Obesidad__: personas con un índice de masa corporal (IMC) $\ge$30 a partir de la altura y el peso autorreportados en la encuesta.
+
+* __Sedentarismo__: personas que respondieron "No hago ningún tipo de ejercicio" a la pregunta "¿Cuál de las siguientes opciones describe mejor la frecuencia con la que realiza actividad física en su tiempo libre?" (encuesta 2003), personas que respondieron "No, habitualmente no realizo actividad física" a la pregunta "¿Usted realiza en su tiempo libre actividad física como caminar, deporta, gimnasia, etc.?" (encuesta 2006), y personas que respondieron "No realizo ningún tipo de ejercicio" a la pregunta "¿Cuál de las siguientes opciones describe mejor la frecuencia con la que realiza actividad física en su tiempo libre?" (encuestas 2011-2020).
+
+* __Tabaquismo__: personas que respondieron "Sí, diariamente/Sí, pero no diariamente" a la pregunta "¿Fuma usted actualmente?".
+
+* __Consumo de alcohol__: personas que respondieron afirmativamente a la pregunta ¿"Ha consumido alcohol en los últimos 12 meses?" (encuestas 2003-2011) y personas que respondieron "Diariamente/5-6 veces por semana/3-4 veces por semana/1-2 veces por semana/Una vez al mes/Menos de una vez al mes" a la pregunta "En los últimos 12 meses, ¿cuál ha sido la frecuencia de consumo de alcohol de cualquier tipo? (encuestas 2014-2020).
+
+* __Alimentación__: personas que reportaron consumir fruta y verdura (independientemente de la frecuencia) en la pregunta "¿Con qué frecuencia consume los siguientes alimentos?"
+
+
+<ins>Análisis estadístico</ins>
+
+Se calculó la prevalencia para cada uno de los FRECV y las encuestas de manera global y desagregada por sexo. Para el cálculo del índice relativo de desigualdad (RII), se realizaron modelos multiplicativos de Poisson multinivel con el individuo (primer nivel) anidado en cada comunidad autónoma (segundo nivel) y en cada encuesta (tercer nivel), incluyendo una pendiente aleatoria en estos dos últimos niveles. 
+
