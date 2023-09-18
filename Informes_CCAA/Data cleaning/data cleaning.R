@@ -2,6 +2,8 @@ library(tidyverse)
 library(readxl)
 library(ggplot2)
 
+setwd(paste0(getwd(),"/Informes_CCAA/Data cleaning")) #Así nos carga la misma carpeta a todas, porque si no cada uno tiene su ruta específica
+
 ###Cargamos las dos bases de datos originales
 
 desigualdades_rii_spain <- read.csv("rii_spain.csv")
@@ -35,6 +37,9 @@ rii <- desigualdades_rii_spain %>%
          sexo=recode(sexo, Overall="Global")) #Esto sería bueno llevarlo al código del proyecto para homogeneizar términos en todo el proyecto
 
 rii$ccaa <- as.factor(rii$ccaa)
+
+save(rii, file = "RII_informes.RData")
+
 
 #Hacemos lo mismo con la base de prevalencias: homogeneizamos y fusionamos
 
