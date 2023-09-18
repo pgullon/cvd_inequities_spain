@@ -57,7 +57,7 @@ rii_diabetes_overall <-  dta %>%
   filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
   mutate(risk_factor="diabetes", 
-         sexo="overall")
+         sexo="Overall")
 
 
 
@@ -75,7 +75,7 @@ rii_diabetes_h <- dta_h %>%
   filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
   mutate(risk_factor="diabetes", 
-         sexo="overall")
+         sexo="Hombres")
 
 
 
@@ -94,7 +94,7 @@ rii_diabetes_m <- dta_m %>%
   filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
   mutate(risk_factor="diabetes", 
-         sexo="overall")
+         sexo="Mujeres")
 
 
 rii_diabetes <- 
@@ -120,7 +120,7 @@ rii_hta_overall <-  dta %>%
   filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
   mutate(risk_factor="hta", 
-         sexo="overall")
+         sexo="Overall")
 
 
 
@@ -138,7 +138,7 @@ rii_hta_h <- dta_h %>%
   filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
   mutate(risk_factor="hta", 
-         sexo="overall")
+         sexo="Hombres")
 
 
 
@@ -157,7 +157,7 @@ rii_hta_m <- dta_m %>%
   filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
   mutate(risk_factor="hta", 
-         sexo="overall")
+         sexo="Mujeres")
 
 rii_hta <- 
   rii_hta_overall %>%
@@ -182,7 +182,7 @@ rii_col_overall <-  dta %>%
   filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
   mutate(risk_factor="col", 
-         sexo="overall")
+         sexo="Overall")
 
 
 
@@ -201,7 +201,7 @@ rii_col_h <- dta_h %>%
   filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
   mutate(risk_factor="col", 
-         sexo="overall")
+         sexo="Hombres")
 
 
 
@@ -221,7 +221,7 @@ rii_col_m <- dta_m %>%
   filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
   mutate(risk_factor="col", 
-         sexo="overall")
+         sexo="Mujeres")
 
 rii_col <- 
   rii_col_overall %>%
@@ -246,7 +246,7 @@ rii_obesity_overall <-  dta %>%
   filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
   mutate(risk_factor="obesity", 
-         sexo="overall")
+         sexo="Overall")
 
 
 
@@ -264,7 +264,7 @@ rii_obesity_h <- dta_h %>%
   filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
   mutate(risk_factor="obesity", 
-         sexo="overall")
+         sexo="Hombres")
 
 
 
@@ -283,7 +283,7 @@ rii_obesity_m <- dta_m %>%
   filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
   mutate(risk_factor="obesity", 
-         sexo="overall")
+         sexo="Mujeres")
 
 rii_obesity <- 
   rii_obesity_overall %>%
@@ -307,7 +307,7 @@ rii_sobrepeso_overall <-  dta %>%
   filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
   mutate(risk_factor="sobrepeso", 
-         sexo="overall")
+         sexo="Overall")
 
 
 
@@ -325,7 +325,7 @@ rii_sobrepeso_h <- dta_h %>%
   filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
   mutate(risk_factor="sobrepeso", 
-         sexo="overall")
+         sexo="Hombres")
 
 
 
@@ -344,7 +344,7 @@ rii_sobrepeso_m <- dta_m %>%
   filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
   mutate(risk_factor="sobrepeso", 
-         sexo="overall")
+         sexo="Mujeres")
 
 rii_sobrepeso <- 
   rii_sobrepeso_overall %>%
@@ -368,7 +368,7 @@ rii_smoking_overall <-  dta %>%
   filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
   mutate(risk_factor="smoking", 
-         sexo="overall")
+         sexo="Overall")
 
 
 
@@ -386,7 +386,7 @@ rii_smoking_h <- dta_h %>%
   filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
   mutate(risk_factor="smoking", 
-         sexo="overall")
+         sexo="Hombres")
 
 
 
@@ -405,7 +405,7 @@ rii_smoking_m <- dta_m %>%
   filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
   mutate(risk_factor="smoking", 
-         sexo="overall")
+         sexo="Mujeres")
 
 rii_smoking <- 
   rii_smoking_overall %>%
@@ -429,7 +429,7 @@ rii_alcohol_overall <-  dta %>%
   filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
   mutate(risk_factor="alcohol", 
-         sexo="overall")
+         sexo="Overall")
 
 
 
@@ -448,7 +448,7 @@ rii_alcohol_h <- dta_h %>%
   filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
   mutate(risk_factor="alcohol", 
-         sexo="overall")
+         sexo="Hombres")
 
 
 
@@ -468,7 +468,7 @@ rii_alcohol_m <- dta_m %>%
   filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
   mutate(risk_factor="alcohol", 
-         sexo="overall")
+         sexo="Mujeres")
 
 
 rii_alcohol <- 
@@ -494,8 +494,8 @@ rii_sedentario_overall <-  dta %>%
          rii_supci=exp(estimate+1.96*std.error)) %>% 
   filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
-  mutate(risk_factor="sedentario", 
-         sexo="overall")
+  mutate(risk_factor="sedentarismo", 
+         sexo="Overall")
 
 
 
@@ -514,7 +514,7 @@ rii_sedentario_h <- dta_h %>%
   filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
   mutate(risk_factor="sedentario", 
-         sexo="overall")
+         sexo="Hombres")
 
 
 
@@ -534,7 +534,7 @@ rii_sedentario_m <- dta_m %>%
   filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
   mutate(risk_factor="sedentario", 
-         sexo="overall")
+         sexo="Mujeres")
 
 rii_sedentario <- 
   rii_sedentario_overall %>%
@@ -558,8 +558,8 @@ rii_fruta_verdura_overall <-  dta %>%
          rii_supci=exp(estimate+1.96*std.error)) %>% 
   filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
-  mutate(risk_factor="fruta_verdura", 
-         sexo="overall")
+  mutate(risk_factor="food", 
+         sexo="Overall")
 
 
 
@@ -576,8 +576,8 @@ rii_fruta_verdura_h <- dta_h %>%
          rii_supci=exp(estimate+1.96*std.error)) %>% 
   filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
-  mutate(risk_factor="fruta_verdura", 
-         sexo="overall")
+  mutate(risk_factor="food", 
+         sexo="Hombres")
 
 
 
@@ -595,8 +595,8 @@ rii_fruta_verdura_m <- dta_m %>%
          rii_supci=exp(estimate+1.96*std.error)) %>% 
   filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
-  mutate(risk_factor="fruta_verdura", 
-         sexo="overall")
+  mutate(risk_factor="food", 
+         sexo="Mujeres")
 
 
 rii_food <- 
