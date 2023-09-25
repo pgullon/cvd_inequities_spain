@@ -23,15 +23,16 @@ library(readr)
 library(PHEindicatormethods)
 library(assertthat)
 library(table1)
+library(forcats)
 
 
 rm(list=ls())
 
-theme_fis<-  theme(axis.text=element_text(size=14, color="black"),
-                   axis.title=element_text(size=16, face="bold", color="black"),
-                   strip.text = element_text(size=16, face="bold", color="black"),
-                   legend.text=element_text(size=16, color="black"),
-                   legend.title = element_text(size=16, color="black"),
+theme_fis<-  theme(axis.text=element_text(size=16, color="black"),
+                   axis.title=element_text(size=18, face="bold", color="black"),
+                   strip.text = element_text(size=18, face="bold", color="black"),
+                   legend.text=element_text(size=18, color="black"),
+                   legend.title = element_text(size=16, color="black", face="bold"),
                    panel.grid.major.x = element_blank(),
                    panel.grid.minor.x = element_blank(),
                    axis.text.x = element_text(color="black", size=14),
@@ -208,23 +209,46 @@ fig_rii_junto_clase <-  ggplot(rii_sedentario_clase, aes(x=encuesta, y=rii, ymin
 
 fig_rii_junto_clase
 
-fig_rii_separado_educacion <-  ggplot(rii_sedentario_education, aes(x=encuesta, y=rii, ymin=rii_infci, ymax=rii_supci)) +
+
+rii_sedentario_education$sexo <- factor(rii_sedentario_education$sexo,
+                                        levels = c("Overall", "Men", "Women"))
+
+fig_rii_separado_educacion <-  ggplot(rii_sedentario_education, aes(x=encuesta, y=rii, ymin=rii_infci, ymax=rii_supci, fill=factor(sexo))) +
   geom_hline(yintercept = 1, lty=2)+
-  geom_ribbon(alpha=0.3, aes(fill=sexo))+
-  geom_line(aes(color=sexo)) +
-  facet_grid(cols=vars(sexo), scales = "free_y") +
+  geom_ribbon(alpha=0.25, aes(fill=sexo))+
+  geom_line(aes(color=sexo), linewidth=1) +
+  facet_grid(~factor(sexo, levels=c("Overall", "Men", "Women")), scales = "free_y") +
   scale_y_continuous(trans="log",
-                     breaks=c( 0.6, 0.75, 1, 1.5, 2, 4, 6))+
+                     breaks=c( 0.6, 0.75, 1, 1.5, 2.5, 4, 6))+
   scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
   coord_cartesian(ylim= c(0.6, 6))+
-  labs(x="", y="RII (95% CI)")+
+  labs(x="", y="Relative Index of Inequality (95% CI)")+
   theme_bw()+
   theme_fis+
+  scale_fill_discrete(name="Sex")+
   scale_color_discrete(name="Sex")+
-  scale_fill_discrete(guide="none")+
   theme()
 
 fig_rii_separado_educacion
+
+
+figura_sii_separado <-  ggplot(sii_sedentario_education, aes(x=encuesta, y=sii, ymin=sii_infci, ymax=sii_supci)) +
+  geom_hline(yintercept = 0, lty=2)+
+  geom_ribbon(alpha=0.25, aes(fill=sexo))+
+  geom_line(aes(color=sexo), linewidth=1) +
+  facet_grid(~factor(sexo, levels=c("Overall", "Men", "Women")), scales = "free_y")  +
+  scale_y_continuous(breaks=c(-20, 0, 20, 40, 60, 80))+
+  scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
+  coord_cartesian(ylim= c(-20, 80))+
+  labs(x="", y="Slope Index of Inequality (95% CI)")+
+  theme_bw()+
+  theme_fis+
+  scale_color_discrete(name="Sex")+
+  scale_fill_discrete(name="Sex")+
+  theme()
+
+figura_sii_separado
+
 
 
 fig_rii_separado_clase <-  ggplot(rii_sedentario_clase, aes(x=encuesta, y=rii, ymin=rii_infci, ymax=rii_supci)) +
@@ -425,20 +449,27 @@ figura_sii_junto <-   ggplot(sii_sedentario_education, aes(x=encuesta, y=sii, ym
 figura_sii_junto
 
 
+sii_sedentario_education$sexo <- factor(sii_sedentario_education$sexo,
+                                        levels = c("Overall", "Men", "Women"))
+
 figura_sii_separado <-  ggplot(sii_sedentario_education, aes(x=encuesta, y=sii, ymin=sii_infci, ymax=sii_supci)) +
   geom_hline(yintercept = 0, lty=2)+
-  geom_ribbon(alpha=0.3, aes(fill=sexo))+
-  geom_line(aes(color=sexo)) +
-  facet_grid(cols=vars(sexo), scales = "free_y") +
+  geom_ribbon(alpha=0.25, aes(fill=sexo))+
+  geom_line(aes(color=sexo), linewidth=1) +
+  facet_grid(~factor(sexo, levels=c("Overall", "Men", "Women")), scales = "free_y")  +
   scale_y_continuous(breaks=c(-20, 0, 20, 40, 60, 80))+
   scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
   coord_cartesian(ylim= c(-20, 80))+
   labs(x="", y="Slope Index of Inequality (95% CI)")+
   theme_bw()+
   theme_fis+
+  scale_color_discrete(name="Sex")+
+  scale_fill_discrete(name="Sex")+
   theme()
 
 figura_sii_separado
+
+
 
 ####FIGURA RII Y SII HOMBRES, MUJERES, OVERALL####
 
@@ -607,10 +638,8 @@ save(data_ccaa_map, file="Physical Activity/data_map.RData")
 
 sedentarismo_map <- ggplot(na.omit(data_ccaa_map), aes(x = long, y = lat, group = group)) +
   geom_polygon(aes(fill=rii), color= "white", linewidth = 0.2) +
-  scale_fill_distiller(palette = "Blues", direction = 1) +
-  labs( title = "Índice Relativo de Desigualdad (RII) en sedentarismo por Comunidades Autónomas entre 2001 y 2020",
-        fill = "RII Sedentarismo",
-        ) +
+  scale_fill_distiller(palette = "Blues", direction = 1, name="Relative Index of Inequality") +
+  labs() +
   facet_wrap(~encuesta, nrow = 2, ncol=4)+
   theme(axis.line = element_blank(),
         axis.text = element_blank(),
@@ -621,9 +650,10 @@ sedentarismo_map <- ggplot(na.omit(data_ccaa_map), aes(x = long, y = lat, group 
         panel.grid = element_blank(),
         panel.background = element_blank(),
         strip.text.x.top = element_text(
-          size = 10),
-        legend.key.size = unit(1, 'cm'),
-        legend.title = element_text(face="bold"))
+          size = 14, face="bold"),
+        legend.key.size = unit(1.5, 'cm'),
+        legend.text = element_text(size=12),
+        legend.title = element_text(face="bold", size = 12))
 sedentarismo_map
 
 ## CREAMOS MAPA DE VARIACIÓN 2001-2020
@@ -649,16 +679,17 @@ rii_variacion_map<-rii_variacion_map %>%
 variacion_sedentarismo_map <- ggplot(rii_variacion_map, aes(x = long, y = lat, group = group)) +
   geom_polygon(aes(fill=variacion), color= "white", linewidth = 0.2) +
   scale_fill_distiller(palette='RdBu',direction=-1, limits=c(-20,28))  +
-  labs( title = "Tasas de variaciones relativas de desigualdades en sedentarismo por Comunidades Autónomas entre 2001 y 2020",
-        fill = "% Variación") +
+  labs(fill = "% Variación") +
   theme_minimal() +
   theme(axis.line = element_blank(),
         axis.text = element_blank(),
         axis.title = element_blank(),
         axis.ticks = element_blank(),
-        legend.key.size = unit(1, 'cm'),
+        legend.key.size = unit(1.5, 'cm'),
         panel.grid = element_blank(),
-        legend.title = element_text(face="bold"))
+        legend.text = element_text(size=12),
+        legend.title = element_text(face="bold", size=12),
+        legend.position = c(0.15, 0.55))
 variacion_sedentarismo_map
 
 
@@ -771,17 +802,23 @@ fig_des_sedentario <-
   ggplot(aes(x=encuesta, y=(sedentario*100), ymin=(sedentario_low*100), ymax=(sedentario_upp*100))) +
   geom_line(aes(color=as.factor(education_3)))+  
   geom_ribbon(alpha=0.3, aes(fill=as.factor(education_3)))+
-  facet_grid(cols = vars(sex))+
+  facet_grid(~factor(sex, levels=c("Overall", "Men", "Women")))+
   scale_y_continuous(breaks = c(20, 40, 60, 100))+
   scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
   labs(x="", y="Prevalence of sedentarism (95% CI)")+
   scale_fill_discrete(name="Educational Level",
                       labels=c("Low", "Medium", "High"))+
-  scale_color_discrete(guide="none")+  theme_bw()+
+  scale_color_discrete(name="Educational Level",
+                       labels=c("Low", "Medium", "High"))+  theme_bw()+
   theme_fis+
   theme()
 
 fig_des_sedentario
+
+scale_color_discrete(name="Sex",
+                     labels = c("Overall", "Men", "Women"))+
+  scale_fill_discrete(name="Sex",
+                      labels = c("Overall", "Men", "Women"))
 
 
 #Prueba figura
