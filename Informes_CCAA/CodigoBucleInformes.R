@@ -19,7 +19,7 @@ ccaa <- data.frame(abreviatura = c("ES", "AN", "AR", "AS", "IB", "CN", "CB", "CM
                                    "Comunitat Valenciana", "Extremadura", "Galicia", "La Rioja", "Comunidad de Madrid",
                                    "Región de Murcia", "Comunidad Foral de Navarra", "País Vasco"))
 
-rii <- rii %>% 
+rii <- rii_informes %>% 
   left_join(ccaa)
 
 prevalencias <- prevalencias %>% 

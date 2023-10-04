@@ -37,8 +37,8 @@ prevalencias_peso_ccaa_overall <- dta %>%
             sobrepeso = survey_mean(sobrepeso, na.rm = T, vartype = "ci"),
             smoking = survey_mean(smoking, na.rm = T, vartype = "ci"), 
             alcohol = survey_mean(alcohol, na.rm = T, vartype = "ci"),
-            sedentario = survey_mean(sedentario, na.rm = T, vartype = "ci"),
-            fruta_verdura = survey_mean(fruta_verdura, na.rm = T, vartype = "ci")) %>%
+            sedentarismo = survey_mean(sedentarismo, na.rm = T, vartype = "ci"),
+            food = survey_mean(food, na.rm = T, vartype = "ci")) %>%
   left_join(ccaas) %>%
   mutate(sexo="Overall")
 
@@ -52,8 +52,8 @@ prevalencias_peso_ccaa_sexo <- dta %>%
             sobrepeso = survey_mean(sobrepeso, na.rm = T, vartype = "ci"),
             smoking = survey_mean(smoking, na.rm = T, vartype = "ci"), 
             alcohol = survey_mean(alcohol, na.rm = T, vartype = "ci"),
-            sedentario = survey_mean(sedentario, na.rm = T, vartype = "ci"),
-            fruta_verdura = survey_mean(fruta_verdura, na.rm = T, vartype = "ci")) %>%
+            sedentarismo = survey_mean(sedentarismo, na.rm = T, vartype = "ci"),
+            food = survey_mean(food, na.rm = T, vartype = "ci")) %>%
   left_join(ccaas)
 
 
@@ -74,8 +74,8 @@ prevalencias_peso_spain_overall <- dta %>%
             sobrepeso = survey_mean(sobrepeso, na.rm = T, vartype = "ci"),
             smoking = survey_mean(smoking, na.rm = T, vartype = "ci"), 
             alcohol = survey_mean(alcohol, na.rm = T, vartype = "ci"),
-            sedentario = survey_mean(sedentario, na.rm = T, vartype = "ci"),
-            fruta_verdura = survey_mean(fruta_verdura, na.rm = T, vartype = "ci")) %>%
+            sedentarismo = survey_mean(sedentarismo, na.rm = T, vartype = "ci"),
+            food = survey_mean(food, na.rm = T, vartype = "ci")) %>%
   mutate(sexo="Overall")
 
 
@@ -90,8 +90,8 @@ prevalencias_peso_spain_sexo <- dta %>%
             sobrepeso = survey_mean(sobrepeso, na.rm = T, vartype = "ci"),
             smoking = survey_mean(smoking, na.rm = T, vartype = "ci"), 
             alcohol = survey_mean(alcohol, na.rm = T, vartype = "ci"),
-            sedentario = survey_mean(sedentario, na.rm = T, vartype = "ci"),
-            fruta_verdura = survey_mean(fruta_verdura, na.rm = T, vartype = "ci"))
+            sedentarismo = survey_mean(sedentarismo, na.rm = T, vartype = "ci"),
+            food = survey_mean(food, na.rm = T, vartype = "ci"))
 
 
 prevalencias_spain <- prevalencias_peso_spain_sexo %>%
@@ -99,5 +99,28 @@ prevalencias_spain <- prevalencias_peso_spain_sexo %>%
   rbind(prevalencias_peso_spain_overall)
 
 write.csv(prevalencias_spain, "prevalencias_spain.csv")
+
+
+# Para los informes
+prevalencias_spain <- prevalencias_spain %>% 
+  mutate(sexo=(case_when(sexo==0~"Mujeres", sexo==1~"Hombres", sexo=="Overall"~"Global")),
+         abreviatura="ES",
+         nombre_notilde="Espana",
+         ccaa=0)
+prevalencias_ccaa <- prevalencias_ccaa %>% 
+  select(-c(id_mapa, nombre)) %>% 
+  mutate(sexo=(case_when(sexo==0~"Mujeres", sexo==1~"Hombres", sexo=="Overall"~"Global")))
+
+prevalencias <- prevalencias_spain %>% 
+  rbind(prevalencias_ccaa) 
+
+prevalencias$ccaa <- as.factor(prevalencias$ccaa)
+
+prevalencias <- prevalencias %>% 
+  filter(encuesta != 2009) %>% 
+  filter(encuesta != 2001) %>%
+  mutate(Sedentarismo=sedentarismo)
+
+save(prevalencias, file = "Informes_CCAA/prevalencias_informes.RData")
 
 

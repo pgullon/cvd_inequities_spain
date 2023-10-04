@@ -2104,7 +2104,7 @@ fig_28
 fig_29 <-  
   prevalencias %>%
   filter((nombre_ccaa == nombre_ca[1]  | nombre_ccaa == nombre_ca[v]), sexo=="Global") %>% 
-  ggplot(aes(x=encuesta, y=(fruta_verdura*100), ymin=(fruta_verdura_low*100), ymax=(fruta_verdura_upp*100), color=as.factor(education_3), linetype=as.factor(nombre_ccaa), group=interaction(education_3, nombre_ccaa)))+
+  ggplot(aes(x=encuesta, y=(food*100), ymin=(food_low*100), ymax=(food_upp*100), color=as.factor(education_3), linetype=as.factor(nombre_ccaa), group=interaction(education_3, nombre_ccaa)))+
   geom_line(size=1.5)+
   facet_grid(cols = vars(sexo))+
   scale_y_continuous(breaks = c(10, 20, 40, 60, 100))+
@@ -2157,7 +2157,7 @@ fig_29
 fig_30 <-  
   prevalencias %>%
   filter((nombre_ccaa == nombre_ca[1]  | nombre_ccaa == nombre_ca[v]), sexo!="Global") %>% 
-  ggplot(aes(x=encuesta, y=(fruta_verdura*100), ymin=(fruta_verdura_low*100), ymax=(fruta_verdura_upp*100), color=as.factor(education_3), linetype=as.factor(nombre_ccaa), group=interaction(education_3, nombre_ccaa)))+
+  ggplot(aes(x=encuesta, y=(food*100), ymin=(food_low*100), ymax=(food_upp*100), color=as.factor(education_3), linetype=as.factor(nombre_ccaa), group=interaction(education_3, nombre_ccaa)))+
   geom_line(size=1.5)+
   facet_grid(cols = vars(sexo))+
   scale_y_continuous(breaks = c(10, 20, 40, 60, 100))+
