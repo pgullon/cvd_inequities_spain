@@ -6,6 +6,9 @@ rm(list=ls())
 
 setwd(paste0(getwd(),"/Informes_CCAA/Data cleaning")) #Así nos carga la misma carpeta a todas, porque si no cada uno tiene su ruta específica
 
+# Este script tiene como objetivo unir las bases que generan los scripts "RII.R" y "prevalencias.R" (RII y prevalencias Spain y CCAA por separado) del directorio raíz en dos bases de datos "RII_informes.RData" y "prevalencias_informes.RData" para generar los informes de cada CCAA. 
+# Concretamente para los informes por CCAA para el trabajo con APLICA es debemos modificar alimentación, porque los scripts raíz no genera los IC para hombres#CCAA, y sedentarismo porque genera un RII igual para mujeres#CCAA.
+
 ###Cargamos las dos bases de datos originales
 
 desigualdades_rii_spain <- read.csv("rii_spain.csv")
