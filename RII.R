@@ -44,7 +44,7 @@ dta <- dta %>%
 # 1. Global para España. Poisson por encuesta (no multinivel)
 
 ################### DIABETES #################################################
-rii_diabetes_overall <-  dta %>%
+rii_diabetes_Global <-  dta %>%
   mutate(education_prueba=((cume_dist(education_3)-1))*-1) %>%
   nest(data=-encuesta) %>%
   mutate(model=map(data, ~svyglm(formula=diabetes~education_prueba+edad+sexo, data=.x, 
@@ -57,8 +57,8 @@ rii_diabetes_overall <-  dta %>%
          rii_supci=exp(estimate+1.96*std.error)) %>% 
   filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
-  mutate(risk_factor="diabetes", 
-         sexo="Overall")
+  mutate(fr="diabetes", 
+         sexo="Global")
 
 
 
@@ -75,7 +75,7 @@ rii_diabetes_h <- dta_h %>%
          rii_supci=exp(estimate+1.96*std.error)) %>% 
   filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
-  mutate(risk_factor="diabetes", 
+  mutate(fr="diabetes", 
          sexo="Hombres")
 
 
@@ -94,12 +94,12 @@ rii_diabetes_m <- dta_m %>%
          rii_supci=exp(estimate+1.96*std.error)) %>% 
   filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
-  mutate(risk_factor="diabetes", 
+  mutate(fr="diabetes", 
          sexo="Mujeres")
 
 
 rii_diabetes <- 
-  rii_diabetes_overall %>%
+  rii_diabetes_Global %>%
   rbind(rii_diabetes_h) %>%
   rbind(rii_diabetes_m)
 
@@ -107,7 +107,7 @@ rii_diabetes <-
 
 
 ############################ HTA #################################################
-rii_hta_overall <-  dta %>%
+rii_hta_Global <-  dta %>%
   mutate(education_prueba=((cume_dist(education_3)-1))*-1) %>%
   nest(data=-encuesta) %>%
   mutate(model=map(data, ~svyglm(formula=hta~education_prueba+edad+sexo, data=.x, 
@@ -120,8 +120,8 @@ rii_hta_overall <-  dta %>%
          rii_supci=exp(estimate+1.96*std.error)) %>% 
   filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
-  mutate(risk_factor="hta", 
-         sexo="Overall")
+  mutate(fr="hta", 
+         sexo="Global")
 
 
 
@@ -138,7 +138,7 @@ rii_hta_h <- dta_h %>%
          rii_supci=exp(estimate+1.96*std.error)) %>% 
   filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
-  mutate(risk_factor="hta", 
+  mutate(fr="hta", 
          sexo="Hombres")
 
 
@@ -157,18 +157,18 @@ rii_hta_m <- dta_m %>%
          rii_supci=exp(estimate+1.96*std.error)) %>% 
   filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
-  mutate(risk_factor="hta", 
+  mutate(fr="hta", 
          sexo="Mujeres")
 
 rii_hta <- 
-  rii_hta_overall %>%
+  rii_hta_Global %>%
   rbind(rii_hta_h) %>%
   rbind(rii_hta_m)
 
 
 
 ############################ COL #################################################
-rii_col_overall <-  dta %>%
+rii_col_Global <-  dta %>%
   filter(encuesta!=2009) %>%
   mutate(education_prueba=((cume_dist(education_3)-1))*-1) %>%
   nest(data=-encuesta) %>%
@@ -182,8 +182,8 @@ rii_col_overall <-  dta %>%
          rii_supci=exp(estimate+1.96*std.error)) %>% 
   filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
-  mutate(risk_factor="col", 
-         sexo="Overall")
+  mutate(fr="col", 
+         sexo="Global")
 
 
 
@@ -201,7 +201,7 @@ rii_col_h <- dta_h %>%
          rii_supci=exp(estimate+1.96*std.error)) %>% 
   filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
-  mutate(risk_factor="col", 
+  mutate(fr="col", 
          sexo="Hombres")
 
 
@@ -221,11 +221,11 @@ rii_col_m <- dta_m %>%
          rii_supci=exp(estimate+1.96*std.error)) %>% 
   filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
-  mutate(risk_factor="col", 
+  mutate(fr="col", 
          sexo="Mujeres")
 
 rii_col <- 
-  rii_col_overall %>%
+  rii_col_Global %>%
   rbind(rii_col_h) %>%
   rbind(rii_col_m)
 
@@ -233,7 +233,7 @@ rii_col <-
 
 
 ############################ OBESIDAD #################################################
-rii_obesity_overall <-  dta %>%
+rii_obesity_Global <-  dta %>%
   mutate(education_prueba=((cume_dist(education_3)-1))*-1) %>%
   nest(data=-encuesta) %>%
   mutate(model=map(data, ~svyglm(formula=obesity~education_prueba+edad+sexo, data=.x, 
@@ -246,8 +246,8 @@ rii_obesity_overall <-  dta %>%
          rii_supci=exp(estimate+1.96*std.error)) %>% 
   filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
-  mutate(risk_factor="obesity", 
-         sexo="Overall")
+  mutate(fr="obesity", 
+         sexo="Global")
 
 
 
@@ -264,7 +264,7 @@ rii_obesity_h <- dta_h %>%
          rii_supci=exp(estimate+1.96*std.error)) %>% 
   filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
-  mutate(risk_factor="obesity", 
+  mutate(fr="obesity", 
          sexo="Hombres")
 
 
@@ -283,18 +283,18 @@ rii_obesity_m <- dta_m %>%
          rii_supci=exp(estimate+1.96*std.error)) %>% 
   filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
-  mutate(risk_factor="obesity", 
+  mutate(fr="obesity", 
          sexo="Mujeres")
 
 rii_obesity <- 
-  rii_obesity_overall %>%
+  rii_obesity_Global %>%
   rbind(rii_obesity_h) %>%
   rbind(rii_obesity_m)
 
 
 
 ############################ sobrepeso #################################################
-rii_sobrepeso_overall <-  dta %>%
+rii_sobrepeso_Global <-  dta %>%
   mutate(education_prueba=((cume_dist(education_3)-1))*-1) %>%
   nest(data=-encuesta) %>%
   mutate(model=map(data, ~svyglm(formula=sobrepeso~education_prueba+edad+sexo, data=.x, 
@@ -307,8 +307,8 @@ rii_sobrepeso_overall <-  dta %>%
          rii_supci=exp(estimate+1.96*std.error)) %>% 
   filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
-  mutate(risk_factor="sobrepeso", 
-         sexo="Overall")
+  mutate(fr="sobrepeso", 
+         sexo="Global")
 
 
 
@@ -325,7 +325,7 @@ rii_sobrepeso_h <- dta_h %>%
          rii_supci=exp(estimate+1.96*std.error)) %>% 
   filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
-  mutate(risk_factor="sobrepeso", 
+  mutate(fr="sobrepeso", 
          sexo="Hombres")
 
 
@@ -344,18 +344,18 @@ rii_sobrepeso_m <- dta_m %>%
          rii_supci=exp(estimate+1.96*std.error)) %>% 
   filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
-  mutate(risk_factor="sobrepeso", 
+  mutate(fr="sobrepeso", 
          sexo="Mujeres")
 
 rii_sobrepeso <- 
-  rii_sobrepeso_overall %>%
+  rii_sobrepeso_Global %>%
   rbind(rii_sobrepeso_h) %>%
   rbind(rii_sobrepeso_m)
 
 
 
 ############################## SMOKING #######################################
-rii_smoking_overall <-  dta %>%
+rii_smoking_Global <-  dta %>%
   mutate(education_prueba=((cume_dist(education_3)-1))*-1) %>%
   nest(data=-encuesta) %>%
   mutate(model=map(data, ~svyglm(formula=smoking~education_prueba+edad+sexo, data=.x, 
@@ -368,8 +368,8 @@ rii_smoking_overall <-  dta %>%
          rii_supci=exp(estimate+1.96*std.error)) %>% 
   filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
-  mutate(risk_factor="smoking", 
-         sexo="Overall")
+  mutate(fr="smoking", 
+         sexo="Global")
 
 
 
@@ -386,7 +386,7 @@ rii_smoking_h <- dta_h %>%
          rii_supci=exp(estimate+1.96*std.error)) %>% 
   filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
-  mutate(risk_factor="smoking", 
+  mutate(fr="smoking", 
          sexo="Hombres")
 
 
@@ -405,17 +405,17 @@ rii_smoking_m <- dta_m %>%
          rii_supci=exp(estimate+1.96*std.error)) %>% 
   filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
-  mutate(risk_factor="smoking", 
+  mutate(fr="smoking", 
          sexo="Mujeres")
 
 rii_smoking <- 
-  rii_smoking_overall %>%
+  rii_smoking_Global %>%
   rbind(rii_smoking_h) %>%
   rbind(rii_smoking_m)
 
 
 ################################# ALCOHOL #####################################
-rii_alcohol_overall <-  dta %>%
+rii_alcohol_Global <-  dta %>%
   filter(encuesta!=2001) %>%
   mutate(education_prueba=((cume_dist(education_3)-1))*-1) %>%
   nest(data=-encuesta) %>%
@@ -429,8 +429,8 @@ rii_alcohol_overall <-  dta %>%
          rii_supci=exp(estimate+1.96*std.error)) %>% 
   filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
-  mutate(risk_factor="alcohol", 
-         sexo="Overall")
+  mutate(fr="alcohol", 
+         sexo="Global")
 
 
 
@@ -448,7 +448,7 @@ rii_alcohol_h <- dta_h %>%
          rii_supci=exp(estimate+1.96*std.error)) %>% 
   filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
-  mutate(risk_factor="alcohol", 
+  mutate(fr="alcohol", 
          sexo="Hombres")
 
 
@@ -468,24 +468,24 @@ rii_alcohol_m <- dta_m %>%
          rii_supci=exp(estimate+1.96*std.error)) %>% 
   filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
-  mutate(risk_factor="alcohol", 
+  mutate(fr="alcohol", 
          sexo="Mujeres")
 
 
 rii_alcohol <- 
-  rii_alcohol_overall %>%
+  rii_alcohol_Global %>%
   rbind(rii_alcohol_h) %>%
   rbind(rii_alcohol_m)
 
 
 
-################################# SEDENTARISMO #####################################
+################################# sedentarismo #####################################
 
-rii_sedentario_overall <-  dta %>%
+rii_sedentarismo_Global <-  dta %>%
   filter(encuesta!=2009) %>%
   mutate(education_prueba=((cume_dist(education_3)-1))*-1) %>%
   nest(data=-encuesta) %>%
-  mutate(model=map(data, ~svyglm(formula=sedentario~education_prueba+edad+sexo, data=.x, 
+  mutate(model=map(data, ~svyglm(formula=sedentarismo~education_prueba+edad+sexo, data=.x, 
                                  design=svydesign(ids=~1,weights=~factor2,data=.), 
                                  family="poisson")), 
          tidied=map(model, tidy)) %>%
@@ -495,16 +495,16 @@ rii_sedentario_overall <-  dta %>%
          rii_supci=exp(estimate+1.96*std.error)) %>% 
   filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
-  mutate(risk_factor="sedentarismo", 
-         sexo="Overall")
+  mutate(fr="sedentarismo", 
+         sexo="Global")
 
 
 
-rii_sedentario_h <- dta_h %>%
+rii_sedentarismo_h <- dta_h %>%
   filter(encuesta!=2009) %>%
   mutate(education_prueba=((cume_dist(education_3)-1))*-1) %>%
   nest(data=-encuesta) %>%
-  mutate(model=map(data, ~svyglm(formula=sedentario~education_prueba+edad+sexo, data=.x, 
+  mutate(model=map(data, ~svyglm(formula=sedentarismo~education_prueba+edad+sexo, data=.x, 
                                  design=svydesign(ids=~1,weights=~factor2,data=.), 
                                  family="poisson")), 
          tidied=map(model, tidy)) %>%
@@ -514,17 +514,17 @@ rii_sedentario_h <- dta_h %>%
          rii_supci=exp(estimate+1.96*std.error)) %>% 
   filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
-  mutate(risk_factor="sedentarismo", 
+  mutate(fr="sedentarismo", 
          sexo="Hombres")
 
 
 
 
-rii_sedentario_m <- dta_m %>%
+rii_sedentarismo_m <- dta_m %>%
   filter(encuesta!=2009) %>%
   mutate(education_prueba=((cume_dist(education_3)-1))*-1) %>%
   nest(data=-encuesta) %>%
-  mutate(model=map(data, ~svyglm(formula=sedentario~education_prueba+edad+sexo, data=.x, 
+  mutate(model=map(data, ~svyglm(formula=sedentarismo~education_prueba+edad+sexo, data=.x, 
                                  design=svydesign(ids=~1,weights=~factor2,data=.), 
                                  family="poisson")), 
          tidied=map(model, tidy)) %>%
@@ -534,22 +534,22 @@ rii_sedentario_m <- dta_m %>%
          rii_supci=exp(estimate+1.96*std.error)) %>% 
   filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
-  mutate(risk_factor="sedentarismo", 
+  mutate(fr="sedentarismo", 
          sexo="Mujeres")
 
-rii_sedentario <- 
-  rii_sedentario_overall %>%
-  rbind(rii_sedentario_h) %>%
-  rbind(rii_sedentario_m)
+rii_sedentarismo <- 
+  rii_sedentarismo_Global %>%
+  rbind(rii_sedentarismo_h) %>%
+  rbind(rii_sedentarismo_m)
 
 
 
 
 ################################# ALIMENTACIÓN #####################################
-rii_fruta_verdura_overall <-  dta %>%
+rii_food_Global <-  dta %>%
   mutate(education_prueba=((cume_dist(education_3)-1))*-1) %>%
   nest(data=-encuesta) %>%
-  mutate(model=map(data, ~svyglm(formula=fruta_verdura~education_prueba+edad+sexo, data=.x, 
+  mutate(model=map(data, ~svyglm(formula=food~education_prueba+edad+sexo, data=.x, 
                                  design=svydesign(ids=~1,weights=~factor2,data=.), 
                                  family="poisson")), 
          tidied=map(model, tidy)) %>%
@@ -559,15 +559,15 @@ rii_fruta_verdura_overall <-  dta %>%
          rii_supci=exp(estimate+1.96*std.error)) %>% 
   filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
-  mutate(risk_factor="food", 
-         sexo="Overall")
+  mutate(fr="food", 
+         sexo="Global")
 
 
 
-rii_fruta_verdura_h <- dta_h %>%
+rii_food_h <- dta_h %>%
   mutate(education_prueba=((cume_dist(education_3)-1))*-1) %>%
   nest(data=-encuesta) %>%
-  mutate(model=map(data, ~svyglm(formula=fruta_verdura~education_prueba+edad+sexo, data=.x, 
+  mutate(model=map(data, ~svyglm(formula=food~education_prueba+edad+sexo, data=.x, 
                                  design=svydesign(ids=~1,weights=~factor2,data=.), 
                                  family="poisson")), 
          tidied=map(model, tidy)) %>%
@@ -577,16 +577,16 @@ rii_fruta_verdura_h <- dta_h %>%
          rii_supci=exp(estimate+1.96*std.error)) %>% 
   filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
-  mutate(risk_factor="food", 
+  mutate(fr="food", 
          sexo="Hombres")
 
 
 
 
-rii_fruta_verdura_m <- dta_m %>%
+rii_food_m <- dta_m %>%
   mutate(education_prueba=((cume_dist(education_3)-1))*-1) %>%
   nest(data=-encuesta) %>%
-  mutate(model=map(data, ~svyglm(formula=fruta_verdura~education_prueba+edad+sexo, data=.x, 
+  mutate(model=map(data, ~svyglm(formula=food~education_prueba+edad+sexo, data=.x, 
                                  design=svydesign(ids=~1,weights=~factor2,data=.), 
                                  family="poisson")), 
          tidied=map(model, tidy)) %>%
@@ -596,14 +596,14 @@ rii_fruta_verdura_m <- dta_m %>%
          rii_supci=exp(estimate+1.96*std.error)) %>% 
   filter(term=="education_prueba") %>% 
   select(rii, rii_infci, rii_supci, encuesta) %>% 
-  mutate(risk_factor="food", 
+  mutate(fr="food", 
          sexo="Mujeres")
 
 
 rii_food <- 
-  rii_fruta_verdura_overall %>%
-  rbind(rii_fruta_verdura_h) %>%
-  rbind(rii_fruta_verdura_m)
+  rii_food_Global %>%
+  rbind(rii_food_h) %>%
+  rbind(rii_food_m)
 
 
 
@@ -613,9 +613,14 @@ rii_spain <- rii_diabetes %>%
   rbind(rii_obesity) %>%
   rbind(rii_smoking) %>%
   rbind(rii_alcohol) %>%
-  rbind(rii_sedentario) %>%
+  rbind(rii_sedentarismo) %>%
   rbind(rii_food) %>%
-  mutate(ccaa=0)
+  mutate(ccaa=0, 
+         abreviatura="ES",
+         nombre_notilde="Espana", 
+         nombre="Espana", 
+         id_mapa=0)
+  
 
 write.csv(rii_spain, "rii_spain.csv")
 
@@ -638,9 +643,9 @@ rii_diabetes <- rii_diabetes %>%
          rii_supci=exp(value+1.96*se)) %>% 
   filter(effect=="education_3_tr") %>% 
   select(rii, rii_infci, rii_supci, group) %>% 
-  mutate(sexo="Overall") %>%
+  mutate(sexo="Global") %>%
   separate(group, c('encuesta', 'ccaa')) %>%
-  mutate(encuesta=ymd(encuesta, truncated = 2L), 
+  mutate( 
          ccaa=as.numeric(ccaa)) %>%
   left_join(ccaas) %>%
   mutate(fr="diabetes")
@@ -657,9 +662,9 @@ rii_diabetes_h <- rii_diabetes_h %>%
          rii_supci=exp(value+1.96*se)) %>% 
   filter(effect=="education_3_tr") %>% 
   select(rii, rii_infci, rii_supci, group) %>% 
-  mutate(sexo="Hombre") %>%
+  mutate(sexo="Hombres") %>%
   separate(group, c('encuesta', 'ccaa')) %>%
-  mutate(encuesta=ymd(encuesta, truncated = 2L), 
+  mutate( 
          ccaa=as.numeric(ccaa)) %>%
   left_join(ccaas) %>%
   mutate(fr="diabetes")
@@ -679,7 +684,7 @@ rii_diabetes_m <- rii_diabetes_m %>%
   select(rii, rii_infci, rii_supci, group) %>% 
   mutate(sexo="Mujeres") %>%
   separate(group, c('encuesta', 'ccaa')) %>%
-  mutate(encuesta=ymd(encuesta, truncated = 2L), 
+  mutate( 
          ccaa=as.numeric(ccaa)) %>%
   left_join(ccaas) %>%
   mutate(fr="diabetes")
@@ -703,9 +708,9 @@ rii_hta <- rii_hta %>%
          rii_supci=exp(value+1.96*se)) %>% 
   filter(effect=="education_3_tr") %>% 
   select(rii, rii_infci, rii_supci, group) %>% 
-  mutate(sexo="Overall") %>%
+  mutate(sexo="Global") %>%
   separate(group, c('encuesta', 'ccaa')) %>%
-  mutate(encuesta=ymd(encuesta, truncated = 2L), 
+  mutate( 
          ccaa=as.numeric(ccaa)) %>%
   left_join(ccaas) %>%
   mutate(fr="hta")
@@ -721,9 +726,9 @@ rii_hta_h <- rii_hta_h %>%
          rii_supci=exp(value+1.96*se)) %>% 
   filter(effect=="education_3_tr") %>% 
   select(rii, rii_infci, rii_supci, group) %>% 
-  mutate(sexo="Hombre") %>%
+  mutate(sexo="Hombres") %>%
   separate(group, c('encuesta', 'ccaa')) %>%
-  mutate(encuesta=ymd(encuesta, truncated = 2L), 
+  mutate( 
          ccaa=as.numeric(ccaa)) %>%
   left_join(ccaas) %>%
   mutate(fr="hta")
@@ -741,7 +746,7 @@ rii_hta_m <- rii_hta_m %>%
   select(rii, rii_infci, rii_supci, group) %>% 
   mutate(sexo="Mujeres") %>%
   separate(group, c('encuesta', 'ccaa')) %>%
-  mutate(encuesta=ymd(encuesta, truncated = 2L), 
+  mutate( 
          ccaa=as.numeric(ccaa)) %>%
   left_join(ccaas) %>%
   mutate(fr="hta")
@@ -764,9 +769,9 @@ rii_col <- rii_col %>%
          rii_supci=exp(value+1.96*se)) %>% 
   filter(effect=="education_3_tr") %>% 
   select(rii, rii_infci, rii_supci, group) %>% 
-  mutate(sexo="Overall") %>%
+  mutate(sexo="Global") %>%
   separate(group, c('encuesta', 'ccaa')) %>%
-  mutate(encuesta=ymd(encuesta, truncated = 2L), 
+  mutate( 
          ccaa=as.numeric(ccaa)) %>%
   left_join(ccaas) %>%
   mutate(fr="col")
@@ -782,9 +787,9 @@ rii_col_h <- rii_col_h %>%
          rii_supci=exp(value+1.96*se)) %>% 
   filter(effect=="education_3_tr") %>% 
   select(rii, rii_infci, rii_supci, group) %>% 
-  mutate(sexo="Hombre") %>%
+  mutate(sexo="Hombres") %>%
   separate(group, c('encuesta', 'ccaa')) %>%
-  mutate(encuesta=ymd(encuesta, truncated = 2L), 
+  mutate( 
          ccaa=as.numeric(ccaa)) %>%
   left_join(ccaas) %>%
   mutate(fr="col")
@@ -802,7 +807,7 @@ rii_col_m <- rii_col_m %>%
   select(rii, rii_infci, rii_supci, group) %>% 
   mutate(sexo="Mujeres") %>%
   separate(group, c('encuesta', 'ccaa')) %>%
-  mutate(encuesta=ymd(encuesta, truncated = 2L), 
+  mutate( 
          ccaa=as.numeric(ccaa)) %>%
   left_join(ccaas) %>%
   mutate(fr="col")
@@ -830,9 +835,9 @@ rii_obesity <- rii_obesity %>%
          rii_supci=exp(value+1.96*se)) %>% 
   filter(effect=="education_3_tr") %>% 
   select(rii, rii_infci, rii_supci, group) %>% 
-  mutate(sexo="Overall") %>%
+  mutate(sexo="Global") %>%
   separate(group, c('encuesta', 'ccaa')) %>%
-  mutate(encuesta=ymd(encuesta, truncated = 2L), 
+  mutate( 
          ccaa=as.numeric(ccaa)) %>%
   left_join(ccaas) %>%
   mutate(fr="obesity")
@@ -848,9 +853,9 @@ rii_obesity_h <- rii_obesity_h %>%
          rii_supci=exp(value+1.96*se)) %>% 
   filter(effect=="education_3_tr") %>% 
   select(rii, rii_infci, rii_supci, group) %>% 
-  mutate(sexo="Hombre") %>%
+  mutate(sexo="Hombres") %>%
   separate(group, c('encuesta', 'ccaa')) %>%
-  mutate(encuesta=ymd(encuesta, truncated = 2L), 
+  mutate( 
          ccaa=as.numeric(ccaa)) %>%
   left_join(ccaas) %>%
   mutate(fr="obesity")
@@ -868,7 +873,7 @@ rii_obesity_m <- rii_obesity_m %>%
   select(rii, rii_infci, rii_supci, group) %>% 
   mutate(sexo="Mujeres") %>%
   separate(group, c('encuesta', 'ccaa')) %>%
-  mutate(encuesta=ymd(encuesta, truncated = 2L), 
+  mutate( 
          ccaa=as.numeric(ccaa)) %>%
   left_join(ccaas) %>%
   mutate(fr="obesity")
@@ -896,9 +901,9 @@ rii_sobrepeso <- rii_sobrepeso %>%
          rii_supci=exp(value+1.96*se)) %>% 
   filter(effect=="education_3_tr") %>% 
   select(rii, rii_infci, rii_supci, group) %>% 
-  mutate(sexo="Overall") %>%
+  mutate(sexo="Global") %>%
   separate(group, c('encuesta', 'ccaa')) %>%
-  mutate(encuesta=ymd(encuesta, truncated = 2L), 
+  mutate( 
          ccaa=as.numeric(ccaa)) %>%
   left_join(ccaas) %>%
   mutate(fr="sobrepeso")
@@ -915,9 +920,9 @@ rii_sobrepeso_h <- rii_sobrepeso_h %>%
          rii_supci=exp(value+1.96*se)) %>% 
   filter(effect=="education_3_tr") %>% 
   select(rii, rii_infci, rii_supci, group) %>% 
-  mutate(sexo="Hombre") %>%
+  mutate(sexo="Hombres") %>%
   separate(group, c('encuesta', 'ccaa')) %>%
-  mutate(encuesta=ymd(encuesta, truncated = 2L), 
+  mutate( 
          ccaa=as.numeric(ccaa)) %>%
   left_join(ccaas) %>%
   mutate(fr="sobrepeso")
@@ -935,7 +940,7 @@ rii_sobrepeso_m <- rii_sobrepeso_m %>%
   select(rii, rii_infci, rii_supci, group) %>% 
   mutate(sexo="Mujeres") %>%
   separate(group, c('encuesta', 'ccaa')) %>%
-  mutate(encuesta=ymd(encuesta, truncated = 2L), 
+  mutate( 
          ccaa=as.numeric(ccaa)) %>%
   left_join(ccaas) %>%
   mutate(fr="sobrepeso")
@@ -959,9 +964,9 @@ rii_smoking <- rii_smoking %>%
          rii_supci=exp(value+1.96*se)) %>% 
   filter(effect=="education_3_tr") %>% 
   select(rii, rii_infci, rii_supci, group) %>% 
-  mutate(sexo="Overall") %>%
+  mutate(sexo="Global") %>%
   separate(group, c('encuesta', 'ccaa')) %>%
-  mutate(encuesta=ymd(encuesta, truncated = 2L), 
+  mutate( 
          ccaa=as.numeric(ccaa)) %>%
   left_join(ccaas) %>%
   mutate(fr="smoking")
@@ -977,9 +982,9 @@ rii_smoking_h <- rii_smoking_h %>%
          rii_supci=exp(value+1.96*se)) %>% 
   filter(effect=="education_3_tr") %>% 
   select(rii, rii_infci, rii_supci, group) %>% 
-  mutate(sexo="Hombre") %>%
+  mutate(sexo="Hombres") %>%
   separate(group, c('encuesta', 'ccaa')) %>%
-  mutate(encuesta=ymd(encuesta, truncated = 2L), 
+  mutate( 
          ccaa=as.numeric(ccaa)) %>%
   left_join(ccaas) %>%
   mutate(fr="smoking")
@@ -997,7 +1002,7 @@ rii_smoking_m <- rii_smoking_m %>%
   select(rii, rii_infci, rii_supci, group) %>% 
   mutate(sexo="Mujeres") %>%
   separate(group, c('encuesta', 'ccaa')) %>%
-  mutate(encuesta=ymd(encuesta, truncated = 2L), 
+  mutate( 
          ccaa=as.numeric(ccaa)) %>%
   left_join(ccaas) %>%
   mutate(fr="smoking")
@@ -1022,9 +1027,9 @@ rii_alcohol <- rii_alcohol %>%
          rii_supci=exp(value+1.96*se)) %>% 
   filter(effect=="education_3_tr") %>% 
   select(rii, rii_infci, rii_supci, group) %>% 
-  mutate(sexo="Overall") %>%
+  mutate(sexo="Global") %>%
   separate(group, c('encuesta', 'ccaa')) %>%
-  mutate(encuesta=ymd(encuesta, truncated = 2L), 
+  mutate( 
          ccaa=as.numeric(ccaa)) %>%
   left_join(ccaas) %>%
   mutate(fr="alcohol")
@@ -1041,9 +1046,9 @@ rii_alcohol_h <- rii_alcohol_h %>%
          rii_supci=exp(value+1.96*se)) %>% 
   filter(effect=="education_3_tr") %>% 
   select(rii, rii_infci, rii_supci, group) %>% 
-  mutate(sexo="Hombre") %>%
+  mutate(sexo="Hombres") %>%
   separate(group, c('encuesta', 'ccaa')) %>%
-  mutate(encuesta=ymd(encuesta, truncated = 2L), 
+  mutate( 
          ccaa=as.numeric(ccaa)) %>%
   left_join(ccaas) %>%
   mutate(fr="alcohol")
@@ -1061,7 +1066,7 @@ rii_alcohol_m <- rii_alcohol_m %>%
   select(rii, rii_infci, rii_supci, group) %>% 
   mutate(sexo="Mujeres") %>%
   separate(group, c('encuesta', 'ccaa')) %>%
-  mutate(encuesta=ymd(encuesta, truncated = 2L), 
+  mutate( 
          ccaa=as.numeric(ccaa)) %>%
   left_join(ccaas) %>%
   mutate(fr="alcohol")
@@ -1073,47 +1078,47 @@ rii_alcohol <- rii_alcohol %>%
 
 
 
-########################### SEDENTARISMO #####################################
-rii_sedentario <- glmmTMB(sedentario~education_3_tr+edad+sexo+(1+education_3_tr|encuesta) + (1+education_3_tr|encuesta: ccaa), data=subset(dta, encuesta!=2009),
+########################### sedentarismo #####################################
+rii_sedentarismo <- glmmTMB(sedentarismo~education_3_tr+edad+sexo+(1+education_3_tr|encuesta) + (1+education_3_tr|encuesta: ccaa), data=subset(dta, encuesta!=2009),
                         family="poisson")
 
 
-rii_sedentario <- rii_sedentario %>%
+rii_sedentarismo <- rii_sedentarismo %>%
   extract_random_coefs(re="encuesta:ccaa") %>%
   mutate(rii=exp(value), 
          rii_infci=exp(value-1.96*se),
          rii_supci=exp(value+1.96*se)) %>% 
   filter(effect=="education_3_tr") %>% 
   select(rii, rii_infci, rii_supci, group) %>% 
-  mutate(sexo="Overall") %>%
+  mutate(sexo="Global") %>%
   separate(group, c('encuesta', 'ccaa')) %>%
-  mutate(encuesta=ymd(encuesta, truncated = 2L), 
+  mutate( 
          ccaa=as.numeric(ccaa)) %>%
   left_join(ccaas) %>%
-  mutate(fr="sedentario")
+  mutate(fr="sedentarismo")
 
-rii_sedentario_h <- glmmTMB(sedentario~education_3_tr+edad+(1+education_3_tr|encuesta) + (1+education_3_tr|encuesta: ccaa), data=subset(dta_h, encuesta!=2009),
+rii_sedentarismo_h <- glmmTMB(sedentarismo~education_3_tr+edad+(1+education_3_tr|encuesta) + (1+education_3_tr|encuesta: ccaa), data=subset(dta_h, encuesta!=2009),
                          family="poisson")
 
-rii_sedentario_h <- rii_sedentario_h %>%
+rii_sedentarismo_h <- rii_sedentarismo_h %>%
   extract_random_coefs(re="encuesta:ccaa") %>%
   mutate(rii=exp(value), 
          rii_infci=exp(value-1.96*se),
          rii_supci=exp(value+1.96*se)) %>% 
   filter(effect=="education_3_tr") %>% 
   select(rii, rii_infci, rii_supci, group) %>% 
-  mutate(sexo="Hombre") %>%
+  mutate(sexo="Hombres") %>%
   separate(group, c('encuesta', 'ccaa')) %>%
-  mutate(encuesta=ymd(encuesta, truncated = 2L), 
+  mutate( 
          ccaa=as.numeric(ccaa)) %>%
   left_join(ccaas) %>%
-  mutate(fr="sedentario")
+  mutate(fr="sedentarismo")
 
 
-rii_sedentario_m <- glmmTMB(sedentario~education_3_tr+edad+(1+education_3_tr|encuesta) + (1+education_3_tr|encuesta: ccaa), data=subset(dta_m, encuesta!=2009),
+rii_sedentarismo_m <- glmmTMB(sedentarismo~education_3_tr+edad+(1+education_3_tr|encuesta) + (1+education_3_tr|encuesta: ccaa), data=subset(dta_m, encuesta!=2009),
                          family="poisson")
 
-rii_sedentario_m <- rii_sedentario_m %>%
+rii_sedentarismo_m <- rii_sedentarismo_m %>%
   extract_random_coefs(re="encuesta:ccaa") %>%
   mutate(rii=exp(value), 
          rii_infci=exp(value-1.96*se),
@@ -1122,14 +1127,14 @@ rii_sedentario_m <- rii_sedentario_m %>%
   select(rii, rii_infci, rii_supci, group) %>% 
   mutate(sexo="Mujeres") %>%
   separate(group, c('encuesta', 'ccaa')) %>%
-  mutate(encuesta=ymd(encuesta, truncated = 2L), 
+  mutate( 
          ccaa=as.numeric(ccaa)) %>%
   left_join(ccaas) %>%
-  mutate(fr="sedentario")
+  mutate(fr="sedentarismo")
 
-rii_sedentario <- rii_sedentario %>%
-  rbind(rii_sedentario_h) %>%
-  rbind(rii_sedentario_m)
+rii_sedentarismo <- rii_sedentarismo %>%
+  rbind(rii_sedentarismo_h) %>%
+  rbind(rii_sedentarismo_m)
 
 
 
@@ -1137,7 +1142,7 @@ rii_sedentario <- rii_sedentario %>%
 
 
 ########################### ALIMENTACIÓN #####################################
-rii_food <- glmmTMB(fruta_verdura~education_3_tr+edad+sexo+(1+education_3_tr|encuesta) + (1+education_3_tr|encuesta: ccaa), data=dta,
+rii_food <- glmmTMB(food~education_3_tr+edad+sexo+(1+education_3_tr|encuesta) + (1+education_3_tr|encuesta: ccaa), data=dta,
                           family="poisson")
 
 rii_food <- rii_food %>%
@@ -1147,14 +1152,14 @@ rii_food <- rii_food %>%
          rii_supci=exp(value+1.96*se)) %>% 
   filter(effect=="education_3_tr") %>% 
   select(rii, rii_infci, rii_supci, group) %>% 
-  mutate(sexo="Overall") %>%
+  mutate(sexo="Global") %>%
   separate(group, c('encuesta', 'ccaa')) %>%
-  mutate(encuesta=ymd(encuesta, truncated = 2L), 
+  mutate( 
          ccaa=as.numeric(ccaa)) %>%
   left_join(ccaas) %>%
   mutate(fr="food")
 
-rii_food_h <- glmmTMB(fruta_verdura~education_3_tr+edad+(1+education_3_tr|encuesta) + (1+education_3_tr|encuesta: ccaa), data=dta_h,
+rii_food_h <- glmmTMB(food~education_3_tr+edad+(1+education_3_tr|encuesta) + (1+education_3_tr|encuesta: ccaa), data=dta_h,
                             family="poisson")
 
 rii_food_h <- rii_food_h %>%
@@ -1164,15 +1169,15 @@ rii_food_h <- rii_food_h %>%
          rii_supci=exp(value+1.96*se)) %>% 
   filter(effect=="education_3_tr") %>% 
   select(rii, rii_infci, rii_supci, group) %>% 
-  mutate(sexo="Hombre") %>%
+  mutate(sexo="Hombres") %>%
   separate(group, c('encuesta', 'ccaa')) %>%
-  mutate(encuesta=ymd(encuesta, truncated = 2L), 
+  mutate( 
          ccaa=as.numeric(ccaa)) %>%
   left_join(ccaas) %>%
   mutate(fr="food")
 
 
-rii_food_m <- glmmTMB(fruta_verdura~education_3_tr+edad+(1+education_3_tr|encuesta) + (1+education_3_tr|encuesta: ccaa), data=dta_m,
+rii_food_m <- glmmTMB(food~education_3_tr+edad+(1+education_3_tr|encuesta) + (1+education_3_tr|encuesta: ccaa), data=dta_m,
                             family="poisson")
 
 rii_food_m <- rii_food_m %>%
@@ -1184,7 +1189,7 @@ rii_food_m <- rii_food_m %>%
   select(rii, rii_infci, rii_supci, group) %>% 
   mutate(sexo="Mujeres") %>%
   separate(group, c('encuesta', 'ccaa')) %>%
-  mutate(encuesta=ymd(encuesta, truncated = 2L), 
+  mutate( 
          ccaa=as.numeric(ccaa)) %>%
   left_join(ccaas) %>%
   mutate(fr="food")
@@ -1209,7 +1214,7 @@ rii_ccaa <- rii_diabetes %>%
   rbind(rii_obesity) %>%
   rbind(rii_smoking) %>%
   rbind(rii_alcohol) %>%
-  rbind(rii_sedentario) %>%
+  rbind(rii_sedentarismo) %>%
   rbind(rii_food)
 
 
@@ -1218,9 +1223,15 @@ rii_ccaa <- rii_diabetes %>%
 write.csv(rii_ccaa, "rii_ccaa.csv")
 
 
+## Base para los informes
+rii_informes <- rii_spain %>%
+  rbind(rii_ccaa) %>% 
+  filter(encuesta!=2001) %>% 
+  filter(encuesta!=2009) %>% 
+  mutate(ccaa=as.factor(ccaa), 
+         fr = recode(fr, "sedentario"="sedentarismo"))
 
-
-
+save(rii_informes, file = "Informes_CCAA/RII_informes.RData")
 
 
 

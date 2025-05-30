@@ -28,7 +28,7 @@ rm(list=ls())
 # Sobrepeso+obesidad=sobrepeso
 # Tabaquismo=smoking
 # Consumo de alcohol=alcohol
-# Sedentarismo=sedentario
+# Sedentarismo=sedentarismo
 # Alimentación=fruta (por ahora solo fruta y verdura diaria en dicotómico con 0 si consume) 
 
 
@@ -84,7 +84,7 @@ ense_2001 <-  ense_2001 %>%
          smoking=case_when((P28==1 | P28==2) ~ 1 , 
                            (P28==3 | P28==4) ~ 0), 
          alcohol=NA,
-         sedentario=case_when(P40==1~1, 
+         sedentarismo=case_when(P40==1~1, 
                               (P40==2 | P40==3 | P40==4)~0), 
          fruta=na_if(P42_1, 9), 
          verdura=na_if(P42_6, 9), 
@@ -92,16 +92,16 @@ ense_2001 <-  ense_2001 %>%
                          (fruta==2 | fruta==3 | fruta==4 | fruta==5)~1), 
          verdura=case_when(verdura==1~0, 
                            (verdura==2 | verdura==3  | verdura==4 | verdura==5)~1), 
-         fruta_verdura=case_when(fruta==1~1, verdura==1~1, 
+         food=case_when(fruta==1~1, verdura==1~1, 
                                  (fruta==0 | verdura==0)~0)) %>%
   select(id, factor, factor2, edad, sexo, ccaa, nacionalidad, migration, clase, clase_tr,
          education_3, education_3_tr, education_5, education_5_tr, diabetes, hta, 
-         col, imc, obesity, sobrepeso, smoking, alcohol, sedentario, fruta, verdura, fruta_verdura) %>%
+         col, imc, obesity, sobrepeso, smoking, alcohol, sedentarismo, fruta, verdura, food) %>%
   filter(edad>17) %>%
   distinct() %>%
   drop_na(id, factor, edad, sexo, ccaa, education_3, education_3_tr, 
           education_5, education_5_tr, diabetes, hta, 
-          col, imc, obesity, sobrepeso, smoking, sedentario, fruta_verdura) %>%
+          col, imc, obesity, sobrepeso, smoking, sedentarismo, food) %>%
   mutate(encuesta=2001)
 
 save(ense_2001, file = "2001/ense2001_clean.RData")
@@ -143,22 +143,22 @@ ense_2003 <-  ense_2003 %>%
                            (FUMA==3 | FUMA==4) ~ 0), 
          alcohol=case_when(BEBE==1~1, 
                            BEBE==6~0), 
-         sedentario=case_when(D_ACFISO==1~1, 
+         sedentarismo=case_when(D_ACFISO==1~1, 
                               D_ACFISO==2~0), 
          fruta=case_when(FRUTA==1~0, 
                          (FRUTA==2 | FRUTA==3 | FRUTA==4 | FRUTA==5)~1), 
          verdura=case_when(VERDURA==1~0, 
                            (VERDURA==2 | VERDURA==3  | VERDURA==4 | VERDURA==5)~1), 
-         fruta_verdura=case_when(fruta==1~1, verdura==1~1, 
+         food=case_when(fruta==1~1, verdura==1~1, 
                                  (fruta==0 | verdura==0)~0)) %>%
   select(id, factor, factor2, edad, sexo, ccaa, nacionalidad, migration, clase, clase_tr,
          education_3, education_3_tr, education_5, education_5_tr, diabetes, hta, 
-         col, imc, obesity, sobrepeso, smoking, alcohol, sedentario, fruta, verdura, fruta_verdura) %>%
+         col, imc, obesity, sobrepeso, smoking, alcohol, sedentarismo, fruta, verdura, food) %>%
   filter(edad>17) %>%
   distinct() %>%
   drop_na(id, factor, edad, sexo, ccaa, nacionalidad, clase, clase_tr,
           education_3, education_3_tr, diabetes, hta, 
-          col, imc, obesity, sobrepeso, smoking, alcohol, sedentario, fruta_verdura) %>%
+          col, imc, obesity, sobrepeso, smoking, alcohol, sedentarismo, food) %>%
   mutate(encuesta=2003)
 
 
@@ -208,7 +208,7 @@ ense_2006 <-  ense_2006 %>%
                            (H1_67==3 | H1_67==4) ~ 0), 
          alcohol=case_when(H2_82==1~1, 
                            H2_82==6~0), 
-         sedentario=case_when(H3_93==6~1, 
+         sedentarismo=case_when(H3_93==6~1, 
                               H3_93==1~0), 
          fruta=na_if(H4_96_1, 9), 
          verdura=na_if(H4_96_7, 9), 
@@ -216,16 +216,16 @@ ense_2006 <-  ense_2006 %>%
                          (fruta==2 | fruta==3 | fruta==4 | fruta==5)~1), 
          verdura=case_when(verdura==1~0, 
                            (verdura==2 | verdura==3  | verdura==4 | verdura==5)~1), 
-         fruta_verdura=case_when(fruta==1~1, verdura==1~1, 
+         food=case_when(fruta==1~1, verdura==1~1, 
                                  (fruta==0 | verdura==0)~0)) %>%
   select(id, factor, factor2, edad, sexo, ccaa, nacionalidad, migration, clase, clase_tr,
          education_3, education_3_tr, education_5, education_5_tr, diabetes, hta, 
-         col, imc, obesity, sobrepeso, smoking, alcohol, sedentario, fruta, verdura, fruta_verdura) %>%
+         col, imc, obesity, sobrepeso, smoking, alcohol, sedentarismo, fruta, verdura, food) %>%
   filter(edad>17) %>%
   distinct() %>%
   drop_na(id, factor, edad, sexo, ccaa, nacionalidad, migration, clase, clase_tr,
           education_3, education_3_tr, education_5, education_5_tr, diabetes, hta, 
-          col, imc, obesity, sobrepeso, smoking, sedentario, fruta_verdura) %>%
+          col, imc, obesity, sobrepeso, smoking, sedentarismo, food) %>%
   mutate(encuesta=2006)
 
 
@@ -280,7 +280,7 @@ eese_2009 <-  eese_2009 %>%
                             PE3==0~1), 
          vigorosa=case_when((PE1==1 | PE1==2 | PE1==3 | PE1==4 | PE1==5 | PE1==6 | PE1==7)~0, 
                             PE1==0~1), 
-         sedentario=case_when((moderada==1 | vigorosa==1)~1, 
+         sedentarismo=case_when((moderada==1 | vigorosa==1)~1, 
                               (moderada==0 & vigorosa==0)~0), 
          fruta=na_if(FV1, 9), fruta=na_if(fruta, 8), 
          verdura=na_if(FV2, 9), verdura=na_if(verdura, 8), 
@@ -288,16 +288,16 @@ eese_2009 <-  eese_2009 %>%
                          (fruta==3 | fruta==4 | fruta==5 | fruta==6)~1), 
          verdura=case_when((verdura==1 | verdura==2)~0, 
                            (verdura==3 | verdura==4  | verdura==5 | verdura==6)~1), 
-         fruta_verdura=case_when(fruta==1~1, verdura==1~1, 
+         food=case_when(fruta==1~1, verdura==1~1, 
                                  (fruta==0 | verdura==0)~0)) %>%
   select(id, factor, factor2, edad, sexo, ccaa, nacionalidad, migration, clase, clase_tr,
          education_3, education_3_tr, education_5, education_5_tr, diabetes, hta, 
-         col, imc, obesity, sobrepeso, smoking, alcohol, sedentario, fruta, verdura, fruta_verdura) %>%
+         col, imc, obesity, sobrepeso, smoking, alcohol, sedentarismo, fruta, verdura, food) %>%
   filter(edad>17) %>%
   distinct() %>%
   drop_na(id, factor, edad, sexo, ccaa, nacionalidad, migration, 
           education_3, education_3_tr, education_5, education_5_tr, diabetes, hta, 
-          imc, obesity, sobrepeso, smoking, sedentario) %>%
+          imc, obesity, sobrepeso, smoking, sedentarismo) %>%
   mutate(encuesta=2009)
 
 save(eese_2009, file = "2009/eese2009_clean.RData")
@@ -346,7 +346,7 @@ ense_2011 <-  ense_2011 %>%
                            (S105==3 | S105==4) ~ 0), 
          alcohol=case_when(T121==1~1, 
                            T121==6~0), 
-         sedentario=case_when(U129==1~1, 
+         sedentarismo=case_when(U129==1~1, 
                               (U129==2 | U129==3 | U129==4)~0), 
          fruta=na_if(V133_1, 9), fruta=na_if(fruta, 8), 
          verdura=na_if(V133_7, 9), verdura=na_if(verdura, 8), 
@@ -354,16 +354,16 @@ ense_2011 <-  ense_2011 %>%
                          (fruta==2 | fruta==3 | fruta==4 | fruta==5)~1), 
          verdura=case_when(verdura==1~0, 
                            (verdura==2 | verdura==3  | verdura==4 | verdura==5)~1), 
-         fruta_verdura=case_when(fruta==1~1, verdura==1~1, 
+         food=case_when(fruta==1~1, verdura==1~1, 
                                  (fruta==0 | verdura==0)~0)) %>%
   select(id, factor, factor2, edad, sexo, ccaa, nacionalidad, migration, clase, clase_tr,
          education_3, education_3_tr, education_5, education_5_tr, diabetes, hta, 
-         col, imc, obesity, sobrepeso, smoking, alcohol, sedentario, fruta, verdura, fruta_verdura) %>%
+         col, imc, obesity, sobrepeso, smoking, alcohol, sedentarismo, fruta, verdura, food) %>%
   filter(edad>17) %>%
   distinct() %>%
   drop_na(id, factor, edad, sexo, ccaa, nacionalidad, migration, clase, clase_tr,
           education_3, education_3_tr, education_5, education_5_tr, diabetes, hta, 
-          col, imc, obesity, sobrepeso, smoking, sedentario, fruta_verdura) %>%
+          col, imc, obesity, sobrepeso, smoking, sedentarismo, food) %>%
   mutate(encuesta=2011)
 
 save(ense_2011, file = "2011/ense2011_clean.RData")
@@ -413,7 +413,7 @@ eese_2014 <-  eese_2014 %>%
          alcohol=case_when((alcohol==1 | alcohol==2 | alcohol==3 | alcohol==4 
                             | alcohol==5 | alcohol==6 | alcohol==7)~1, 
                            (alcohol==8 | alcohol==9)~0), 
-         sedentario=case_when(T112==1~1, 
+         sedentarismo=case_when(T112==1~1, 
                               (T112==2 | T112==3 | T112==4)~0),
          fruta=na_if(U120_1, 9), fruta=na_if(fruta, 8), 
          verdura=na_if(U120_7, 9), verdura=na_if(verdura, 8), 
@@ -421,16 +421,16 @@ eese_2014 <-  eese_2014 %>%
                          (fruta==2 | fruta==3 | fruta==4 | fruta==5 | fruta==6)~1), 
          verdura=case_when(verdura==1~0, 
                            (verdura==2 | verdura==3  | verdura==4 | verdura==5 | verdura==6)~1), 
-         fruta_verdura=case_when(fruta==1~1, verdura==1~1, 
+         food=case_when(fruta==1~1, verdura==1~1, 
                                  (fruta==0 | verdura==0)~0)) %>%
   select(id, factor, factor2, edad, sexo, ccaa, nacionalidad, migration, clase, clase_tr,
          education_3, education_3_tr, education_5, education_5_tr, diabetes, hta, 
-         col, imc, obesity, sobrepeso, smoking, alcohol, sedentario, fruta, verdura, fruta_verdura) %>%
+         col, imc, obesity, sobrepeso, smoking, alcohol, sedentarismo, fruta, verdura, food) %>%
   filter(edad>17) %>%
   distinct() %>%
   drop_na(id, factor, edad, sexo, ccaa, nacionalidad, migration, clase, clase_tr,
           education_3, education_3_tr, education_5, education_5_tr, diabetes, hta, 
-          col, imc, obesity, sobrepeso, smoking, alcohol, sedentario, fruta_verdura) %>%
+          col, imc, obesity, sobrepeso, smoking, alcohol, sedentarismo, food) %>%
   mutate(encuesta=2014)
 
 save(eese_2014, file = "2014/eese2014_clean.RData")
@@ -479,7 +479,7 @@ ense_2017 <-  ense_2017 %>%
          alcohol=case_when((alcohol==1 | alcohol==2 | alcohol==3 | alcohol==4 
                             | alcohol==5 | alcohol==6 | alcohol==7)~1, 
                            (alcohol==8 | alcohol==9)~0), 
-         sedentario=case_when(T112==1~1, 
+         sedentarismo=case_when(T112==1~1, 
                               (T112==2 | T112==3 | T112==4)~0), 
          fruta=na_if(U120_1, 9), fruta=na_if(fruta, 8), 
          verdura=na_if(U120_7, 9), verdura=na_if(verdura, 8), 
@@ -487,16 +487,16 @@ ense_2017 <-  ense_2017 %>%
                          (fruta==2 | fruta==3 | fruta==4 | fruta==5 | fruta==6)~1), 
          verdura=case_when(verdura==1~0, 
                            (verdura==2 | verdura==3  | verdura==4 | verdura==5 | verdura==6)~1), 
-         fruta_verdura=case_when(fruta==1~1, verdura==1~1, 
+         food=case_when(fruta==1~1, verdura==1~1, 
                                  (fruta==0 | verdura==0)~0)) %>%
   select(id, factor, factor2, edad, sexo, ccaa, nacionalidad, migration, clase, clase_tr,
          education_3, education_3_tr, education_5, education_5_tr, diabetes, hta, 
-         col, imc, obesity, sobrepeso, smoking, alcohol, sedentario, fruta, verdura, fruta_verdura) %>%
+         col, imc, obesity, sobrepeso, smoking, alcohol, sedentarismo, fruta, verdura, food) %>%
   filter(edad>17) %>%
   distinct() %>%
   drop_na(id, factor, edad, sexo, ccaa, nacionalidad, migration, clase, clase_tr,
           education_3, education_3_tr, education_5, education_5_tr, diabetes, hta, 
-          col, imc, obesity, sobrepeso, smoking, alcohol, sedentario, fruta_verdura) %>%
+          col, imc, obesity, sobrepeso, smoking, alcohol, sedentarismo, food) %>%
   mutate(encuesta=2017)
 
 
@@ -547,7 +547,7 @@ eese_2020 <-  eese_2020 %>%
          alcohol=case_when((alcohol==1 | alcohol==2 | alcohol==3 | alcohol==4 
                             | alcohol==5 | alcohol==6 | alcohol==7)~1, 
                            (alcohol==8 | alcohol==9)~0), 
-         sedentario=case_when(T112==1~1, 
+         sedentarismo=case_when(T112==1~1, 
                               (T112==2 | T112==3 | T112==4)~0), 
          fruta=na_if(U120_1, 9), fruta=na_if(fruta, 8), 
          verdura=na_if(U120_7, 9), verdura=na_if(verdura, 8), 
@@ -555,16 +555,16 @@ eese_2020 <-  eese_2020 %>%
                          (fruta==2 | fruta==3 | fruta==4 | fruta==5 | fruta==6)~1), 
          verdura=case_when(verdura==1~0, 
                            (verdura==2 | verdura==3  | verdura==4 | verdura==5 | verdura==6)~1), 
-         fruta_verdura=case_when(fruta==1~1, verdura==1~1, 
+         food=case_when(fruta==1~1, verdura==1~1, 
                                  (fruta==0 | verdura==0)~0)) %>%
   select(id, factor, factor2, edad, sexo, ccaa, nacionalidad, migration, clase, clase_tr,
          education_3, education_3_tr, education_5, education_5_tr, diabetes, hta, 
-         col, imc, obesity, sobrepeso, smoking, alcohol, sedentario, fruta, verdura, fruta_verdura) %>%
+         col, imc, obesity, sobrepeso, smoking, alcohol, sedentarismo, fruta, verdura, food) %>%
   filter(edad>17) %>%
   distinct() %>%
   drop_na(id, factor, edad, sexo, ccaa, nacionalidad, migration, clase, clase_tr,
           education_3, education_3_tr, education_5, education_5_tr, diabetes, hta, 
-          col, imc, obesity, sobrepeso, smoking, alcohol, sedentario, fruta_verdura) %>%
+          col, imc, obesity, sobrepeso, smoking, alcohol, sedentarismo, food) %>%
   mutate(encuesta=2020)
          
 
