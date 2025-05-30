@@ -55,13 +55,14 @@ fig_1 <-
   prevalencias %>%
   filter((nombre_ccaa == nombre_ca[1]  | nombre_ccaa == nombre_ca[v]), sexo=="Global") %>% 
   ggplot(aes(x=encuesta, y=(diabetes*100), ymin=(diabetes_low*100), ymax=(diabetes_upp*100), color=as.factor(education_3), linetype=as.factor(nombre_ccaa), group=interaction(education_3, nombre_ccaa)))+
-  geom_line(size=1.5)+
+  geom_line(size=2)+
   facet_grid(cols = vars(sexo))+
   scale_y_continuous(breaks = c(10, 20, 40, 60, 100))+
   scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
   labs(x="", y="Prevalencia (95% IC)")+
-  scale_color_discrete(name="Nivel Educativo",
-                      labels=c("Bajo", "Medio", "Alto"))+
+  scale_color_manual(name="Nivel Educativo",
+                      labels=c("Bajo", "Medio", "Alto"),
+                      values = c("#E69F00", "#af8dc3", "#1c8900"))+
   scale_linetype_manual(values = c("España" = "dashed",
                                    "Andalucía" = "solid",
                                    "Aragón" = "solid",
@@ -108,13 +109,14 @@ fig_2 <-
   prevalencias %>%
   filter((nombre_ccaa == nombre_ca[1]  | nombre_ccaa == nombre_ca[v]), sexo!="Global") %>% 
   ggplot(aes(x=encuesta, y=(diabetes*100), ymin=(diabetes_low*100), ymax=(diabetes_upp*100), color=as.factor(education_3), linetype=as.factor(nombre_ccaa), group=interaction(education_3, nombre_ccaa)))+
-  geom_line(size=1.5)+
+  geom_line(size=2)+
   facet_grid(cols = vars(sexo))+
   scale_y_continuous(breaks = c(10, 20, 40, 60, 100))+
   scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
   labs(x="", y="Prevalencia (95% IC)")+
-  scale_color_discrete(name="Nivel Educativo",
-                      labels=c("Bajo", "Medio", "Alto"))+
+  scale_color_manual(name="Nivel Educativo",
+                      labels=c("Bajo", "Medio", "Alto"),
+                      values = c("#E69F00", "#af8dc3", "#1c8900"))+
   scale_linetype_manual(values = c("España" = "dashed",
                                    "Andalucía" = "solid",
                                    "Aragón" = "solid",
@@ -163,48 +165,48 @@ fig_2
   geom_hline(yintercept = 1, lty=2)+
   geom_ribbon(alpha=0.07, aes(fill=nombre_ccaa))+
   facet_grid(cols = vars(sexo))+
-  geom_line(aes(color=nombre_ccaa, linetype=nombre_ccaa), size=1.5)+
+  geom_line(aes(color=nombre_ccaa, linetype=nombre_ccaa), size=2)+
   scale_y_continuous(trans="log",
                      breaks=c(0, 1, 1.5, 2, 4, 8, 16, 32, 64))+
   scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
   labs(x="", y="RII (95% CI)")+
-  scale_color_manual(values=c("España" =  "dimgray",
-                             "Andalucía" = "#CC0033", 
-                             "Aragón" = "#CC0033", 
-                             "Principado de Asturias" = "#CC0033", 
-                             "Illes Balears" = "#CC0033", 
-                             "Canarias" = "#CC0033", 
-                             "Cantabria" = "#CC0033", 
-                             "Castilla y León" = "#CC0033", 
-                             "Castilla-La Mancha" = "#CC0033", 
-                             "Cataluña" = "#CC0033", 
-                             "Comunitat Valenciana" = "#CC0033", 
-                             "Extremadura" = "#CC0033", 
-                             "Galicia" = "#CC0033", 
-                             "La Rioja" = "#CC0033", 
-                             "Comunidad de Madrid" = "#CC0033",
-                             "Región de Murcia" = "#CC0033", 
-                             "Comunidad Foral de Navarra" = "#CC0033", 
-                             "País Vasco" = "#CC0033"),
+  scale_color_manual(values=c("España" = "dimgrey",
+                             "Andalucía" = "#cc0033", 
+                             "Aragón" = "#cc0033", 
+                             "Principado de Asturias" = "#cc0033", 
+                             "Illes Balears" = "#cc0033", 
+                             "Canarias" = "#cc0033", 
+                             "Cantabria" = "#cc0033", 
+                             "Castilla y León" = "#cc0033", 
+                             "Castilla-La Mancha" = "#cc0033", 
+                             "Cataluña" = "#cc0033", 
+                             "Comunitat Valenciana" = "#cc0033", 
+                             "Extremadura" = "#cc0033", 
+                             "Galicia" = "#cc0033", 
+                             "La Rioja" = "#cc0033", 
+                             "Comunidad de Madrid" = "#cc0033",
+                             "Región de Murcia" = "#cc0033", 
+                             "Comunidad Foral de Navarra" = "#cc0033", 
+                             "País Vasco" = "#cc0033"),
                      guide="none")+
-  scale_fill_manual(values=c("España" =  "dimgray",
-                             "Andalucía" = "#CC0033", 
-                             "Aragón" = "#CC0033", 
-                             "Principado de Asturias" = "#CC0033", 
-                             "Illes Balears" = "#CC0033", 
-                             "Canarias" = "#CC0033", 
-                             "Cantabria" = "#CC0033", 
-                             "Castilla y León" = "#CC0033", 
-                             "Castilla-La Mancha" = "#CC0033", 
-                             "Cataluña" = "#CC0033", 
-                             "Comunitat Valenciana" = "#CC0033", 
-                             "Extremadura" = "#CC0033", 
-                             "Galicia" = "#CC0033", 
-                             "La Rioja" = "#CC0033", 
-                             "Comunidad de Madrid" = "#CC0033",
-                             "Región de Murcia" = "#CC0033", 
-                             "Comunidad Foral de Navarra" = "#CC0033", 
-                             "País Vasco" = "#CC0033"),
+  scale_fill_manual(values=c("España" = "dimgrey",
+                             "Andalucía" = "#cc0033", 
+                             "Aragón" = "#cc0033", 
+                             "Principado de Asturias" = "#cc0033", 
+                             "Illes Balears" = "#cc0033", 
+                             "Canarias" = "#cc0033", 
+                             "Cantabria" = "#cc0033", 
+                             "Castilla y León" = "#cc0033", 
+                             "Castilla-La Mancha" = "#cc0033", 
+                             "Cataluña" = "#cc0033", 
+                             "Comunitat Valenciana" = "#cc0033", 
+                             "Extremadura" = "#cc0033", 
+                             "Galicia" = "#cc0033", 
+                             "La Rioja" = "#cc0033", 
+                             "Comunidad de Madrid" = "#cc0033",
+                             "Región de Murcia" = "#cc0033", 
+                             "Comunidad Foral de Navarra" = "#cc0033", 
+                             "País Vasco" = "#cc0033"),
                     guide="none")+
   scale_linetype_manual(values = c("España" = "dashed",
                                    "Andalucía" = "solid", 
@@ -255,48 +257,48 @@ fig_3
   geom_hline(yintercept = 1, lty=2)+
   geom_ribbon(alpha=0.07, aes(fill=nombre_ccaa))+
   facet_grid(cols = vars(sexo))+
-  geom_line(aes(color=nombre_ccaa, linetype=nombre_ccaa), size=1.5)+
+  geom_line(aes(color=nombre_ccaa, linetype=nombre_ccaa), size=2)+
   scale_y_continuous(trans="log",
                      breaks=c(0, 1, 1.5, 2, 4, 8, 16, 32, 64))+
   scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
   labs(x="", y="RII (95% CI)")+
-  scale_color_manual(values=c("España" =  "dimgray",
-                             "Andalucía" = "#CC0033", 
-                             "Aragón" = "#CC0033", 
-                             "Principado de Asturias" = "#CC0033", 
-                             "Illes Balears" = "#CC0033", 
-                             "Canarias" = "#CC0033", 
-                             "Cantabria" = "#CC0033", 
-                             "Castilla y León" = "#CC0033", 
-                             "Castilla-La Mancha" = "#CC0033", 
-                             "Cataluña" = "#CC0033", 
-                             "Comunitat Valenciana" = "#CC0033", 
-                             "Extremadura" = "#CC0033", 
-                             "Galicia" = "#CC0033", 
-                             "La Rioja" = "#CC0033", 
-                             "Comunidad de Madrid" = "#CC0033",
-                             "Región de Murcia" = "#CC0033", 
-                             "Comunidad Foral de Navarra" = "#CC0033", 
-                             "País Vasco" = "#CC0033"),
+  scale_color_manual(values=c("España" = "dimgrey",
+                             "Andalucía" = "#cc0033", 
+                             "Aragón" = "#cc0033", 
+                             "Principado de Asturias" = "#cc0033", 
+                             "Illes Balears" = "#cc0033", 
+                             "Canarias" = "#cc0033", 
+                             "Cantabria" = "#cc0033", 
+                             "Castilla y León" = "#cc0033", 
+                             "Castilla-La Mancha" = "#cc0033", 
+                             "Cataluña" = "#cc0033", 
+                             "Comunitat Valenciana" = "#cc0033", 
+                             "Extremadura" = "#cc0033", 
+                             "Galicia" = "#cc0033", 
+                             "La Rioja" = "#cc0033", 
+                             "Comunidad de Madrid" = "#cc0033",
+                             "Región de Murcia" = "#cc0033", 
+                             "Comunidad Foral de Navarra" = "#cc0033", 
+                             "País Vasco" = "#cc0033"),
                      guide="none")+
-  scale_fill_manual(values=c("España" =  "dimgray",
-                             "Andalucía" = "#CC0033", 
-                             "Aragón" = "#CC0033", 
-                             "Principado de Asturias" = "#CC0033", 
-                             "Illes Balears" = "#CC0033", 
-                             "Canarias" = "#CC0033", 
-                             "Cantabria" = "#CC0033", 
-                             "Castilla y León" = "#CC0033", 
-                             "Castilla-La Mancha" = "#CC0033", 
-                             "Cataluña" = "#CC0033", 
-                             "Comunitat Valenciana" = "#CC0033", 
-                             "Extremadura" = "#CC0033", 
-                             "Galicia" = "#CC0033", 
-                             "La Rioja" = "#CC0033", 
-                             "Comunidad de Madrid" = "#CC0033",
-                             "Región de Murcia" = "#CC0033", 
-                             "Comunidad Foral de Navarra" = "#CC0033", 
-                             "País Vasco" = "#CC0033"),
+  scale_fill_manual(values=c("España" = "dimgrey",
+                             "Andalucía" = "#cc0033", 
+                             "Aragón" = "#cc0033", 
+                             "Principado de Asturias" = "#cc0033", 
+                             "Illes Balears" = "#cc0033", 
+                             "Canarias" = "#cc0033", 
+                             "Cantabria" = "#cc0033", 
+                             "Castilla y León" = "#cc0033", 
+                             "Castilla-La Mancha" = "#cc0033", 
+                             "Cataluña" = "#cc0033", 
+                             "Comunitat Valenciana" = "#cc0033", 
+                             "Extremadura" = "#cc0033", 
+                             "Galicia" = "#cc0033", 
+                             "La Rioja" = "#cc0033", 
+                             "Comunidad de Madrid" = "#cc0033",
+                             "Región de Murcia" = "#cc0033", 
+                             "Comunidad Foral de Navarra" = "#cc0033", 
+                             "País Vasco" = "#cc0033"),
                     guide="none")+
   scale_linetype_manual(values = c("España" = "dashed",
                                    "Andalucía" = "solid", 
@@ -348,13 +350,14 @@ fig_5 <-
   prevalencias %>%
   filter((nombre_ccaa == nombre_ca[1]  | nombre_ccaa == nombre_ca[v]), sexo=="Global") %>% 
   ggplot(aes(x=encuesta, y=(hta*100), ymin=(hta_low*100), ymax=(hta_upp*100), color=as.factor(education_3), linetype=as.factor(nombre_ccaa), group=interaction(education_3, nombre_ccaa)))+
-  geom_line(size=1.5)+
+  geom_line(size=2)+
   facet_grid(cols = vars(sexo))+
   scale_y_continuous(breaks = c(10, 20, 40, 60, 100))+
   scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
   labs(x="", y="Prevalencia (95% IC)")+
-  scale_color_discrete(name="Nivel Educativo",
-                      labels=c("Bajo", "Medio", "Alto"))+
+  scale_color_manual(name="Nivel Educativo",
+                    labels=c("Bajo", "Medio", "Alto"),
+                    values = c("#E69F00", "#af8dc3", "#1c8900"))+
   scale_linetype_manual(values = c("España" = "dashed",
                                    "Andalucía" = "solid",
                                    "Aragón" = "solid",
@@ -401,13 +404,14 @@ fig_6 <-
   prevalencias %>%
   filter((nombre_ccaa == nombre_ca[1]  | nombre_ccaa == nombre_ca[v]), sexo!="Global") %>% 
   ggplot(aes(x=encuesta, y=(hta*100), ymin=(hta_low*100), ymax=(hta_upp*100), color=as.factor(education_3), linetype=as.factor(nombre_ccaa), group=interaction(education_3, nombre_ccaa)))+
-  geom_line(size=1.5)+
+  geom_line(size=2)+
   facet_grid(cols = vars(sexo))+
   scale_y_continuous(breaks = c(10, 20, 40, 60, 100))+
   scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
   labs(x="", y="Prevalencia (95% IC)")+
-  scale_color_discrete(name="Nivel Educativo",
-                      labels=c("Bajo", "Medio", "Alto"))+
+  scale_color_manual(name="Nivel Educativo",
+                     labels=c("Bajo", "Medio", "Alto"),
+                     values = c("#E69F00", "#af8dc3", "#1c8900"))+
   scale_linetype_manual(values = c("España" = "dashed",
                                    "Andalucía" = "solid",
                                    "Aragón" = "solid",
@@ -456,48 +460,48 @@ fig_6
   geom_hline(yintercept = 1, lty=2)+
   geom_ribbon(alpha=0.07, aes(fill=nombre_ccaa))+
   facet_grid(cols = vars(sexo))+
-  geom_line(aes(color=nombre_ccaa, linetype=nombre_ccaa), size=1.5)+
+  geom_line(aes(color=nombre_ccaa, linetype=nombre_ccaa), size=2)+
   scale_y_continuous(trans="log",
                      breaks=c(0, 1, 1.5, 2, 4, 8, 16, 32, 64))+
   scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
   labs(x="", y="RII (95% CI)")+
-  scale_color_manual(values=c("España" =  "dimgray",
-                             "Andalucía" = "#CC0033", 
-                             "Aragón" = "#CC0033", 
-                             "Principado de Asturias" = "#CC0033", 
-                             "Illes Balears" = "#CC0033", 
-                             "Canarias" = "#CC0033", 
-                             "Cantabria" = "#CC0033", 
-                             "Castilla y León" = "#CC0033", 
-                             "Castilla-La Mancha" = "#CC0033", 
-                             "Cataluña" = "#CC0033", 
-                             "Comunitat Valenciana" = "#CC0033", 
-                             "Extremadura" = "#CC0033", 
-                             "Galicia" = "#CC0033", 
-                             "La Rioja" = "#CC0033", 
-                             "Comunidad de Madrid" = "#CC0033",
-                             "Región de Murcia" = "#CC0033", 
-                             "Comunidad Foral de Navarra" = "#CC0033", 
-                             "País Vasco" = "#CC0033"),
+  scale_color_manual(values=c("España" =  "dimgrey",
+                             "Andalucía" = "#cc0033", 
+                             "Aragón" = "#cc0033", 
+                             "Principado de Asturias" = "#cc0033", 
+                             "Illes Balears" = "#cc0033", 
+                             "Canarias" = "#cc0033", 
+                             "Cantabria" = "#cc0033", 
+                             "Castilla y León" = "#cc0033", 
+                             "Castilla-La Mancha" = "#cc0033", 
+                             "Cataluña" = "#cc0033", 
+                             "Comunitat Valenciana" = "#cc0033", 
+                             "Extremadura" = "#cc0033", 
+                             "Galicia" = "#cc0033", 
+                             "La Rioja" = "#cc0033", 
+                             "Comunidad de Madrid" = "#cc0033",
+                             "Región de Murcia" = "#cc0033", 
+                             "Comunidad Foral de Navarra" = "#cc0033", 
+                             "País Vasco" = "#cc0033"),
                      guide="none")+
-  scale_fill_manual(values=c("España" =  "dimgray",
-                             "Andalucía" = "#CC0033", 
-                             "Aragón" = "#CC0033", 
-                             "Principado de Asturias" = "#CC0033", 
-                             "Illes Balears" = "#CC0033", 
-                             "Canarias" = "#CC0033", 
-                             "Cantabria" = "#CC0033", 
-                             "Castilla y León" = "#CC0033", 
-                             "Castilla-La Mancha" = "#CC0033", 
-                             "Cataluña" = "#CC0033", 
-                             "Comunitat Valenciana" = "#CC0033", 
-                             "Extremadura" = "#CC0033", 
-                             "Galicia" = "#CC0033", 
-                             "La Rioja" = "#CC0033", 
-                             "Comunidad de Madrid" = "#CC0033",
-                             "Región de Murcia" = "#CC0033", 
-                             "Comunidad Foral de Navarra" = "#CC0033", 
-                             "País Vasco" = "#CC0033"),
+  scale_fill_manual(values=c("España" = "dimgrey",
+                             "Andalucía" = "#cc0033", 
+                             "Aragón" = "#cc0033", 
+                             "Principado de Asturias" = "#cc0033", 
+                             "Illes Balears" = "#cc0033", 
+                             "Canarias" = "#cc0033", 
+                             "Cantabria" = "#cc0033", 
+                             "Castilla y León" = "#cc0033", 
+                             "Castilla-La Mancha" = "#cc0033", 
+                             "Cataluña" = "#cc0033", 
+                             "Comunitat Valenciana" = "#cc0033", 
+                             "Extremadura" = "#cc0033", 
+                             "Galicia" = "#cc0033", 
+                             "La Rioja" = "#cc0033", 
+                             "Comunidad de Madrid" = "#cc0033",
+                             "Región de Murcia" = "#cc0033", 
+                             "Comunidad Foral de Navarra" = "#cc0033", 
+                             "País Vasco" = "#cc0033"),
                     guide="none")+
   scale_linetype_manual(values = c("España" = "dashed",
                                    "Andalucía" = "solid", 
@@ -548,48 +552,48 @@ fig_7
   geom_hline(yintercept = 1, lty=2)+
   geom_ribbon(alpha=0.07, aes(fill=nombre_ccaa))+
   facet_grid(cols = vars(sexo))+
-  geom_line(aes(color=nombre_ccaa, linetype=nombre_ccaa), size=1.5)+
+  geom_line(aes(color=nombre_ccaa, linetype=nombre_ccaa), size=2)+
   scale_y_continuous(trans="log",
                      breaks=c(0, 1, 1.5, 2, 4, 8, 16, 32, 64))+
   scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
   labs(x="", y="RII (95% CI)")+
-  scale_color_manual(values=c("España" =  "dimgray",
-                             "Andalucía" = "#CC0033", 
-                             "Aragón" = "#CC0033", 
-                             "Principado de Asturias" = "#CC0033", 
-                             "Illes Balears" = "#CC0033", 
-                             "Canarias" = "#CC0033", 
-                             "Cantabria" = "#CC0033", 
-                             "Castilla y León" = "#CC0033", 
-                             "Castilla-La Mancha" = "#CC0033", 
-                             "Cataluña" = "#CC0033", 
-                             "Comunitat Valenciana" = "#CC0033", 
-                             "Extremadura" = "#CC0033", 
-                             "Galicia" = "#CC0033", 
-                             "La Rioja" = "#CC0033", 
-                             "Comunidad de Madrid" = "#CC0033",
-                             "Región de Murcia" = "#CC0033", 
-                             "Comunidad Foral de Navarra" = "#CC0033", 
-                             "País Vasco" = "#CC0033"),
+  scale_color_manual(values=c("España" = "dimgrey",
+                             "Andalucía" = "#cc0033", 
+                             "Aragón" = "#cc0033", 
+                             "Principado de Asturias" = "#cc0033", 
+                             "Illes Balears" = "#cc0033", 
+                             "Canarias" = "#cc0033", 
+                             "Cantabria" = "#cc0033", 
+                             "Castilla y León" = "#cc0033", 
+                             "Castilla-La Mancha" = "#cc0033", 
+                             "Cataluña" = "#cc0033", 
+                             "Comunitat Valenciana" = "#cc0033", 
+                             "Extremadura" = "#cc0033", 
+                             "Galicia" = "#cc0033", 
+                             "La Rioja" = "#cc0033", 
+                             "Comunidad de Madrid" = "#cc0033",
+                             "Región de Murcia" = "#cc0033", 
+                             "Comunidad Foral de Navarra" = "#cc0033", 
+                             "País Vasco" = "#cc0033"),
                      guide="none")+
-  scale_fill_manual(values=c("España" =  "dimgray",
-                             "Andalucía" = "#CC0033", 
-                             "Aragón" = "#CC0033", 
-                             "Principado de Asturias" = "#CC0033", 
-                             "Illes Balears" = "#CC0033", 
-                             "Canarias" = "#CC0033", 
-                             "Cantabria" = "#CC0033", 
-                             "Castilla y León" = "#CC0033", 
-                             "Castilla-La Mancha" = "#CC0033", 
-                             "Cataluña" = "#CC0033", 
-                             "Comunitat Valenciana" = "#CC0033", 
-                             "Extremadura" = "#CC0033", 
-                             "Galicia" = "#CC0033", 
-                             "La Rioja" = "#CC0033", 
-                             "Comunidad de Madrid" = "#CC0033",
-                             "Región de Murcia" = "#CC0033", 
-                             "Comunidad Foral de Navarra" = "#CC0033", 
-                             "País Vasco" = "#CC0033"),
+  scale_fill_manual(values=c("España" = "dimgrey",
+                             "Andalucía" = "#cc0033", 
+                             "Aragón" = "#cc0033", 
+                             "Principado de Asturias" = "#cc0033", 
+                             "Illes Balears" = "#cc0033", 
+                             "Canarias" = "#cc0033", 
+                             "Cantabria" = "#cc0033", 
+                             "Castilla y León" = "#cc0033", 
+                             "Castilla-La Mancha" = "#cc0033", 
+                             "Cataluña" = "#cc0033", 
+                             "Comunitat Valenciana" = "#cc0033", 
+                             "Extremadura" = "#cc0033", 
+                             "Galicia" = "#cc0033", 
+                             "La Rioja" = "#cc0033", 
+                             "Comunidad de Madrid" = "#cc0033",
+                             "Región de Murcia" = "#cc0033", 
+                             "Comunidad Foral de Navarra" = "#cc0033", 
+                             "País Vasco" = "#cc0033"),
                     guide="none")+
   scale_linetype_manual(values = c("España" = "dashed",
                                    "Andalucía" = "solid", 
@@ -641,13 +645,14 @@ fig_9 <-
   prevalencias %>%
   filter((nombre_ccaa == nombre_ca[1]  | nombre_ccaa == nombre_ca[v]), sexo=="Global") %>% 
   ggplot(aes(x=encuesta, y=(col*100), ymin=(col_low*100), ymax=(col_upp*100), color=as.factor(education_3), linetype=as.factor(nombre_ccaa), group=interaction(education_3, nombre_ccaa)))+
-  geom_line(size=1.5)+
+  geom_line(size=2)+
   facet_grid(cols = vars(sexo))+
   scale_y_continuous(breaks = c(10, 20, 40, 60, 100))+
   scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
   labs(x="", y="Prevalencia (95% IC)")+
-  scale_color_discrete(name="Nivel Educativo",
-                      labels=c("Bajo", "Medio", "Alto"))+
+  scale_color_manual(name="Nivel Educativo",
+                    labels=c("Bajo", "Medio", "Alto"),
+                    values = c("#E69F00", "#af8dc3", "#1c8900"))+
   scale_linetype_manual(values = c("España" = "dashed",
                                    "Andalucía" = "solid",
                                    "Aragón" = "solid",
@@ -694,13 +699,14 @@ fig_10 <-
   prevalencias %>%
   filter((nombre_ccaa == nombre_ca[1]  | nombre_ccaa == nombre_ca[v]), sexo!="Global") %>% 
   ggplot(aes(x=encuesta, y=(col*100), ymin=(col_low*100), ymax=(col_upp*100), color=as.factor(education_3), linetype=as.factor(nombre_ccaa), group=interaction(education_3, nombre_ccaa)))+
-  geom_line(size=1.5)+
+  geom_line(size=2)+
   facet_grid(cols = vars(sexo))+
   scale_y_continuous(breaks = c(10, 20, 40, 60, 100))+
   scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
   labs(x="", y="Prevalencia (95% IC)")+
-  scale_color_discrete(name="Nivel Educativo",
-                      labels=c("Bajo", "Medio", "Alto"))+
+  scale_color_manual(name="Nivel Educativo",
+                    labels=c("Bajo", "Medio", "Alto"),
+                    values = c("#E69F00", "#af8dc3", "#1c8900"))+
   scale_linetype_manual(values = c("España" = "dashed",
                                    "Andalucía" = "solid",
                                    "Aragón" = "solid",
@@ -749,48 +755,48 @@ fig_10
   geom_hline(yintercept = 1, lty=2)+
   geom_ribbon(alpha=0.07, aes(fill=nombre_ccaa))+
   facet_grid(cols = vars(sexo))+
-  geom_line(aes(color=nombre_ccaa, linetype=nombre_ccaa), size=1.5)+
+  geom_line(aes(color=nombre_ccaa, linetype=nombre_ccaa), size=2)+
   scale_y_continuous(trans="log",
                      breaks=c(0, 1, 1.5, 2, 4, 8, 16, 32, 64))+
   scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
   labs(x="", y="RII (95% CI)")+
-  scale_color_manual(values=c("España" =  "dimgray",
-                             "Andalucía" = "#CC0033", 
-                             "Aragón" = "#CC0033", 
-                             "Principado de Asturias" = "#CC0033", 
-                             "Illes Balears" = "#CC0033", 
-                             "Canarias" = "#CC0033", 
-                             "Cantabria" = "#CC0033", 
-                             "Castilla y León" = "#CC0033", 
-                             "Castilla-La Mancha" = "#CC0033", 
-                             "Cataluña" = "#CC0033", 
-                             "Comunitat Valenciana" = "#CC0033", 
-                             "Extremadura" = "#CC0033", 
-                             "Galicia" = "#CC0033", 
-                             "La Rioja" = "#CC0033", 
-                             "Comunidad de Madrid" = "#CC0033",
-                             "Región de Murcia" = "#CC0033", 
-                             "Comunidad Foral de Navarra" = "#CC0033", 
-                             "País Vasco" = "#CC0033"),
+  scale_color_manual(values=c("España" = "dimgrey",
+                             "Andalucía" = "#cc0033", 
+                             "Aragón" = "#cc0033", 
+                             "Principado de Asturias" = "#cc0033", 
+                             "Illes Balears" = "#cc0033", 
+                             "Canarias" = "#cc0033", 
+                             "Cantabria" = "#cc0033", 
+                             "Castilla y León" = "#cc0033", 
+                             "Castilla-La Mancha" = "#cc0033", 
+                             "Cataluña" = "#cc0033", 
+                             "Comunitat Valenciana" = "#cc0033", 
+                             "Extremadura" = "#cc0033", 
+                             "Galicia" = "#cc0033", 
+                             "La Rioja" = "#cc0033", 
+                             "Comunidad de Madrid" = "#cc0033",
+                             "Región de Murcia" = "#cc0033", 
+                             "Comunidad Foral de Navarra" = "#cc0033", 
+                             "País Vasco" = "#cc0033"),
                      guide="none")+
-  scale_fill_manual(values=c("España" =  "dimgray",
-                             "Andalucía" = "#CC0033", 
-                             "Aragón" = "#CC0033", 
-                             "Principado de Asturias" = "#CC0033", 
-                             "Illes Balears" = "#CC0033", 
-                             "Canarias" = "#CC0033", 
-                             "Cantabria" = "#CC0033", 
-                             "Castilla y León" = "#CC0033", 
-                             "Castilla-La Mancha" = "#CC0033", 
-                             "Cataluña" = "#CC0033", 
-                             "Comunitat Valenciana" = "#CC0033", 
-                             "Extremadura" = "#CC0033", 
-                             "Galicia" = "#CC0033", 
-                             "La Rioja" = "#CC0033", 
-                             "Comunidad de Madrid" = "#CC0033",
-                             "Región de Murcia" = "#CC0033", 
-                             "Comunidad Foral de Navarra" = "#CC0033", 
-                             "País Vasco" = "#CC0033"),
+  scale_fill_manual(values=c("España" = "dimgrey",
+                             "Andalucía" = "#cc0033", 
+                             "Aragón" = "#cc0033", 
+                             "Principado de Asturias" = "#cc0033", 
+                             "Illes Balears" = "#cc0033", 
+                             "Canarias" = "#cc0033", 
+                             "Cantabria" = "#cc0033", 
+                             "Castilla y León" = "#cc0033", 
+                             "Castilla-La Mancha" = "#cc0033", 
+                             "Cataluña" = "#cc0033", 
+                             "Comunitat Valenciana" = "#cc0033", 
+                             "Extremadura" = "#cc0033", 
+                             "Galicia" = "#cc0033", 
+                             "La Rioja" = "#cc0033", 
+                             "Comunidad de Madrid" = "#cc0033",
+                             "Región de Murcia" = "#cc0033", 
+                             "Comunidad Foral de Navarra" = "#cc0033", 
+                             "País Vasco" = "#cc0033"),
                     guide="none")+
   scale_linetype_manual(values = c("España" = "dashed",
                                    "Andalucía" = "solid", 
@@ -841,48 +847,48 @@ fig_11
   geom_hline(yintercept = 1, lty=2)+
   geom_ribbon(alpha=0.07, aes(fill=nombre_ccaa))+
   facet_grid(cols = vars(sexo))+
-  geom_line(aes(color=nombre_ccaa, linetype=nombre_ccaa), size=1.5)+
+  geom_line(aes(color=nombre_ccaa, linetype=nombre_ccaa), size=2)+
   scale_y_continuous(trans="log",
                      breaks=c(0, 1, 1.5, 2, 4, 8, 16, 32, 64))+
   scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
   labs(x="", y="RII (95% CI)")+
-  scale_color_manual(values=c("España" =  "dimgray",
-                             "Andalucía" = "#CC0033", 
-                             "Aragón" = "#CC0033", 
-                             "Principado de Asturias" = "#CC0033", 
-                             "Illes Balears" = "#CC0033", 
-                             "Canarias" = "#CC0033", 
-                             "Cantabria" = "#CC0033", 
-                             "Castilla y León" = "#CC0033", 
-                             "Castilla-La Mancha" = "#CC0033", 
-                             "Cataluña" = "#CC0033", 
-                             "Comunitat Valenciana" = "#CC0033", 
-                             "Extremadura" = "#CC0033", 
-                             "Galicia" = "#CC0033", 
-                             "La Rioja" = "#CC0033", 
-                             "Comunidad de Madrid" = "#CC0033",
-                             "Región de Murcia" = "#CC0033", 
-                             "Comunidad Foral de Navarra" = "#CC0033", 
-                             "País Vasco" = "#CC0033"),
+  scale_color_manual(values=c("España" = "dimgrey",
+                             "Andalucía" = "#cc0033", 
+                             "Aragón" = "#cc0033", 
+                             "Principado de Asturias" = "#cc0033", 
+                             "Illes Balears" = "#cc0033", 
+                             "Canarias" = "#cc0033", 
+                             "Cantabria" = "#cc0033", 
+                             "Castilla y León" = "#cc0033", 
+                             "Castilla-La Mancha" = "#cc0033", 
+                             "Cataluña" = "#cc0033", 
+                             "Comunitat Valenciana" = "#cc0033", 
+                             "Extremadura" = "#cc0033", 
+                             "Galicia" = "#cc0033", 
+                             "La Rioja" = "#cc0033", 
+                             "Comunidad de Madrid" = "#cc0033",
+                             "Región de Murcia" = "#cc0033", 
+                             "Comunidad Foral de Navarra" = "#cc0033", 
+                             "País Vasco" = "#cc0033"),
                      guide="none")+
-  scale_fill_manual(values=c("España" =  "dimgray",
-                             "Andalucía" = "#CC0033", 
-                             "Aragón" = "#CC0033", 
-                             "Principado de Asturias" = "#CC0033", 
-                             "Illes Balears" = "#CC0033", 
-                             "Canarias" = "#CC0033", 
-                             "Cantabria" = "#CC0033", 
-                             "Castilla y León" = "#CC0033", 
-                             "Castilla-La Mancha" = "#CC0033", 
-                             "Cataluña" = "#CC0033", 
-                             "Comunitat Valenciana" = "#CC0033", 
-                             "Extremadura" = "#CC0033", 
-                             "Galicia" = "#CC0033", 
-                             "La Rioja" = "#CC0033", 
-                             "Comunidad de Madrid" = "#CC0033",
-                             "Región de Murcia" = "#CC0033", 
-                             "Comunidad Foral de Navarra" = "#CC0033", 
-                             "País Vasco" = "#CC0033"),
+  scale_fill_manual(values=c("España" = "dimgrey",
+                             "Andalucía" = "#cc0033", 
+                             "Aragón" = "#cc0033", 
+                             "Principado de Asturias" = "#cc0033", 
+                             "Illes Balears" = "#cc0033", 
+                             "Canarias" = "#cc0033", 
+                             "Cantabria" = "#cc0033", 
+                             "Castilla y León" = "#cc0033", 
+                             "Castilla-La Mancha" = "#cc0033", 
+                             "Cataluña" = "#cc0033", 
+                             "Comunitat Valenciana" = "#cc0033", 
+                             "Extremadura" = "#cc0033", 
+                             "Galicia" = "#cc0033", 
+                             "La Rioja" = "#cc0033", 
+                             "Comunidad de Madrid" = "#cc0033",
+                             "Región de Murcia" = "#cc0033", 
+                             "Comunidad Foral de Navarra" = "#cc0033", 
+                             "País Vasco" = "#cc0033"),
                     guide="none")+
   scale_linetype_manual(values = c("España" = "dashed",
                                    "Andalucía" = "solid", 
@@ -933,13 +939,14 @@ fig_13 <-
   prevalencias %>%
   filter((nombre_ccaa == nombre_ca[1]  | nombre_ccaa == nombre_ca[v]), sexo=="Global") %>% 
   ggplot(aes(x=encuesta, y=(obesity*100), ymin=(obesity_low*100), ymax=(obesity_upp*100), color=as.factor(education_3), linetype=as.factor(nombre_ccaa), group=interaction(education_3, nombre_ccaa)))+
-  geom_line(size=1.5)+
+  geom_line(size=2)+
   facet_grid(cols = vars(sexo))+
   scale_y_continuous(breaks = c(10, 20, 40, 60, 100))+
   scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
   labs(x="", y="Prevalencia (95% IC)")+
-  scale_color_discrete(name="Nivel Educativo",
-                      labels=c("Bajo", "Medio", "Alto"))+
+  scale_color_manual(name="Nivel Educativo",
+                    labels=c("Bajo", "Medio", "Alto"),
+                    values = c("#E69F00", "#af8dc3", "#1c8900"))+
   scale_linetype_manual(values = c("España" = "dashed",
                                    "Andalucía" = "solid",
                                    "Aragón" = "solid",
@@ -986,13 +993,14 @@ fig_14 <-
     prevalencias %>%
   filter((nombre_ccaa == nombre_ca[1]  | nombre_ccaa == nombre_ca[v]), sexo!="Global") %>% 
   ggplot(aes(x=encuesta, y=(obesity*100), ymin=(obesity_low*100), ymax=(obesity_upp*100), color=as.factor(education_3), linetype=as.factor(nombre_ccaa), group=interaction(education_3, nombre_ccaa)))+
-  geom_line(size=1.5)+
+  geom_line(size=2)+
   facet_grid(cols = vars(sexo))+
   scale_y_continuous(breaks = c(10, 20, 40, 60, 100))+
   scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
   labs(x="", y="Prevalencia (95% IC)")+
-  scale_color_discrete(name="Nivel Educativo",
-                      labels=c("Bajo", "Medio", "Alto"))+
+  scale_color_manual(name="Nivel Educativo",
+                    labels=c("Bajo", "Medio", "Alto"),
+                    values = c("#E69F00", "#af8dc3", "#1c8900"))+
   scale_linetype_manual(values = c("España" = "dashed",
                                    "Andalucía" = "solid",
                                    "Aragón" = "solid",
@@ -1041,48 +1049,48 @@ fig_14
   geom_hline(yintercept = 1, lty=2)+
   geom_ribbon(alpha=0.07, aes(fill=nombre_ccaa))+
   facet_grid(cols = vars(sexo))+
-  geom_line(aes(color=nombre_ccaa, linetype=nombre_ccaa), size=1.5)+
+  geom_line(aes(color=nombre_ccaa, linetype=nombre_ccaa), size=2)+
   scale_y_continuous(trans="log",
                      breaks=c(0, 1, 1.5, 2, 4, 8, 16, 32, 64))+
   scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
   labs(x="", y="RII (95% CI)")+
-  scale_color_manual(values=c("España" =  "dimgray",
-                             "Andalucía" = "#CC0033", 
-                             "Aragón" = "#CC0033", 
-                             "Principado de Asturias" = "#CC0033", 
-                             "Illes Balears" = "#CC0033", 
-                             "Canarias" = "#CC0033", 
-                             "Cantabria" = "#CC0033", 
-                             "Castilla y León" = "#CC0033", 
-                             "Castilla-La Mancha" = "#CC0033", 
-                             "Cataluña" = "#CC0033", 
-                             "Comunitat Valenciana" = "#CC0033", 
-                             "Extremadura" = "#CC0033", 
-                             "Galicia" = "#CC0033", 
-                             "La Rioja" = "#CC0033", 
-                             "Comunidad de Madrid" = "#CC0033",
-                             "Región de Murcia" = "#CC0033", 
-                             "Comunidad Foral de Navarra" = "#CC0033", 
-                             "País Vasco" = "#CC0033"),
+  scale_color_manual(values=c("España" = "dimgrey",
+                             "Andalucía" = "#cc0033", 
+                             "Aragón" = "#cc0033", 
+                             "Principado de Asturias" = "#cc0033", 
+                             "Illes Balears" = "#cc0033", 
+                             "Canarias" = "#cc0033", 
+                             "Cantabria" = "#cc0033", 
+                             "Castilla y León" = "#cc0033", 
+                             "Castilla-La Mancha" = "#cc0033", 
+                             "Cataluña" = "#cc0033", 
+                             "Comunitat Valenciana" = "#cc0033", 
+                             "Extremadura" = "#cc0033", 
+                             "Galicia" = "#cc0033", 
+                             "La Rioja" = "#cc0033", 
+                             "Comunidad de Madrid" = "#cc0033",
+                             "Región de Murcia" = "#cc0033", 
+                             "Comunidad Foral de Navarra" = "#cc0033", 
+                             "País Vasco" = "#cc0033"),
                      guide="none")+
-  scale_fill_manual(values=c("España" =  "dimgray",
-                             "Andalucía" = "#CC0033", 
-                             "Aragón" = "#CC0033", 
-                             "Principado de Asturias" = "#CC0033", 
-                             "Illes Balears" = "#CC0033", 
-                             "Canarias" = "#CC0033", 
-                             "Cantabria" = "#CC0033", 
-                             "Castilla y León" = "#CC0033", 
-                             "Castilla-La Mancha" = "#CC0033", 
-                             "Cataluña" = "#CC0033", 
-                             "Comunitat Valenciana" = "#CC0033", 
-                             "Extremadura" = "#CC0033", 
-                             "Galicia" = "#CC0033", 
-                             "La Rioja" = "#CC0033", 
-                             "Comunidad de Madrid" = "#CC0033",
-                             "Región de Murcia" = "#CC0033", 
-                             "Comunidad Foral de Navarra" = "#CC0033", 
-                             "País Vasco" = "#CC0033"),
+  scale_fill_manual(values=c("España" = "dimgrey",
+                             "Andalucía" = "#cc0033", 
+                             "Aragón" = "#cc0033", 
+                             "Principado de Asturias" = "#cc0033", 
+                             "Illes Balears" = "#cc0033", 
+                             "Canarias" = "#cc0033", 
+                             "Cantabria" = "#cc0033", 
+                             "Castilla y León" = "#cc0033", 
+                             "Castilla-La Mancha" = "#cc0033", 
+                             "Cataluña" = "#cc0033", 
+                             "Comunitat Valenciana" = "#cc0033", 
+                             "Extremadura" = "#cc0033", 
+                             "Galicia" = "#cc0033", 
+                             "La Rioja" = "#cc0033", 
+                             "Comunidad de Madrid" = "#cc0033",
+                             "Región de Murcia" = "#cc0033", 
+                             "Comunidad Foral de Navarra" = "#cc0033", 
+                             "País Vasco" = "#cc0033"),
                     guide="none")+
   scale_linetype_manual(values = c("España" = "dashed",
                                    "Andalucía" = "solid", 
@@ -1133,48 +1141,48 @@ fig_15
   geom_hline(yintercept = 1, lty=2)+
   geom_ribbon(alpha=0.07, aes(fill=nombre_ccaa))+
   facet_grid(cols = vars(sexo))+
-  geom_line(aes(color=nombre_ccaa, linetype=nombre_ccaa), size=1.5)+
+  geom_line(aes(color=nombre_ccaa, linetype=nombre_ccaa), size=2)+
   scale_y_continuous(trans="log",
                      breaks=c(0, 1, 1.5, 2, 4, 8, 16, 32, 64))+
   scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
   labs(x="", y="RII (95% CI)")+
-  scale_color_manual(values=c("España" =  "dimgray",
-                             "Andalucía" = "#CC0033", 
-                             "Aragón" = "#CC0033", 
-                             "Principado de Asturias" = "#CC0033", 
-                             "Illes Balears" = "#CC0033", 
-                             "Canarias" = "#CC0033", 
-                             "Cantabria" = "#CC0033", 
-                             "Castilla y León" = "#CC0033", 
-                             "Castilla-La Mancha" = "#CC0033", 
-                             "Cataluña" = "#CC0033", 
-                             "Comunitat Valenciana" = "#CC0033", 
-                             "Extremadura" = "#CC0033", 
-                             "Galicia" = "#CC0033", 
-                             "La Rioja" = "#CC0033", 
-                             "Comunidad de Madrid" = "#CC0033",
-                             "Región de Murcia" = "#CC0033", 
-                             "Comunidad Foral de Navarra" = "#CC0033", 
-                             "País Vasco" = "#CC0033"),
+  scale_color_manual(values=c("España" = "dimgrey",
+                             "Andalucía" = "#cc0033", 
+                             "Aragón" = "#cc0033", 
+                             "Principado de Asturias" = "#cc0033", 
+                             "Illes Balears" = "#cc0033", 
+                             "Canarias" = "#cc0033", 
+                             "Cantabria" = "#cc0033", 
+                             "Castilla y León" = "#cc0033", 
+                             "Castilla-La Mancha" = "#cc0033", 
+                             "Cataluña" = "#cc0033", 
+                             "Comunitat Valenciana" = "#cc0033", 
+                             "Extremadura" = "#cc0033", 
+                             "Galicia" = "#cc0033", 
+                             "La Rioja" = "#cc0033", 
+                             "Comunidad de Madrid" = "#cc0033",
+                             "Región de Murcia" = "#cc0033", 
+                             "Comunidad Foral de Navarra" = "#cc0033", 
+                             "País Vasco" = "#cc0033"),
                      guide="none")+
-  scale_fill_manual(values=c("España" =  "dimgray",
-                             "Andalucía" = "#CC0033", 
-                             "Aragón" = "#CC0033", 
-                             "Principado de Asturias" = "#CC0033", 
-                             "Illes Balears" = "#CC0033", 
-                             "Canarias" = "#CC0033", 
-                             "Cantabria" = "#CC0033", 
-                             "Castilla y León" = "#CC0033", 
-                             "Castilla-La Mancha" = "#CC0033", 
-                             "Cataluña" = "#CC0033", 
-                             "Comunitat Valenciana" = "#CC0033", 
-                             "Extremadura" = "#CC0033", 
-                             "Galicia" = "#CC0033", 
-                             "La Rioja" = "#CC0033", 
-                             "Comunidad de Madrid" = "#CC0033",
-                             "Región de Murcia" = "#CC0033", 
-                             "Comunidad Foral de Navarra" = "#CC0033", 
-                             "País Vasco" = "#CC0033"),
+  scale_fill_manual(values=c("España" = "dimgrey",
+                             "Andalucía" = "#cc0033", 
+                             "Aragón" = "#cc0033", 
+                             "Principado de Asturias" = "#cc0033", 
+                             "Illes Balears" = "#cc0033", 
+                             "Canarias" = "#cc0033", 
+                             "Cantabria" = "#cc0033", 
+                             "Castilla y León" = "#cc0033", 
+                             "Castilla-La Mancha" = "#cc0033", 
+                             "Cataluña" = "#cc0033", 
+                             "Comunitat Valenciana" = "#cc0033", 
+                             "Extremadura" = "#cc0033", 
+                             "Galicia" = "#cc0033", 
+                             "La Rioja" = "#cc0033", 
+                             "Comunidad de Madrid" = "#cc0033",
+                             "Región de Murcia" = "#cc0033", 
+                             "Comunidad Foral de Navarra" = "#cc0033", 
+                             "País Vasco" = "#cc0033"),
                     guide="none")+
   scale_linetype_manual(values = c("España" = "dashed",
                                    "Andalucía" = "solid", 
@@ -1226,13 +1234,14 @@ fig_17 <-
   prevalencias %>%
   filter((nombre_ccaa == nombre_ca[1]  | nombre_ccaa == nombre_ca[v]), sexo=="Global") %>% 
   ggplot(aes(x=encuesta, y=(Sedentarismo*100), ymin=(sedentarismo_low*100), ymax=(sedentarismo_upp*100), color=as.factor(education_3), linetype=as.factor(nombre_ccaa), group=interaction(education_3, nombre_ccaa)))+
-  geom_line(size=1.5)+
+  geom_line(size=2)+
   facet_grid(cols = vars(sexo))+
   scale_y_continuous(breaks = c(10, 20, 40, 60, 100))+
   scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
   labs(x="", y="Prevalencia (95% IC)")+
-  scale_color_discrete(name="Nivel Educativo",
-                      labels=c("Bajo", "Medio", "Alto"))+
+  scale_color_manual(name="Nivel Educativo",
+                    labels=c("Bajo", "Medio", "Alto"),
+                    values = c("#E69F00", "#af8dc3", "#1c8900"))+
   scale_linetype_manual(values = c("España" = "dashed",
                                    "Andalucía" = "solid",
                                    "Aragón" = "solid",
@@ -1279,13 +1288,14 @@ fig_18 <-
       prevalencias %>%
   filter((nombre_ccaa == nombre_ca[1]  | nombre_ccaa == nombre_ca[v]), sexo!="Global") %>% 
   ggplot(aes(x=encuesta, y=(Sedentarismo*100), ymin=(sedentarismo_low*100), ymax=(sedentarismo_upp*100), color=as.factor(education_3), linetype=as.factor(nombre_ccaa), group=interaction(education_3, nombre_ccaa)))+
-  geom_line(size=1.5)+
+  geom_line(size=2)+
   facet_grid(cols = vars(sexo))+
   scale_y_continuous(breaks = c(10, 20, 40, 60, 100))+
   scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
   labs(x="", y="Prevalencia (95% IC)")+
-  scale_color_discrete(name="Nivel Educativo",
-                      labels=c("Bajo", "Medio", "Alto"))+
+  scale_color_manual(name="Nivel Educativo",
+                    labels=c("Bajo", "Medio", "Alto"),
+                    values = c("#E69F00", "#af8dc3", "#1c8900"))+
   scale_linetype_manual(values = c("España" = "dashed",
                                    "Andalucía" = "solid",
                                    "Aragón" = "solid",
@@ -1334,48 +1344,48 @@ fig_18
   geom_hline(yintercept = 1, lty=2)+
   geom_ribbon(alpha=0.07, aes(fill=nombre_ccaa))+
   facet_grid(cols = vars(sexo))+
-  geom_line(aes(color=nombre_ccaa, linetype=nombre_ccaa), size=1.5)+
+  geom_line(aes(color=nombre_ccaa, linetype=nombre_ccaa), size=2)+
   scale_y_continuous(trans="log",
                      breaks=c(0, 1, 1.5, 2, 4, 8, 16, 32, 64))+
   scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
   labs(x="", y="RII (95% CI)")+
-  scale_color_manual(values=c("España" =  "dimgray",
-                             "Andalucía" = "#CC0033", 
-                             "Aragón" = "#CC0033", 
-                             "Principado de Asturias" = "#CC0033", 
-                             "Illes Balears" = "#CC0033", 
-                             "Canarias" = "#CC0033", 
-                             "Cantabria" = "#CC0033", 
-                             "Castilla y León" = "#CC0033", 
-                             "Castilla-La Mancha" = "#CC0033", 
-                             "Cataluña" = "#CC0033", 
-                             "Comunitat Valenciana" = "#CC0033", 
-                             "Extremadura" = "#CC0033", 
-                             "Galicia" = "#CC0033", 
-                             "La Rioja" = "#CC0033", 
-                             "Comunidad de Madrid" = "#CC0033",
-                             "Región de Murcia" = "#CC0033", 
-                             "Comunidad Foral de Navarra" = "#CC0033", 
-                             "País Vasco" = "#CC0033"),
+  scale_color_manual(values=c("España" = "dimgrey",
+                             "Andalucía" = "#cc0033", 
+                             "Aragón" = "#cc0033", 
+                             "Principado de Asturias" = "#cc0033", 
+                             "Illes Balears" = "#cc0033", 
+                             "Canarias" = "#cc0033", 
+                             "Cantabria" = "#cc0033", 
+                             "Castilla y León" = "#cc0033", 
+                             "Castilla-La Mancha" = "#cc0033", 
+                             "Cataluña" = "#cc0033", 
+                             "Comunitat Valenciana" = "#cc0033", 
+                             "Extremadura" = "#cc0033", 
+                             "Galicia" = "#cc0033", 
+                             "La Rioja" = "#cc0033", 
+                             "Comunidad de Madrid" = "#cc0033",
+                             "Región de Murcia" = "#cc0033", 
+                             "Comunidad Foral de Navarra" = "#cc0033", 
+                             "País Vasco" = "#cc0033"),
                      guide="none")+
-  scale_fill_manual(values=c("España" =  "dimgray",
-                             "Andalucía" = "#CC0033", 
-                             "Aragón" = "#CC0033", 
-                             "Principado de Asturias" = "#CC0033", 
-                             "Illes Balears" = "#CC0033", 
-                             "Canarias" = "#CC0033", 
-                             "Cantabria" = "#CC0033", 
-                             "Castilla y León" = "#CC0033", 
-                             "Castilla-La Mancha" = "#CC0033", 
-                             "Cataluña" = "#CC0033", 
-                             "Comunitat Valenciana" = "#CC0033", 
-                             "Extremadura" = "#CC0033", 
-                             "Galicia" = "#CC0033", 
-                             "La Rioja" = "#CC0033", 
-                             "Comunidad de Madrid" = "#CC0033",
-                             "Región de Murcia" = "#CC0033", 
-                             "Comunidad Foral de Navarra" = "#CC0033", 
-                             "País Vasco" = "#CC0033"),
+  scale_fill_manual(values=c("España" = "dimgrey",
+                             "Andalucía" = "#cc0033", 
+                             "Aragón" = "#cc0033", 
+                             "Principado de Asturias" = "#cc0033", 
+                             "Illes Balears" = "#cc0033", 
+                             "Canarias" = "#cc0033", 
+                             "Cantabria" = "#cc0033", 
+                             "Castilla y León" = "#cc0033", 
+                             "Castilla-La Mancha" = "#cc0033", 
+                             "Cataluña" = "#cc0033", 
+                             "Comunitat Valenciana" = "#cc0033", 
+                             "Extremadura" = "#cc0033", 
+                             "Galicia" = "#cc0033", 
+                             "La Rioja" = "#cc0033", 
+                             "Comunidad de Madrid" = "#cc0033",
+                             "Región de Murcia" = "#cc0033", 
+                             "Comunidad Foral de Navarra" = "#cc0033", 
+                             "País Vasco" = "#cc0033"),
                     guide="none")+
   scale_linetype_manual(values = c("España" = "dashed",
                                    "Andalucía" = "solid", 
@@ -1426,48 +1436,48 @@ fig_19
   geom_hline(yintercept = 1, lty=2)+
   geom_ribbon(alpha=0.07, aes(fill=nombre_ccaa))+
   facet_grid(cols = vars(sexo))+
-  geom_line(aes(color=nombre_ccaa, linetype=nombre_ccaa), size=1.5)+
+  geom_line(aes(color=nombre_ccaa, linetype=nombre_ccaa), size=2)+
   scale_y_continuous(trans="log",
                      breaks=c(0, 1, 1.5, 2, 4, 8, 16, 32, 64))+
   scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
   labs(x="", y="RII (95% CI)")+
-  scale_color_manual(values=c("España" =  "dimgray",
-                             "Andalucía" = "#CC0033", 
-                             "Aragón" = "#CC0033", 
-                             "Principado de Asturias" = "#CC0033", 
-                             "Illes Balears" = "#CC0033", 
-                             "Canarias" = "#CC0033", 
-                             "Cantabria" = "#CC0033", 
-                             "Castilla y León" = "#CC0033", 
-                             "Castilla-La Mancha" = "#CC0033", 
-                             "Cataluña" = "#CC0033", 
-                             "Comunitat Valenciana" = "#CC0033", 
-                             "Extremadura" = "#CC0033", 
-                             "Galicia" = "#CC0033", 
-                             "La Rioja" = "#CC0033", 
-                             "Comunidad de Madrid" = "#CC0033",
-                             "Región de Murcia" = "#CC0033", 
-                             "Comunidad Foral de Navarra" = "#CC0033", 
-                             "País Vasco" = "#CC0033"),
+  scale_color_manual(values=c("España" = "dimgrey",
+                             "Andalucía" = "#cc0033", 
+                             "Aragón" = "#cc0033", 
+                             "Principado de Asturias" = "#cc0033", 
+                             "Illes Balears" = "#cc0033", 
+                             "Canarias" = "#cc0033", 
+                             "Cantabria" = "#cc0033", 
+                             "Castilla y León" = "#cc0033", 
+                             "Castilla-La Mancha" = "#cc0033", 
+                             "Cataluña" = "#cc0033", 
+                             "Comunitat Valenciana" = "#cc0033", 
+                             "Extremadura" = "#cc0033", 
+                             "Galicia" = "#cc0033", 
+                             "La Rioja" = "#cc0033", 
+                             "Comunidad de Madrid" = "#cc0033",
+                             "Región de Murcia" = "#cc0033", 
+                             "Comunidad Foral de Navarra" = "#cc0033", 
+                             "País Vasco" = "#cc0033"),
                      guide="none")+
-  scale_fill_manual(values=c("España" =  "dimgray",
-                             "Andalucía" = "#CC0033", 
-                             "Aragón" = "#CC0033", 
-                             "Principado de Asturias" = "#CC0033", 
-                             "Illes Balears" = "#CC0033", 
-                             "Canarias" = "#CC0033", 
-                             "Cantabria" = "#CC0033", 
-                             "Castilla y León" = "#CC0033", 
-                             "Castilla-La Mancha" = "#CC0033", 
-                             "Cataluña" = "#CC0033", 
-                             "Comunitat Valenciana" = "#CC0033", 
-                             "Extremadura" = "#CC0033", 
-                             "Galicia" = "#CC0033", 
-                             "La Rioja" = "#CC0033", 
-                             "Comunidad de Madrid" = "#CC0033",
-                             "Región de Murcia" = "#CC0033", 
-                             "Comunidad Foral de Navarra" = "#CC0033", 
-                             "País Vasco" = "#CC0033"),
+  scale_fill_manual(values=c("España" = "dimgrey",
+                             "Andalucía" = "#cc0033", 
+                             "Aragón" = "#cc0033", 
+                             "Principado de Asturias" = "#cc0033", 
+                             "Illes Balears" = "#cc0033", 
+                             "Canarias" = "#cc0033", 
+                             "Cantabria" = "#cc0033", 
+                             "Castilla y León" = "#cc0033", 
+                             "Castilla-La Mancha" = "#cc0033", 
+                             "Cataluña" = "#cc0033", 
+                             "Comunitat Valenciana" = "#cc0033", 
+                             "Extremadura" = "#cc0033", 
+                             "Galicia" = "#cc0033", 
+                             "La Rioja" = "#cc0033", 
+                             "Comunidad de Madrid" = "#cc0033",
+                             "Región de Murcia" = "#cc0033", 
+                             "Comunidad Foral de Navarra" = "#cc0033", 
+                             "País Vasco" = "#cc0033"),
                     guide="none")+
   scale_linetype_manual(values = c("España" = "dashed",
                                    "Andalucía" = "solid", 
@@ -1519,13 +1529,14 @@ fig_21 <-
   prevalencias %>%
   filter((nombre_ccaa == nombre_ca[1]  | nombre_ccaa == nombre_ca[v]), sexo=="Global") %>% 
   ggplot(aes(x=encuesta, y=(smoking*100), ymin=(smoking_low*100), ymax=(smoking_upp*100), color=as.factor(education_3), linetype=as.factor(nombre_ccaa), group=interaction(education_3, nombre_ccaa)))+
-  geom_line(size=1.5)+
+  geom_line(size=2)+
   facet_grid(cols = vars(sexo))+
   scale_y_continuous(breaks = c(10, 20, 40, 60, 100))+
   scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
   labs(x="", y="Prevalencia (95% IC)")+
-  scale_color_discrete(name="Nivel Educativo",
-                      labels=c("Bajo", "Medio", "Alto"))+
+  scale_color_manual(name="Nivel Educativo",
+                    labels=c("Bajo", "Medio", "Alto"),
+                    values = c("#E69F00", "#af8dc3", "#1c8900"))+
   scale_linetype_manual(values = c("España" = "dashed",
                                    "Andalucía" = "solid",
                                    "Aragón" = "solid",
@@ -1572,13 +1583,14 @@ fig_22 <-
         prevalencias %>%
   filter((nombre_ccaa == nombre_ca[1]  | nombre_ccaa == nombre_ca[v]), sexo!="Global") %>% 
   ggplot(aes(x=encuesta, y=(smoking*100), ymin=(smoking_low*100), ymax=(smoking_upp*100), color=as.factor(education_3), linetype=as.factor(nombre_ccaa), group=interaction(education_3, nombre_ccaa)))+
-  geom_line(size=1.5)+
+  geom_line(size=2)+
   facet_grid(cols = vars(sexo))+
   scale_y_continuous(breaks = c(10, 20, 40, 60, 100))+
   scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
   labs(x="", y="Prevalencia (95% IC)")+
-  scale_color_discrete(name="Nivel Educativo",
-                      labels=c("Bajo", "Medio", "Alto"))+
+  scale_color_manual(name="Nivel Educativo",
+                    labels=c("Bajo", "Medio", "Alto"),
+                    values = c("#E69F00", "#af8dc3", "#1c8900"))+
   scale_linetype_manual(values = c("España" = "dashed",
                                    "Andalucía" = "solid",
                                    "Aragón" = "solid",
@@ -1627,48 +1639,48 @@ fig_22
   geom_hline(yintercept = 1, lty=2)+
   geom_ribbon(alpha=0.07, aes(fill=nombre_ccaa))+
   facet_grid(cols = vars(sexo))+
-  geom_line(aes(color=nombre_ccaa, linetype=nombre_ccaa), size=1.5)+
+  geom_line(aes(color=nombre_ccaa, linetype=nombre_ccaa), size=2)+
   scale_y_continuous(trans="log",
                      breaks=c(0, 1, 1.5, 2, 4, 8, 16, 32, 64))+
   scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
   labs(x="", y="RII (95% CI)")+
-  scale_color_manual(values=c("España" =  "dimgray",
-                             "Andalucía" = "#CC0033", 
-                             "Aragón" = "#CC0033", 
-                             "Principado de Asturias" = "#CC0033", 
-                             "Illes Balears" = "#CC0033", 
-                             "Canarias" = "#CC0033", 
-                             "Cantabria" = "#CC0033", 
-                             "Castilla y León" = "#CC0033", 
-                             "Castilla-La Mancha" = "#CC0033", 
-                             "Cataluña" = "#CC0033", 
-                             "Comunitat Valenciana" = "#CC0033", 
-                             "Extremadura" = "#CC0033", 
-                             "Galicia" = "#CC0033", 
-                             "La Rioja" = "#CC0033", 
-                             "Comunidad de Madrid" = "#CC0033",
-                             "Región de Murcia" = "#CC0033", 
-                             "Comunidad Foral de Navarra" = "#CC0033", 
-                             "País Vasco" = "#CC0033"),
+  scale_color_manual(values=c("España" = "dimgrey",
+                             "Andalucía" = "#cc0033", 
+                             "Aragón" = "#cc0033", 
+                             "Principado de Asturias" = "#cc0033", 
+                             "Illes Balears" = "#cc0033", 
+                             "Canarias" = "#cc0033", 
+                             "Cantabria" = "#cc0033", 
+                             "Castilla y León" = "#cc0033", 
+                             "Castilla-La Mancha" = "#cc0033", 
+                             "Cataluña" = "#cc0033", 
+                             "Comunitat Valenciana" = "#cc0033", 
+                             "Extremadura" = "#cc0033", 
+                             "Galicia" = "#cc0033", 
+                             "La Rioja" = "#cc0033", 
+                             "Comunidad de Madrid" = "#cc0033",
+                             "Región de Murcia" = "#cc0033", 
+                             "Comunidad Foral de Navarra" = "#cc0033", 
+                             "País Vasco" = "#cc0033"),
                      guide="none")+
-  scale_fill_manual(values=c("España" =  "dimgray",
-                             "Andalucía" = "#CC0033", 
-                             "Aragón" = "#CC0033", 
-                             "Principado de Asturias" = "#CC0033", 
-                             "Illes Balears" = "#CC0033", 
-                             "Canarias" = "#CC0033", 
-                             "Cantabria" = "#CC0033", 
-                             "Castilla y León" = "#CC0033", 
-                             "Castilla-La Mancha" = "#CC0033", 
-                             "Cataluña" = "#CC0033", 
-                             "Comunitat Valenciana" = "#CC0033", 
-                             "Extremadura" = "#CC0033", 
-                             "Galicia" = "#CC0033", 
-                             "La Rioja" = "#CC0033", 
-                             "Comunidad de Madrid" = "#CC0033",
-                             "Región de Murcia" = "#CC0033", 
-                             "Comunidad Foral de Navarra" = "#CC0033", 
-                             "País Vasco" = "#CC0033"),
+  scale_fill_manual(values=c("España" = "dimgrey",
+                             "Andalucía" = "#cc0033", 
+                             "Aragón" = "#cc0033", 
+                             "Principado de Asturias" = "#cc0033", 
+                             "Illes Balears" = "#cc0033", 
+                             "Canarias" = "#cc0033", 
+                             "Cantabria" = "#cc0033", 
+                             "Castilla y León" = "#cc0033", 
+                             "Castilla-La Mancha" = "#cc0033", 
+                             "Cataluña" = "#cc0033", 
+                             "Comunitat Valenciana" = "#cc0033", 
+                             "Extremadura" = "#cc0033", 
+                             "Galicia" = "#cc0033", 
+                             "La Rioja" = "#cc0033", 
+                             "Comunidad de Madrid" = "#cc0033",
+                             "Región de Murcia" = "#cc0033", 
+                             "Comunidad Foral de Navarra" = "#cc0033", 
+                             "País Vasco" = "#cc0033"),
                     guide="none")+
   scale_linetype_manual(values = c("España" = "dashed",
                                    "Andalucía" = "solid", 
@@ -1719,48 +1731,48 @@ fig_23
   geom_hline(yintercept = 1, lty=2)+
   geom_ribbon(alpha=0.07, aes(fill=nombre_ccaa))+
   facet_grid(cols = vars(sexo))+
-  geom_line(aes(color=nombre_ccaa, linetype=nombre_ccaa), size=1.5)+
+  geom_line(aes(color=nombre_ccaa, linetype=nombre_ccaa), size=2)+
   scale_y_continuous(trans="log",
                      breaks=c(0, 1, 1.5, 2, 4, 8, 16, 32, 64))+
   scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
   labs(x="", y="RII (95% CI)")+
-  scale_color_manual(values=c("España" =  "dimgray",
-                             "Andalucía" = "#CC0033", 
-                             "Aragón" = "#CC0033", 
-                             "Principado de Asturias" = "#CC0033", 
-                             "Illes Balears" = "#CC0033", 
-                             "Canarias" = "#CC0033", 
-                             "Cantabria" = "#CC0033", 
-                             "Castilla y León" = "#CC0033", 
-                             "Castilla-La Mancha" = "#CC0033", 
-                             "Cataluña" = "#CC0033", 
-                             "Comunitat Valenciana" = "#CC0033", 
-                             "Extremadura" = "#CC0033", 
-                             "Galicia" = "#CC0033", 
-                             "La Rioja" = "#CC0033", 
-                             "Comunidad de Madrid" = "#CC0033",
-                             "Región de Murcia" = "#CC0033", 
-                             "Comunidad Foral de Navarra" = "#CC0033", 
-                             "País Vasco" = "#CC0033"),
+  scale_color_manual(values=c("España" = "dimgrey",
+                             "Andalucía" = "#cc0033", 
+                             "Aragón" = "#cc0033", 
+                             "Principado de Asturias" = "#cc0033", 
+                             "Illes Balears" = "#cc0033", 
+                             "Canarias" = "#cc0033", 
+                             "Cantabria" = "#cc0033", 
+                             "Castilla y León" = "#cc0033", 
+                             "Castilla-La Mancha" = "#cc0033", 
+                             "Cataluña" = "#cc0033", 
+                             "Comunitat Valenciana" = "#cc0033", 
+                             "Extremadura" = "#cc0033", 
+                             "Galicia" = "#cc0033", 
+                             "La Rioja" = "#cc0033", 
+                             "Comunidad de Madrid" = "#cc0033",
+                             "Región de Murcia" = "#cc0033", 
+                             "Comunidad Foral de Navarra" = "#cc0033", 
+                             "País Vasco" = "#cc0033"),
                      guide="none")+
-  scale_fill_manual(values=c("España" =  "dimgray",
-                             "Andalucía" = "#CC0033", 
-                             "Aragón" = "#CC0033", 
-                             "Principado de Asturias" = "#CC0033", 
-                             "Illes Balears" = "#CC0033", 
-                             "Canarias" = "#CC0033", 
-                             "Cantabria" = "#CC0033", 
-                             "Castilla y León" = "#CC0033", 
-                             "Castilla-La Mancha" = "#CC0033", 
-                             "Cataluña" = "#CC0033", 
-                             "Comunitat Valenciana" = "#CC0033", 
-                             "Extremadura" = "#CC0033", 
-                             "Galicia" = "#CC0033", 
-                             "La Rioja" = "#CC0033", 
-                             "Comunidad de Madrid" = "#CC0033",
-                             "Región de Murcia" = "#CC0033", 
-                             "Comunidad Foral de Navarra" = "#CC0033", 
-                             "País Vasco" = "#CC0033"),
+  scale_fill_manual(values=c("España" = "dimgrey",
+                             "Andalucía" = "#cc0033", 
+                             "Aragón" = "#cc0033", 
+                             "Principado de Asturias" = "#cc0033", 
+                             "Illes Balears" = "#cc0033", 
+                             "Canarias" = "#cc0033", 
+                             "Cantabria" = "#cc0033", 
+                             "Castilla y León" = "#cc0033", 
+                             "Castilla-La Mancha" = "#cc0033", 
+                             "Cataluña" = "#cc0033", 
+                             "Comunitat Valenciana" = "#cc0033", 
+                             "Extremadura" = "#cc0033", 
+                             "Galicia" = "#cc0033", 
+                             "La Rioja" = "#cc0033", 
+                             "Comunidad de Madrid" = "#cc0033",
+                             "Región de Murcia" = "#cc0033", 
+                             "Comunidad Foral de Navarra" = "#cc0033", 
+                             "País Vasco" = "#cc0033"),
                     guide="none")+
   scale_linetype_manual(values = c("España" = "dashed",
                                    "Andalucía" = "solid", 
@@ -1812,13 +1824,14 @@ fig_25 <-
   prevalencias %>%
   filter((nombre_ccaa == nombre_ca[1]  | nombre_ccaa == nombre_ca[v]), sexo=="Global") %>% 
   ggplot(aes(x=encuesta, y=(alcohol*100), ymin=(alcohol_low*100), ymax=(alcohol_upp*100), color=as.factor(education_3), linetype=as.factor(nombre_ccaa), group=interaction(education_3, nombre_ccaa)))+
-  geom_line(size=1.5)+
+  geom_line(size=2)+
   facet_grid(cols = vars(sexo))+
   scale_y_continuous(breaks = c(10, 20, 40, 60, 100))+
   scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
   labs(x="", y="Prevalencia (95% IC)")+
-  scale_color_discrete(name="Nivel Educativo",
-                      labels=c("Bajo", "Medio", "Alto"))+
+  scale_color_manual(name="Nivel Educativo",
+                    labels=c("Bajo", "Medio", "Alto"),
+                    values = c("#E69F00", "#af8dc3", "#1c8900"))+
   scale_linetype_manual(values = c("España" = "dashed",
                                    "Andalucía" = "solid",
                                    "Aragón" = "solid",
@@ -1865,13 +1878,14 @@ fig_26 <-
     prevalencias %>%
   filter((nombre_ccaa == nombre_ca[1]  | nombre_ccaa == nombre_ca[v]), sexo!="Global") %>% 
   ggplot(aes(x=encuesta, y=(alcohol*100), ymin=(alcohol_low*100), ymax=(alcohol_upp*100), color=as.factor(education_3), linetype=as.factor(nombre_ccaa), group=interaction(education_3, nombre_ccaa)))+
-  geom_line(size=1.5)+
+  geom_line(size=2)+
   facet_grid(cols = vars(sexo))+
   scale_y_continuous(breaks = c(10, 20, 40, 60, 100))+
   scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
   labs(x="", y="Prevalencia (95% IC)")+
-  scale_color_discrete(name="Nivel Educativo",
-                      labels=c("Bajo", "Medio", "Alto"))+
+  scale_color_manual(name="Nivel Educativo",
+                    labels=c("Bajo", "Medio", "Alto"),
+                    values = c("#E69F00", "#af8dc3", "#1c8900"))+
   scale_linetype_manual(values = c("España" = "dashed",
                                    "Andalucía" = "solid",
                                    "Aragón" = "solid",
@@ -1920,48 +1934,48 @@ fig_26
   geom_hline(yintercept = 1, lty=2)+
   geom_ribbon(alpha=0.07, aes(fill=nombre_ccaa))+
   facet_grid(cols = vars(sexo))+
-  geom_line(aes(color=nombre_ccaa, linetype=nombre_ccaa), size=1.5)+
+  geom_line(aes(color=nombre_ccaa, linetype=nombre_ccaa), size=2)+
   scale_y_continuous(trans="log",
                      breaks=c(0, 1, 1.5, 2, 4, 8, 16, 32, 64))+
   scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
   labs(x="", y="RII (95% CI)")+
-  scale_color_manual(values=c("España" =  "dimgray",
-                             "Andalucía" = "#CC0033", 
-                             "Aragón" = "#CC0033", 
-                             "Principado de Asturias" = "#CC0033", 
-                             "Illes Balears" = "#CC0033", 
-                             "Canarias" = "#CC0033", 
-                             "Cantabria" = "#CC0033", 
-                             "Castilla y León" = "#CC0033", 
-                             "Castilla-La Mancha" = "#CC0033", 
-                             "Cataluña" = "#CC0033", 
-                             "Comunitat Valenciana" = "#CC0033", 
-                             "Extremadura" = "#CC0033", 
-                             "Galicia" = "#CC0033", 
-                             "La Rioja" = "#CC0033", 
-                             "Comunidad de Madrid" = "#CC0033",
-                             "Región de Murcia" = "#CC0033", 
-                             "Comunidad Foral de Navarra" = "#CC0033", 
-                             "País Vasco" = "#CC0033"),
+  scale_color_manual(values=c("España" = "dimgrey",
+                             "Andalucía" = "#cc0033", 
+                             "Aragón" = "#cc0033", 
+                             "Principado de Asturias" = "#cc0033", 
+                             "Illes Balears" = "#cc0033", 
+                             "Canarias" = "#cc0033", 
+                             "Cantabria" = "#cc0033", 
+                             "Castilla y León" = "#cc0033", 
+                             "Castilla-La Mancha" = "#cc0033", 
+                             "Cataluña" = "#cc0033", 
+                             "Comunitat Valenciana" = "#cc0033", 
+                             "Extremadura" = "#cc0033", 
+                             "Galicia" = "#cc0033", 
+                             "La Rioja" = "#cc0033", 
+                             "Comunidad de Madrid" = "#cc0033",
+                             "Región de Murcia" = "#cc0033", 
+                             "Comunidad Foral de Navarra" = "#cc0033", 
+                             "País Vasco" = "#cc0033"),
                      guide="none")+
-  scale_fill_manual(values=c("España" =  "dimgray",
-                             "Andalucía" = "#CC0033", 
-                             "Aragón" = "#CC0033", 
-                             "Principado de Asturias" = "#CC0033", 
-                             "Illes Balears" = "#CC0033", 
-                             "Canarias" = "#CC0033", 
-                             "Cantabria" = "#CC0033", 
-                             "Castilla y León" = "#CC0033", 
-                             "Castilla-La Mancha" = "#CC0033", 
-                             "Cataluña" = "#CC0033", 
-                             "Comunitat Valenciana" = "#CC0033", 
-                             "Extremadura" = "#CC0033", 
-                             "Galicia" = "#CC0033", 
-                             "La Rioja" = "#CC0033", 
-                             "Comunidad de Madrid" = "#CC0033",
-                             "Región de Murcia" = "#CC0033", 
-                             "Comunidad Foral de Navarra" = "#CC0033", 
-                             "País Vasco" = "#CC0033"),
+  scale_fill_manual(values=c("España" = "dimgrey",
+                             "Andalucía" = "#cc0033", 
+                             "Aragón" = "#cc0033", 
+                             "Principado de Asturias" = "#cc0033", 
+                             "Illes Balears" = "#cc0033", 
+                             "Canarias" = "#cc0033", 
+                             "Cantabria" = "#cc0033", 
+                             "Castilla y León" = "#cc0033", 
+                             "Castilla-La Mancha" = "#cc0033", 
+                             "Cataluña" = "#cc0033", 
+                             "Comunitat Valenciana" = "#cc0033", 
+                             "Extremadura" = "#cc0033", 
+                             "Galicia" = "#cc0033", 
+                             "La Rioja" = "#cc0033", 
+                             "Comunidad de Madrid" = "#cc0033",
+                             "Región de Murcia" = "#cc0033", 
+                             "Comunidad Foral de Navarra" = "#cc0033", 
+                             "País Vasco" = "#cc0033"),
                     guide="none")+
   scale_linetype_manual(values = c("España" = "dashed",
                                    "Andalucía" = "solid", 
@@ -2012,48 +2026,48 @@ fig_27
   geom_hline(yintercept = 1, lty=2)+
   geom_ribbon(alpha=0.07, aes(fill=nombre_ccaa))+
   facet_grid(cols = vars(sexo))+
-  geom_line(aes(color=nombre_ccaa, linetype=nombre_ccaa), size=1.5)+
+  geom_line(aes(color=nombre_ccaa, linetype=nombre_ccaa), size=2)+
   scale_y_continuous(trans="log",
                      breaks=c(0, 1, 1.5, 2, 4, 8, 16, 32, 64))+
   scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
   labs(x="", y="RII (95% CI)")+
-  scale_color_manual(values=c("España" =  "dimgray",
-                             "Andalucía" = "#CC0033", 
-                             "Aragón" = "#CC0033", 
-                             "Principado de Asturias" = "#CC0033", 
-                             "Illes Balears" = "#CC0033", 
-                             "Canarias" = "#CC0033", 
-                             "Cantabria" = "#CC0033", 
-                             "Castilla y León" = "#CC0033", 
-                             "Castilla-La Mancha" = "#CC0033", 
-                             "Cataluña" = "#CC0033", 
-                             "Comunitat Valenciana" = "#CC0033", 
-                             "Extremadura" = "#CC0033", 
-                             "Galicia" = "#CC0033", 
-                             "La Rioja" = "#CC0033", 
-                             "Comunidad de Madrid" = "#CC0033",
-                             "Región de Murcia" = "#CC0033", 
-                             "Comunidad Foral de Navarra" = "#CC0033", 
-                             "País Vasco" = "#CC0033"),
+  scale_color_manual(values=c("España" = "dimgrey",
+                             "Andalucía" = "#cc0033", 
+                             "Aragón" = "#cc0033", 
+                             "Principado de Asturias" = "#cc0033", 
+                             "Illes Balears" = "#cc0033", 
+                             "Canarias" = "#cc0033", 
+                             "Cantabria" = "#cc0033", 
+                             "Castilla y León" = "#cc0033", 
+                             "Castilla-La Mancha" = "#cc0033", 
+                             "Cataluña" = "#cc0033", 
+                             "Comunitat Valenciana" = "#cc0033", 
+                             "Extremadura" = "#cc0033", 
+                             "Galicia" = "#cc0033", 
+                             "La Rioja" = "#cc0033", 
+                             "Comunidad de Madrid" = "#cc0033",
+                             "Región de Murcia" = "#cc0033", 
+                             "Comunidad Foral de Navarra" = "#cc0033", 
+                             "País Vasco" = "#cc0033"),
                      guide="none")+
-  scale_fill_manual(values=c("España" =  "dimgray",
-                             "Andalucía" = "#CC0033", 
-                             "Aragón" = "#CC0033", 
-                             "Principado de Asturias" = "#CC0033", 
-                             "Illes Balears" = "#CC0033", 
-                             "Canarias" = "#CC0033", 
-                             "Cantabria" = "#CC0033", 
-                             "Castilla y León" = "#CC0033", 
-                             "Castilla-La Mancha" = "#CC0033", 
-                             "Cataluña" = "#CC0033", 
-                             "Comunitat Valenciana" = "#CC0033", 
-                             "Extremadura" = "#CC0033", 
-                             "Galicia" = "#CC0033", 
-                             "La Rioja" = "#CC0033", 
-                             "Comunidad de Madrid" = "#CC0033",
-                             "Región de Murcia" = "#CC0033", 
-                             "Comunidad Foral de Navarra" = "#CC0033", 
-                             "País Vasco" = "#CC0033"),
+  scale_fill_manual(values=c("España" = "dimgrey",
+                             "Andalucía" = "#cc0033", 
+                             "Aragón" = "#cc0033", 
+                             "Principado de Asturias" = "#cc0033", 
+                             "Illes Balears" = "#cc0033", 
+                             "Canarias" = "#cc0033", 
+                             "Cantabria" = "#cc0033", 
+                             "Castilla y León" = "#cc0033", 
+                             "Castilla-La Mancha" = "#cc0033", 
+                             "Cataluña" = "#cc0033", 
+                             "Comunitat Valenciana" = "#cc0033", 
+                             "Extremadura" = "#cc0033", 
+                             "Galicia" = "#cc0033", 
+                             "La Rioja" = "#cc0033", 
+                             "Comunidad de Madrid" = "#cc0033",
+                             "Región de Murcia" = "#cc0033", 
+                             "Comunidad Foral de Navarra" = "#cc0033", 
+                             "País Vasco" = "#cc0033"),
                     guide="none")+
   scale_linetype_manual(values = c("España" = "dashed",
                                    "Andalucía" = "solid", 
@@ -2105,13 +2119,14 @@ fig_29 <-
   prevalencias %>%
   filter((nombre_ccaa == nombre_ca[1]  | nombre_ccaa == nombre_ca[v]), sexo=="Global") %>% 
   ggplot(aes(x=encuesta, y=(fruta_verdura*100), ymin=(fruta_verdura_low*100), ymax=(fruta_verdura_upp*100), color=as.factor(education_3), linetype=as.factor(nombre_ccaa), group=interaction(education_3, nombre_ccaa)))+
-  geom_line(size=1.5)+
+  geom_line(size=2)+
   facet_grid(cols = vars(sexo))+
   scale_y_continuous(breaks = c(10, 20, 40, 60, 100))+
   scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
   labs(x="", y="Prevalencia (95% IC)")+
-  scale_color_discrete(name="Nivel Educativo",
-                      labels=c("Bajo", "Medio", "Alto"))+
+  scale_color_manual(name="Nivel Educativo",
+                    labels=c("Bajo", "Medio", "Alto"),
+                    values = c("#E69F00", "#af8dc3", "#1c8900"))+
   scale_linetype_manual(values = c("España" = "dashed",
                                    "Andalucía" = "solid",
                                    "Aragón" = "solid",
@@ -2158,13 +2173,14 @@ fig_30 <-
   prevalencias %>%
   filter((nombre_ccaa == nombre_ca[1]  | nombre_ccaa == nombre_ca[v]), sexo!="Global") %>% 
   ggplot(aes(x=encuesta, y=(fruta_verdura*100), ymin=(fruta_verdura_low*100), ymax=(fruta_verdura_upp*100), color=as.factor(education_3), linetype=as.factor(nombre_ccaa), group=interaction(education_3, nombre_ccaa)))+
-  geom_line(size=1.5)+
+  geom_line(size=2)+
   facet_grid(cols = vars(sexo))+
   scale_y_continuous(breaks = c(10, 20, 40, 60, 100))+
   scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
   labs(x="", y="Prevalencia (95% IC)")+
-  scale_color_discrete(name="Nivel Educativo",
-                      labels=c("Bajo", "Medio", "Alto"))+
+  scale_color_manual(name="Nivel Educativo",
+                    labels=c("Bajo", "Medio", "Alto"),
+                    values = c("#E69F00", "#af8dc3", "#1c8900"))+
   scale_linetype_manual(values = c("España" = "dashed",
                                    "Andalucía" = "solid",
                                    "Aragón" = "solid",
@@ -2213,48 +2229,48 @@ fig_30
   geom_hline(yintercept = 1, lty=2)+
   geom_ribbon(alpha=0.07, aes(fill=nombre_ccaa))+
   facet_grid(cols = vars(sexo))+
-  geom_line(aes(color=nombre_ccaa, linetype=nombre_ccaa), size=1.5)+
+  geom_line(aes(color=nombre_ccaa, linetype=nombre_ccaa), size=2)+
   scale_y_continuous(trans="log",
                      breaks=c(0, 1, 1.5, 2, 4, 8, 16, 32, 64))+
   scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
   labs(x="", y="RII (95% CI)")+
-  scale_color_manual(values=c("España" =  "dimgray",
-                             "Andalucía" = "#CC0033", 
-                             "Aragón" = "#CC0033", 
-                             "Principado de Asturias" = "#CC0033", 
-                             "Illes Balears" = "#CC0033", 
-                             "Canarias" = "#CC0033", 
-                             "Cantabria" = "#CC0033", 
-                             "Castilla y León" = "#CC0033", 
-                             "Castilla-La Mancha" = "#CC0033", 
-                             "Cataluña" = "#CC0033", 
-                             "Comunitat Valenciana" = "#CC0033", 
-                             "Extremadura" = "#CC0033", 
-                             "Galicia" = "#CC0033", 
-                             "La Rioja" = "#CC0033", 
-                             "Comunidad de Madrid" = "#CC0033",
-                             "Región de Murcia" = "#CC0033", 
-                             "Comunidad Foral de Navarra" = "#CC0033", 
-                             "País Vasco" = "#CC0033"),
+  scale_color_manual(values=c("España" = "dimgrey",
+                             "Andalucía" = "#cc0033", 
+                             "Aragón" = "#cc0033", 
+                             "Principado de Asturias" = "#cc0033", 
+                             "Illes Balears" = "#cc0033", 
+                             "Canarias" = "#cc0033", 
+                             "Cantabria" = "#cc0033", 
+                             "Castilla y León" = "#cc0033", 
+                             "Castilla-La Mancha" = "#cc0033", 
+                             "Cataluña" = "#cc0033", 
+                             "Comunitat Valenciana" = "#cc0033", 
+                             "Extremadura" = "#cc0033", 
+                             "Galicia" = "#cc0033", 
+                             "La Rioja" = "#cc0033", 
+                             "Comunidad de Madrid" = "#cc0033",
+                             "Región de Murcia" = "#cc0033", 
+                             "Comunidad Foral de Navarra" = "#cc0033", 
+                             "País Vasco" = "#cc0033"),
                      guide="none")+
-  scale_fill_manual(values=c("España" =  "dimgray",
-                             "Andalucía" = "#CC0033", 
-                             "Aragón" = "#CC0033", 
-                             "Principado de Asturias" = "#CC0033", 
-                             "Illes Balears" = "#CC0033", 
-                             "Canarias" = "#CC0033", 
-                             "Cantabria" = "#CC0033", 
-                             "Castilla y León" = "#CC0033", 
-                             "Castilla-La Mancha" = "#CC0033", 
-                             "Cataluña" = "#CC0033", 
-                             "Comunitat Valenciana" = "#CC0033", 
-                             "Extremadura" = "#CC0033", 
-                             "Galicia" = "#CC0033", 
-                             "La Rioja" = "#CC0033", 
-                             "Comunidad de Madrid" = "#CC0033",
-                             "Región de Murcia" = "#CC0033", 
-                             "Comunidad Foral de Navarra" = "#CC0033", 
-                             "País Vasco" = "#CC0033"),
+  scale_fill_manual(values=c("España" = "dimgrey",
+                             "Andalucía" = "#cc0033", 
+                             "Aragón" = "#cc0033", 
+                             "Principado de Asturias" = "#cc0033", 
+                             "Illes Balears" = "#cc0033", 
+                             "Canarias" = "#cc0033", 
+                             "Cantabria" = "#cc0033", 
+                             "Castilla y León" = "#cc0033", 
+                             "Castilla-La Mancha" = "#cc0033", 
+                             "Cataluña" = "#cc0033", 
+                             "Comunitat Valenciana" = "#cc0033", 
+                             "Extremadura" = "#cc0033", 
+                             "Galicia" = "#cc0033", 
+                             "La Rioja" = "#cc0033", 
+                             "Comunidad de Madrid" = "#cc0033",
+                             "Región de Murcia" = "#cc0033", 
+                             "Comunidad Foral de Navarra" = "#cc0033", 
+                             "País Vasco" = "#cc0033"),
                     guide="none")+
   scale_linetype_manual(values = c("España" = "dashed",
                                    "Andalucía" = "solid", 
@@ -2305,48 +2321,48 @@ fig_31
   geom_hline(yintercept = 1, lty=2)+
   geom_ribbon(alpha=0.07, aes(fill=nombre_ccaa))+
   facet_grid(cols = vars(sexo))+
-  geom_line(aes(color=nombre_ccaa, linetype=nombre_ccaa), size=1.5)+
+  geom_line(aes(color=nombre_ccaa, linetype=nombre_ccaa), size=2)+
   scale_y_continuous(trans="log",
                      breaks=c(0, 1, 1.5, 2, 4, 8, 16, 32, 64))+
   scale_x_continuous(breaks = c(2001, 2003, 2006, 2011, 2014, 2017, 2020))+
   labs(x="", y="RII (95% CI)")+
-  scale_color_manual(values=c("España" =  "dimgray",
-                             "Andalucía" = "#CC0033", 
-                             "Aragón" = "#CC0033", 
-                             "Principado de Asturias" = "#CC0033", 
-                             "Illes Balears" = "#CC0033", 
-                             "Canarias" = "#CC0033", 
-                             "Cantabria" = "#CC0033", 
-                             "Castilla y León" = "#CC0033", 
-                             "Castilla-La Mancha" = "#CC0033", 
-                             "Cataluña" = "#CC0033", 
-                             "Comunitat Valenciana" = "#CC0033", 
-                             "Extremadura" = "#CC0033", 
-                             "Galicia" = "#CC0033", 
-                             "La Rioja" = "#CC0033", 
-                             "Comunidad de Madrid" = "#CC0033",
-                             "Región de Murcia" = "#CC0033", 
-                             "Comunidad Foral de Navarra" = "#CC0033", 
-                             "País Vasco" = "#CC0033"),
+  scale_color_manual(values=c("España" = "dimgrey",
+                             "Andalucía" = "#cc0033", 
+                             "Aragón" = "#cc0033", 
+                             "Principado de Asturias" = "#cc0033", 
+                             "Illes Balears" = "#cc0033", 
+                             "Canarias" = "#cc0033", 
+                             "Cantabria" = "#cc0033", 
+                             "Castilla y León" = "#cc0033", 
+                             "Castilla-La Mancha" = "#cc0033", 
+                             "Cataluña" = "#cc0033", 
+                             "Comunitat Valenciana" = "#cc0033", 
+                             "Extremadura" = "#cc0033", 
+                             "Galicia" = "#cc0033", 
+                             "La Rioja" = "#cc0033", 
+                             "Comunidad de Madrid" = "#cc0033",
+                             "Región de Murcia" = "#cc0033", 
+                             "Comunidad Foral de Navarra" = "#cc0033", 
+                             "País Vasco" = "#cc0033"),
                      guide="none")+
-  scale_fill_manual(values=c("España" =  "dimgray",
-                             "Andalucía" = "#CC0033", 
-                             "Aragón" = "#CC0033", 
-                             "Principado de Asturias" = "#CC0033", 
-                             "Illes Balears" = "#CC0033", 
-                             "Canarias" = "#CC0033", 
-                             "Cantabria" = "#CC0033", 
-                             "Castilla y León" = "#CC0033", 
-                             "Castilla-La Mancha" = "#CC0033", 
-                             "Cataluña" = "#CC0033", 
-                             "Comunitat Valenciana" = "#CC0033", 
-                             "Extremadura" = "#CC0033", 
-                             "Galicia" = "#CC0033", 
-                             "La Rioja" = "#CC0033", 
-                             "Comunidad de Madrid" = "#CC0033",
-                             "Región de Murcia" = "#CC0033", 
-                             "Comunidad Foral de Navarra" = "#CC0033", 
-                             "País Vasco" = "#CC0033"),
+  scale_fill_manual(values=c("España" = "dimgrey",
+                             "Andalucía" = "#cc0033", 
+                             "Aragón" = "#cc0033", 
+                             "Principado de Asturias" = "#cc0033", 
+                             "Illes Balears" = "#cc0033", 
+                             "Canarias" = "#cc0033", 
+                             "Cantabria" = "#cc0033", 
+                             "Castilla y León" = "#cc0033", 
+                             "Castilla-La Mancha" = "#cc0033", 
+                             "Cataluña" = "#cc0033", 
+                             "Comunitat Valenciana" = "#cc0033", 
+                             "Extremadura" = "#cc0033", 
+                             "Galicia" = "#cc0033", 
+                             "La Rioja" = "#cc0033", 
+                             "Comunidad de Madrid" = "#cc0033",
+                             "Región de Murcia" = "#cc0033", 
+                             "Comunidad Foral de Navarra" = "#cc0033", 
+                             "País Vasco" = "#cc0033"),
                     guide="none")+
   scale_linetype_manual(values = c("España" = "dashed",
                                    "Andalucía" = "solid", 

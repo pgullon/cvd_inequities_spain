@@ -500,7 +500,7 @@ ense_2017 <-  ense_2017 %>%
   mutate(encuesta=2017)
 
 
-save(ense_2017, file = "2017/ense2017_clean.RData")
+save(ense_2017, file = "Physical Activity/Estudio Jubilacion/ense2017_clean.RData")
 
 
 ############################ EESE 2020 ###################################
