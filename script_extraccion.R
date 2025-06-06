@@ -178,3 +178,4 @@ save(eese_2020, file = "2020/eese2020.RData")
 
 eese
 
+Comprobación
