@@ -172,3 +172,9 @@ eese_2020 <- adulto2020 %>%
 save(eese_2020, file = "2020/eese2020.RData")
 
 
+
+###################################### 2023 ###########################
+#Cargamos encuesta adultos
+
+eese
+
