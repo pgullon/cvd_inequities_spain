@@ -1,0 +1,45 @@
+#########################################################################################################################			
+INSTITUTO NACIONAL DE ESTADÍSTICA	www.ine.es		
+			
+FICHEROS DE MICRODATOS			
+	Encuesta de Salud de España. Fichero Adulto(ESdEadulto)		
+	AÑO 2023		
+			
+Leeme.txt 			
+############################################################			
+			
+Este directorio contiene:			
+			
+1- Este archivo (leeme.txt)			
+2- Un fichero Excel con el diseño de registro de los microdatos ( "dr_ESdEadulto_2023.xlsx")			
+3- El fichero de microdatos en formato txt, ancho fijo ("md_ESdEadulto_2023.txt"). La longitud de cada			
+	   variable se puede consultar en el fichero Excel del diseño de registro "dr_ESdEadulto_2023.xlsx"		
+4- Cinco directorios: CSV, R, SAS, SPSS, STATA			
+			
+Contenido de los directorios:			
+			
+1- El directorio  CSV contiene:			
+	a) El fichero de microdatos en formato CSV, el separador es la TABULACIÓN ("ESdEadulto_2023.tab")		
+			
+2- El directorio R contiene:
+	a) El fichero de microdatos en formato RData ("ESdEadulto_2023.RData")						
+			
+3- El directorio SAS contiene:			
+	a) Fichero de microdatos en formato SAS, con los datos codificados (es decir,		
+	   las variables cualitativas son un código numérico, por ejemplo '40' en lugar		
+	   de 'Segovia') ("esdeadulto_2023.sas7bdat")		
+	b) Programa SAS con las sentencias para dar formato a las variables del fichero		
+	   de microdatos anterior ("ESdEadulto_2023_conFormato.sas")		
+			
+4- El directorio SPSS contiene:			
+	a) Fichero de microdatos en formato SPSS, con los diccionarios de las variables		
+	   integrados ("ESdEadulto_2023.sav")		
+	   		
+5- El directorio STATA contiene:			
+	a) Fichero de microdatos en formato STATA, sin los diccionarios de las variables		
+	   integrados ("ESdEadulto_2023.dta"). Las etiquetas las variables y valores pueden consultarse en el		
+	   fichero Excel del diseño de registro "dr_ESdEadulto_2023.xlsx" que		
+	   está en la misma carpeta que este fichero "Leeme.txt"		
+	   		
+			
+#########################################################################################################################			
