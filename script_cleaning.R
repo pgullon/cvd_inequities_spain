@@ -571,6 +571,74 @@ eese_2020 <-  eese_2020 %>%
 save(eese_2020, file = "2020/eese2020_clean.RData")
 
 
+############################ EESE 2023 ###################################
+load("2023/eese2023.RData")
+
+# Creamos las variables y nos quedamos solo con las variables de interés
+eese_2023 <-  eese_2023 %>% 
+  mutate(id=IDENTHOGAR, 
+         factor=as.numeric(FACTORADULTO),
+         factor2=rescale(factor, to=c(1,100)),
+         edad=as.numeric(EDADa), 
+         sexo=as.numeric(SEXOa),
+         sexo=case_when(sexo==1~1, sexo==2~0),
+         ccaa=na_if(CCAA.x, "18"), ccaa=as.numeric(na_if(ccaa, "19")),
+         migration = as.numeric(na_if(na_if(A1a, "8"), "9")),
+         nacionalidad=A2a_1, 
+         clase=na_if(CLASE_PR.x, "8"), clase=na_if(clase, "9"), 
+         clase_tr=cume_dist(clase),
+         education=na_if(NIVEST, "99"), education=as.numeric(na_if(education, "99")), 
+         education_3=case_when((education==2 | education==3 | education==4)~1, 
+                               (education==5 | education==6 | education==7 | education==8)~2, 
+                               (education==9)~3),
+         education_3_tr=((cume_dist(education_3)-1))*-1,
+         education_5=case_when((education==2 | education==3)~1,
+                               education==4~2,
+                               (education==5 | education==7)~3,
+                               (education==6 | education==8)~4, 
+                               (education==9)~5),
+         education_5_tr=((cume_dist(education_5)-1))*-1,
+         diabetes=case_when((C5a_12==1 |C5c_12==1) ~ 1, 
+                            (C5a_12==2 | C5c_12==2) ~ 0), 
+         hta=case_when((C5a_1==1 |C5c_1==1) ~ 1, 
+                       (C5a_1==2 | C5c_1==2) ~ 0),
+         col=case_when((C5a_15==1 |C5c_15==1) ~ 1, 
+                       (C5a_15==2 | C5c_15==2) ~ 0),
+         peso=na_if(N2, 998), peso=as.numeric(na_if(peso, 999)), 
+         altura=na_if(N1, 998), altura=na_if(altura, 999),
+         imc=round(peso/(altura/100)^2,2), 
+         obesity=case_when(imc<30 ~0, imc>=30~1),
+         sobrepeso=case_when(imc<25 ~0, imc>=25~1),
+         smoking=case_when((Q1==1 | Q1==2) ~ 1 , 
+                           (Q1==3 | Q1==4) ~ 0), 
+         alcohol=na_if(R1, "98"), alcohol=as.numeric(na_if(alcohol, "99")),
+         alcohol=case_when((alcohol==1 | alcohol==2 | alcohol==3 | alcohol==4 
+                            | alcohol==5 | alcohol==6 | alcohol==7)~1, 
+                           (alcohol==8 | alcohol==9)~0), 
+         sedentarismo=case_when(O2==1~1, 
+                                (O2==2 | O2==3 | O2==4)~0), 
+         fruta=na_if(P1_1, "9"), fruta=na_if(fruta, "8"), 
+         verdura=na_if(P1_7, "9"), verdura=na_if(verdura, "8"), 
+         fruta=case_when(fruta==1~0, 
+                         (fruta==2 | fruta==3 | fruta==4 | fruta==5 | fruta==6)~1), 
+         verdura=case_when(verdura==1~0, 
+                           (verdura==2 | verdura==3  | verdura==4 | verdura==5 | verdura==6)~1), 
+         food=case_when(fruta==1~1, verdura==1~1, 
+                        (fruta==0 | verdura==0)~0)) %>%
+  select(id, factor, factor2, edad, sexo, ccaa, nacionalidad, migration, clase, clase_tr,
+         education_3, education_3_tr, education_5, education_5_tr, diabetes, hta, 
+         col, imc, obesity, sobrepeso, smoking, alcohol, sedentarismo, fruta, verdura, food) %>%
+  filter(edad>17) %>%
+  distinct() %>%
+  drop_na(id, factor, edad, sexo, ccaa, nacionalidad, migration, clase, clase_tr,
+          education_3, education_3_tr, education_5, education_5_tr, diabetes, hta, 
+          col, imc, obesity, sobrepeso, smoking, alcohol, sedentarismo, food) %>%
+  mutate(encuesta=2023)
+
+
+save(eese_2023, file = "2023/eese2023_clean.RData")
+
+
 dta <- ense_2001 %>%
   rbind(ense_2003) %>%
   rbind(ense_2006) %>%
@@ -578,6 +646,7 @@ dta <- ense_2001 %>%
   rbind(ense_2011) %>%
   rbind(eese_2014) %>%
   rbind(ense_2017) %>%
-  rbind(eese_2020) 
+  rbind(eese_2020) %>% 
+  rbind(eese_2023)
 
 save(dta, file = "joined_dta.RData")

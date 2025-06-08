@@ -174,8 +174,24 @@ save(eese_2020, file = "2020/eese2020.RData")
 
 
 ###################################### 2023 ###########################
-#Cargamos encuesta adultos
 
-eese
+#Cargamos encuesta adultos
+load("2023/ESdEadulto_2023.RData")
+adulto2023 <- Microdatos
+metadatos_adulto2023 <- Metadatos
+rm(Microdatos, Metadatos)
+
+# Cargar encuesta hogares
+load("2023/ESdEhogar_2023.RData")
+hogar2023 <- Microdatos
+metadatos_hogar2023 <- Metadatos
+rm(Microdatos, Metadatos)
+
+# Unir adultos con hogar
+eese_2023 <- adulto2023 %>%
+  left_join(hogar2023, by = "IDENTHOGAR")
+
+save(eese_2023, file = "2023/eese2023.RData")
+rm(adulto2023, eese_2023, hogar2023, metadatos_adulto2023, metadatos_hogar2023)
 
 Comprobación
