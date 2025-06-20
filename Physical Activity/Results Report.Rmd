@@ -27,7 +27,7 @@ To describe social inequities in sedentarism in women and men by autonomous regi
 
 ## Methods
 
-**Sample:** Data from 167,581 adults (aged 18 or older) were obtained from the Spanish National Health Survey and the Spanish Module of the European Health Survey from 2001, 2003, 2006, 2009, 2011, 2014, 2017, and 2020. 
+**Sample:** Data from 167,581 adults (aged 18 or older) were obtained from the Spanish National Health Survey and the Spanish Module of the European Health Survey from 2001, 2003, 2006, 2009, 2011, 2014, 2017, 2020 and 2023. 
 
 **Exposure:** Socioeconomic position was measured using the educational level operationalized into three categories (low, middle, high).  
 
@@ -37,12 +37,7 @@ To describe social inequities in sedentarism in women and men by autonomous regi
 
 ## Results
 
-### Table 1
-
-![](Table1.png)
-
-
-### RRI of sedentarism in Spain 2001 and 2020
+### RRI of sedentarism in Spain 2001 and 2023
 
 ```{r fig1, fig.height = 5, fig.width = 8, echo=FALSE}
 

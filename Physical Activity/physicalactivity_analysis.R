@@ -15,8 +15,6 @@
 # Cargamos librerías
 
 library(plyr)
-library(tidyverse)
-library(broom)
 library(glmmTMB)
 library(mixedup)
 library(sf)
@@ -25,7 +23,11 @@ library(lpSolve)
 library(irr)
 library(scales)
 library(segmented)
-select=dplyr::select
+library(remotes)
+library(assertthat)
+library(broom)
+library(table1)
+library(tidyverse)
 
 
 rm(list=ls())
@@ -78,9 +80,9 @@ select <- dplyr::select
 # RII por nivel educativo 
 
 # Overall
-rii_sedentario_overall <- dta %>%
+rii_sedentarismo_overall <- dta %>%
   nest(data=-encuesta) %>%
-  mutate(model=map(data, ~glm(formula=sedentario~education_3_tr+edad+sexo, data=.x, 
+  mutate(model=map(data, ~glm(formula=sedentarismo~education_3_tr+edad+sexo, data=.x, 
                               family="poisson")), 
          tidied=map(model, tidy)) %>%
   unnest(tidied) %>%
@@ -95,9 +97,9 @@ rii_sedentario_overall <- dta %>%
 
 # Hombres
 dta_h<- subset(dta, sexo==1)
-rii_sedentario_h <- dta_h %>%
+rii_sedentarismo_h <- dta_h %>%
   nest(data=-encuesta) %>%
-  mutate(model=map(data, ~glm(formula=sedentario~education_3_tr+edad, data=.x, 
+  mutate(model=map(data, ~glm(formula=sedentarismo~education_3_tr+edad, data=.x, 
                               family="poisson")), 
          tidied=map(model, tidy)) %>%
   unnest(tidied) %>%
@@ -111,9 +113,9 @@ rii_sedentario_h <- dta_h %>%
 
 # Mujeres
 dta_m<- subset(dta, sexo==0)
-rii_sedentario_m <- dta_m %>%
+rii_sedentarismo_m <- dta_m %>%
   nest(data=-encuesta) %>%
-  mutate(model=map(data, ~glm(formula=sedentario~education_3_tr+edad, data=.x, 
+  mutate(model=map(data, ~glm(formula=sedentarismo~education_3_tr+edad, data=.x, 
                               family="poisson")), 
          tidied=map(model, tidy)) %>%
   unnest(tidied) %>%
@@ -126,26 +128,28 @@ rii_sedentario_m <- dta_m %>%
          sexo="Women")
 
 #Creamos base de datos de RII por nivel educativo
-rii_sedentario_education <- 
-  rii_sedentario_overall %>%
-  rbind(rii_sedentario_h) %>%
-  rbind(rii_sedentario_m) %>% 
+rii_sedentarismo_education <- 
+  rii_sedentarismo_overall %>%
+  rbind(rii_sedentarismo_h) %>%
+  rbind(rii_sedentarismo_m) %>% 
   mutate(exp="RII Education") %>% 
   rename(est = rii, infci=rii_infci, supci=rii_supci, estrato=sexo)
 
+rm(rii_sedentarismo_h, rii_sedentarismo_m, rii_sedentarismo_overall)
 
 #### PROBAMOS A HALLAR PUNTOS DE CORTE CON SEGMENTED ###
 
 library(segmented)
 
-rii_overall <- rii_sedentario_education %>% 
+rii_overall <- rii_sedentarismo_education %>% 
   filter(estrato=="Overall")
 
 # Ajustar el modelo lineal básico
 mod_overall <- lm(est ~ encuesta, data = rii_overall)
 
 # Aplicar segmentación de regresión
-seg_overall <- segmented(mod_overall, seg.Z = ~encuesta, psi = c(2011))
+psi_ini <- median(rii_overall$encuesta)
+seg_overall <- segmented(mod_overall, seg.Z = ~encuesta, psi = psi_ini)
 
 # Ver los resultados de la segmentación
 summary(seg_overall)
@@ -155,7 +159,7 @@ plot(seg_overall, col = "blue", main = "Segmentación de regresión para hombres
 points(rii_overall$encuesta, rii_overall$est, col = "red")
 
 # Datos originales filtrados por estrato "Overall"
-rii_overall <- rii_sedentario_education %>% 
+rii_overall <- rii_sedentarismo_education %>% 
   filter(estrato=="Overall")
 
 # Crear predicciones del modelo segmentado
@@ -169,19 +173,21 @@ breakpoints <- seg_overall$psi[, "Est."]
 
 fig_segmented <- ggplot(rii_overall, aes(x = encuesta, y = est)) +
   geom_point(color = "blue", size = 2) +
-  geom_line(data = pred_overall, aes(x = encuesta, y = est_pred), color = "red", size = 1) +
-  geom_vline(xintercept = breakpoints, linetype = "dashed", color = "black", size = 1) +
+  geom_line(data = pred_overall, aes(x = encuesta, y = est_pred), color = "red", linewidth = 1) +
+  geom_vline(xintercept = breakpoints, linetype = "dashed", color = "black", linewidth = 1) +
   labs(title = "Modelo de segmentación de RII para sedentarismo",
        x = "Año de encuesta",
        y = "Índice Relativo de Desigualdad (RII)") +
   theme_minimal()
 
+fig_segmented
+
 # RII por clase social
 
 # Overall
-rii_sedentario_overall_clase <- dta %>%
+rii_sedentarismo_overall_clase <- dta %>%
   nest(data=-encuesta) %>%
-  mutate(model=map(data, ~glm(formula=sedentario~clase_tr+edad+sexo, data=.x, 
+  mutate(model=map(data, ~glm(formula=sedentarismo~clase_tr+edad+sexo, data=.x, 
                               family="poisson")), 
          tidied=map(model, tidy)) %>%
   unnest(tidied) %>%
@@ -195,9 +201,9 @@ rii_sedentario_overall_clase <- dta %>%
 
 # Hombres
 dta_h<- subset(dta, sexo==1)
-rii_sedentario_h_clase <- dta_h %>%
+rii_sedentarismo_h_clase <- dta_h %>%
   nest(data=-encuesta) %>%
-  mutate(model=map(data, ~glm(formula=sedentario~clase_tr+edad, data=.x, 
+  mutate(model=map(data, ~glm(formula=sedentarismo~clase_tr+edad, data=.x, 
                               family="poisson")), 
          tidied=map(model, tidy)) %>%
   unnest(tidied) %>%
@@ -211,9 +217,9 @@ rii_sedentario_h_clase <- dta_h %>%
 
 # Mujeres
 dta_m<- subset(dta, sexo==0)
-rii_sedentario_m_clase <- dta_m %>%
+rii_sedentarismo_m_clase <- dta_m %>%
   nest(data=-encuesta) %>%
-  mutate(model=map(data, ~glm(formula=sedentario~clase_tr+edad, data=.x, 
+  mutate(model=map(data, ~glm(formula=sedentarismo~clase_tr+edad, data=.x, 
                               family="poisson")), 
          tidied=map(model, tidy)) %>%
   unnest(tidied) %>%
@@ -226,9 +232,9 @@ rii_sedentario_m_clase <- dta_m %>%
          sexo="Women")
 
 #Creamos base de datos de RII por clase social
-rii_sedentario_clase <- rii_sedentario_overall_clase %>%
-  rbind(rii_sedentario_h_clase) %>%
-  rbind(rii_sedentario_m_clase) %>% 
+rii_sedentarismo_clase <- rii_sedentarismo_overall_clase %>%
+  rbind(rii_sedentarismo_h_clase) %>%
+  rbind(rii_sedentarismo_m_clase) %>% 
   mutate(exp="RII Social Class") %>% 
   rename(est = rii, infci=rii_infci, supci=rii_supci, estrato=sexo)
 
@@ -240,9 +246,9 @@ rii_sedentario_clase <- rii_sedentario_overall_clase %>%
 # SII por nivel educativo
 
 # Overall
-sii_sedentario_overall <- dta %>%
+sii_sedentarismo_overall <- dta %>%
   nest(data=-encuesta) %>%
-  mutate(model=map(data, ~glm(formula=sedentario~education_3_tr+edad+sexo, data=.x, 
+  mutate(model=map(data, ~glm(formula=sedentarismo~education_3_tr+edad+sexo, data=.x, 
                               family=poisson(link="identity"),start = c(1, 0, 0, 0))), 
          tidied=map(model, tidy)) %>%
   unnest(tidied) %>%
@@ -255,9 +261,9 @@ sii_sedentario_overall <- dta %>%
          sexo="Overall")
 
 # Hombres
-sii_sedentario_h <- dta_h %>%
+sii_sedentarismo_h <- dta_h %>%
   nest(data=-encuesta) %>%
-  mutate(model=map(data, ~glm(formula=sedentario~education_3_tr+edad, data=.x, 
+  mutate(model=map(data, ~glm(formula=sedentarismo~education_3_tr+edad, data=.x, 
                               family=poisson(link="identity"),start = c(1, 0, 0))), 
          tidied=map(model, tidy)) %>%
   unnest(tidied) %>%
@@ -270,9 +276,9 @@ sii_sedentario_h <- dta_h %>%
          sexo="Men")
 
 # Mujeres
-sii_sedentario_m <- dta_m %>%
+sii_sedentarismo_m <- dta_m %>%
   nest(data=-encuesta) %>%
-  mutate(model=map(data, ~glm(formula=sedentario~education_3_tr+edad, data=.x, 
+  mutate(model=map(data, ~glm(formula=sedentarismo~education_3_tr+edad, data=.x, 
                               family=poisson(link="identity"),start = c(1, 0, 0))), 
          tidied=map(model, tidy)) %>%
   unnest(tidied) %>%
@@ -285,12 +291,13 @@ sii_sedentario_m <- dta_m %>%
          sexo="Women")
 
 # Creamos base de datos de SII por nivel educativo
-sii_sedentario_education <- sii_sedentario_overall %>%
-  rbind(sii_sedentario_h) %>%
-  rbind(sii_sedentario_m) %>%
+sii_sedentarismo_education <- sii_sedentarismo_overall %>%
+  rbind(sii_sedentarismo_h) %>%
+  rbind(sii_sedentarismo_m) %>%
   mutate(exp="SII Education") %>% 
   rename(est = sii, infci=sii_infci, supci=sii_supci, estrato=sexo)
 
+rm(sii_sedentarismo_h, sii_sedentarismo_m, sii_sedentarismo_overall)
 
 #####################################################
 ## Calculamos desigualdad en sedentarismo por sexo ##
@@ -305,9 +312,9 @@ dta_sexo<-dta %>%
 # Desigualdad por sexo, por nivel educativo
 
 # Overall
-sexo_sedentario_all <- dta_sexo %>%
+sexo_sedentarismo_all <- dta_sexo %>%
   nest(data=-encuesta) %>%
-  mutate(model=map(data, ~glm(formula=sedentario~sex+edad, data=.x, 
+  mutate(model=map(data, ~glm(formula=sedentarismo~sex+edad, data=.x, 
                               family="poisson")), 
          tidied=map(model, tidy)) %>%
   unnest(tidied) %>%
@@ -321,9 +328,9 @@ sexo_sedentario_all <- dta_sexo %>%
 
 # Nivel Educativo Bajo
 dta_bajo<- subset(dta, education_3==1)
-sexo_sedentario_bajo <- dta_bajo %>%
+sexo_sedentarismo_bajo <- dta_bajo %>%
   nest(data=-encuesta) %>%
-  mutate(model=map(data, ~glm(formula=sedentario~sexo+edad, data=.x, 
+  mutate(model=map(data, ~glm(formula=sedentarismo~sexo+edad, data=.x, 
                               family="poisson")), 
          tidied=map(model, tidy)) %>%
   unnest(tidied) %>%
@@ -337,9 +344,9 @@ sexo_sedentario_bajo <- dta_bajo %>%
 
 # Nivel Educativo Medio
 dta_medio<- subset(dta, education_3==2)
-sexo_sedentario_medio <- dta_medio %>%
+sexo_sedentarismo_medio <- dta_medio %>%
   nest(data=-encuesta) %>%
-  mutate(model=map(data, ~glm(formula=sedentario~sexo+edad, data=.x, 
+  mutate(model=map(data, ~glm(formula=sedentarismo~sexo+edad, data=.x, 
                               family="poisson")), 
          tidied=map(model, tidy)) %>%
   unnest(tidied) %>%
@@ -353,9 +360,9 @@ sexo_sedentario_medio <- dta_medio %>%
 
 # Nivel Educativo Alto
 dta_alto<- subset(dta, education_3==3)
-sexo_sedentario_alto <- dta_alto %>%
+sexo_sedentarismo_alto <- dta_alto %>%
   nest(data=-encuesta) %>%
-  mutate(model=map(data, ~glm(formula=sedentario~sexo+edad, data=.x, 
+  mutate(model=map(data, ~glm(formula=sedentarismo~sexo+edad, data=.x, 
                               family="poisson")), 
          tidied=map(model, tidy)) %>%
   unnest(tidied) %>%
@@ -368,10 +375,10 @@ sexo_sedentario_alto <- dta_alto %>%
          educacion="Alto")
 
 # Montamos la base de datos
-sexo_sedentario_educacion <- sexo_sedentario_all %>% 
-  rbind(sexo_sedentario_bajo) %>% 
-  rbind(sexo_sedentario_medio) %>% 
-  rbind(sexo_sedentario_alto) %>%
+sexo_sedentarismo_educacion <- sexo_sedentarismo_all %>% 
+  rbind(sexo_sedentarismo_bajo) %>% 
+  rbind(sexo_sedentarismo_medio) %>% 
+  rbind(sexo_sedentarismo_alto) %>%
   mutate(exp="Sex Inequality by Educational Level") %>% 
   rename(est = rii, infci=rii_infci, supci=rii_supci, estrato=educacion)
 
@@ -380,9 +387,9 @@ sexo_sedentario_educacion <- sexo_sedentario_all %>%
 
 # Clase Social 1
 dta_1<- subset(dta, clase==1)
-sexo_sedentario_1 <- dta_1 %>%
+sexo_sedentarismo_1 <- dta_1 %>%
   nest(data=-encuesta) %>%
-  mutate(model=map(data, ~glm(formula=sedentario~sexo+edad, data=.x, 
+  mutate(model=map(data, ~glm(formula=sedentarismo~sexo+edad, data=.x, 
                               family="poisson")), 
          tidied=map(model, tidy)) %>%
   unnest(tidied) %>%
@@ -396,9 +403,9 @@ sexo_sedentario_1 <- dta_1 %>%
 
 # Clase Social 2
 dta_2<- subset(dta, clase==2)
-sexo_sedentario_2 <- dta_2 %>%
+sexo_sedentarismo_2 <- dta_2 %>%
   nest(data=-encuesta) %>%
-  mutate(model=map(data, ~glm(formula=sedentario~sexo+edad, data=.x, 
+  mutate(model=map(data, ~glm(formula=sedentarismo~sexo+edad, data=.x, 
                               family="poisson")), 
          tidied=map(model, tidy)) %>%
   unnest(tidied) %>%
@@ -412,9 +419,9 @@ sexo_sedentario_2 <- dta_2 %>%
 
 # Clase Social 3
 dta_3<- subset(dta, clase==3)
-sexo_sedentario_3 <- dta_3 %>%
+sexo_sedentarismo_3 <- dta_3 %>%
   nest(data=-encuesta) %>%
-  mutate(model=map(data, ~glm(formula=sedentario~sexo+edad, data=.x, 
+  mutate(model=map(data, ~glm(formula=sedentarismo~sexo+edad, data=.x, 
                               family="poisson")), 
          tidied=map(model, tidy)) %>%
   unnest(tidied) %>%
@@ -428,9 +435,9 @@ sexo_sedentario_3 <- dta_3 %>%
 
 # Clase Social 4
 dta_4<- subset(dta, clase==4)
-sexo_sedentario_4 <- dta_4 %>%
+sexo_sedentarismo_4 <- dta_4 %>%
   nest(data=-encuesta) %>%
-  mutate(model=map(data, ~glm(formula=sedentario~sexo+edad, data=.x, 
+  mutate(model=map(data, ~glm(formula=sedentarismo~sexo+edad, data=.x, 
                               family="poisson")), 
          tidied=map(model, tidy)) %>%
   unnest(tidied) %>%
@@ -444,9 +451,9 @@ sexo_sedentario_4 <- dta_4 %>%
 
 # Clase Social 5
 dta_5<- subset(dta, clase==5)
-sexo_sedentario_5 <- dta_5 %>%
+sexo_sedentarismo_5 <- dta_5 %>%
   nest(data=-encuesta) %>%
-  mutate(model=map(data, ~glm(formula=sedentario~sexo+edad, data=.x, 
+  mutate(model=map(data, ~glm(formula=sedentarismo~sexo+edad, data=.x, 
                               family="poisson")), 
          tidied=map(model, tidy)) %>%
   unnest(tidied) %>%
@@ -460,9 +467,9 @@ sexo_sedentario_5 <- dta_5 %>%
 
 # Clase Social 6
 dta_6<- subset(dta, clase==6)
-sexo_sedentario_6 <- dta_6 %>%
+sexo_sedentarismo_6 <- dta_6 %>%
   nest(data=-encuesta) %>%
-  mutate(model=map(data, ~glm(formula=sedentario~sexo+edad, data=.x, 
+  mutate(model=map(data, ~glm(formula=sedentarismo~sexo+edad, data=.x, 
                               family="poisson")), 
          tidied=map(model, tidy)) %>%
   unnest(tidied) %>%
@@ -475,13 +482,13 @@ sexo_sedentario_6 <- dta_6 %>%
          clase="6")
 
 # Montamos la base de datos
-sexo_sedentario_clase <- sexo_sedentario_all %>% 
-  rbind(sexo_sedentario_1) %>%
-  rbind(sexo_sedentario_2) %>%
-  rbind(sexo_sedentario_3) %>% 
-  rbind(sexo_sedentario_4) %>% 
-  rbind(sexo_sedentario_5) %>% 
-  rbind(sexo_sedentario_6) %>%
+sexo_sedentarismo_clase <- sexo_sedentarismo_all %>% 
+  rbind(sexo_sedentarismo_1) %>%
+  rbind(sexo_sedentarismo_2) %>%
+  rbind(sexo_sedentarismo_3) %>% 
+  rbind(sexo_sedentarismo_4) %>% 
+  rbind(sexo_sedentarismo_5) %>% 
+  rbind(sexo_sedentarismo_6) %>%
   mutate(exp="Sex Inequality by Social Class") %>% 
   rename(est = rii, infci=rii_infci, supci=rii_supci, estrato=clase)
 
@@ -493,11 +500,11 @@ sexo_sedentario_clase <- sexo_sedentario_all %>%
 
 # Juntamos bases de datos
 
-desigualdades_sedentarismo <- rii_sedentario_education %>% 
-  rbind(rii_sedentario_clase) %>% 
-  rbind(sii_sedentario_education) %>% 
-  rbind(sexo_sedentario_educacion) %>% 
-  rbind(sexo_sedentario_clase)
+desigualdades_sedentarismo <- rii_sedentarismo_education %>% 
+  rbind(rii_sedentarismo_clase) %>% 
+  rbind(sii_sedentarismo_education) %>% 
+  rbind(sexo_sedentarismo_educacion) %>% 
+  rbind(sexo_sedentarismo_clase)
 
 
 save(desigualdades_sedentarismo, file="Physical Activity/desigualdades_sedentarismo.RData")
@@ -847,32 +854,32 @@ dta <- dta %>%
 
 
 #Estimamos con modelos multinivel que asumen que hay una desigualdad que cambia en el tiempo. Observaciones -> ccaa -> tiempo
-rii_sedentario_CCAA <- glmmTMB(sedentario~education_3_tr+edad+sexo+(1+education_3_tr|encuesta) + (1+education_3_tr|encuesta: ccaa), data=dta,
+rii_sedentarismo_CCAA <- glmmTMB(sedentarismo~education_3_tr+edad+sexo+(1+education_3_tr|encuesta) + (1+education_3_tr|encuesta: ccaa), data=dta,
                                family="poisson")
 
-rii_sedentario_CCAA <- rii_sedentario_CCAA %>%
+rii_sedentarismo_CCAA <- rii_sedentarismo_CCAA %>%
   extract_random_coefs(re="encuesta:ccaa") %>%
   mutate(rii=exp(value), 
          rii_infci=exp(value-1.96*se),
          rii_supci=exp(value+1.96*se)) %>% 
   filter(effect=="education_3_tr") %>% 
-  select(rii, rii_infci, rii_supci, group) %>% 
+  dplyr::select(rii, rii_infci, rii_supci, group) %>% 
   mutate(sexo="Overall") %>%
   separate(group, c('encuesta', 'ccaa')) %>%
   mutate(ccaa=as.numeric(ccaa)) %>%
   left_join(ccaas) %>%
   mutate(fr="Sedentarismo")
 
-rii_sedentario_CCAA_h <- glmmTMB(sedentario~education_3_tr+edad+(1+education_3_tr|encuesta) + (1+education_3_tr|encuesta: ccaa), data=subset(dta, sexo==1, encuesta != "2001"),
+rii_sedentarismo_CCAA_h <- glmmTMB(sedentarismo~education_3_tr+edad+(1+education_3_tr|encuesta) + (1+education_3_tr|encuesta: ccaa), data=subset(dta, sexo==1, encuesta != "2001"),
                                  family="poisson")
 
-rii_sedentario_CCAA_h <- rii_sedentario_CCAA_h %>%
+rii_sedentarismo_CCAA_h <- rii_sedentarismo_CCAA_h %>%
   extract_random_coefs(re="encuesta:ccaa") %>%
   mutate(rii=exp(value), 
          rii_infci=exp(value-1.96*se),
          rii_supci=exp(value+1.96*se)) %>% 
   filter(effect=="education_3_tr") %>% 
-  select(rii, rii_infci, rii_supci, group) %>% 
+  dplyr::select(rii, rii_infci, rii_supci, group) %>% 
   mutate(sexo="Hombres") %>%
   separate(group, c('encuesta', 'ccaa')) %>%
   mutate(ccaa=as.numeric(ccaa)) %>%
@@ -880,37 +887,37 @@ rii_sedentario_CCAA_h <- rii_sedentario_CCAA_h %>%
   mutate(fr="Sedentarismo")
 
 
-rii_sedentario_CCAA_m <- glmmTMB(sedentario~education_3_tr+edad+(1+education_3_tr|encuesta) + (1+education_3_tr|encuesta: ccaa), data=subset(dta, sexo==0, encuesta != "2001"),
+rii_sedentarismo_CCAA_m <- glmmTMB(sedentarismo~education_3_tr+edad+(1+education_3_tr|encuesta) + (1+education_3_tr|encuesta: ccaa), data=subset(dta, sexo==0, encuesta != "2001"),
                                  family="poisson")
 
-rii_sedentario_CCAA_m <- rii_sedentario_CCAA_m %>%
+rii_sedentarismo_CCAA_m <- rii_sedentarismo_CCAA_m %>%
   extract_random_coefs(re="encuesta:ccaa") %>%
   mutate(rii=exp(value), 
          rii_infci=exp(value-1.96*se),
          rii_supci=exp(value+1.96*se)) %>% 
   filter(effect=="education_3_tr") %>% 
-  select(rii, rii_infci, rii_supci, group) %>% 
+  dplyr::select(rii, rii_infci, rii_supci, group) %>% 
   mutate(sexo="Mujeres") %>%
   separate(group, c('encuesta', 'ccaa')) %>%
   mutate(ccaa=as.numeric(ccaa)) %>%
   left_join(ccaas) %>%
   mutate(fr="Sedentarismo")
 
-rii_sedentario_CCAA <- rii_sedentario_CCAA %>%
-  rbind(rii_sedentario_CCAA_h) %>%
-  rbind(rii_sedentario_CCAA_m)
+rii_sedentarismo_CCAA <- rii_sedentarismo_CCAA %>%
+  rbind(rii_sedentarismo_CCAA_h) %>%
+  rbind(rii_sedentarismo_CCAA_m)
 
 
-## Calculamos tasa de variación 2001-2020 de RII en sedentarismo por Comunidad Autónoma
+## Calculamos tasa de variación 2001-2023 de RII en sedentarismo por Comunidad Autónoma
 
-rii_variacion_CCAA <- rii_sedentario_CCAA %>% 
-  filter(encuesta=="2001" | encuesta== "2020") %>%
-  select(-c(rii_infci, rii_supci)) %>% 
+rii_variacion_CCAA <- rii_sedentarismo_CCAA %>% 
+  filter(encuesta=="2001" | encuesta== "2023") %>%
+  dplyr::select(-c(rii_infci, rii_supci)) %>% 
   pivot_wider(names_from = encuesta, values_from = rii) %>% 
   group_by(ccaa) %>%
-  rename(encuesta2020="2020",
+  dplyr::rename(encuesta2023="2023",
          encuesta2001="2001") %>% 
-  mutate(variacion=(((as.numeric(encuesta2020))-(as.numeric(encuesta2001)))/as.numeric(encuesta2001))*100) %>% 
+  mutate(variacion=(((as.numeric(encuesta2023))-(as.numeric(encuesta2001)))/as.numeric(encuesta2001))*100) %>% 
   filter(sexo=="Overall")
 
 
@@ -922,7 +929,7 @@ rii_variacion_CCAA <- rii_sedentario_CCAA %>%
 
 # Figura RII por Comunidades Autónomas multilíneas por sexo - 3x17 figuras
 
-fig_CCAA_multilineas <- ggplot(rii_sedentario_CCAA, aes(x=encuesta, y=rii, ymin=rii_infci, ymax=rii_supci, group=nombre_notilde)) +
+fig_CCAA_multilineas <- ggplot(rii_sedentarismo_CCAA, aes(x=encuesta, y=rii, ymin=rii_infci, ymax=rii_supci, group=nombre_notilde)) +
   geom_hline(yintercept = 1, lty=2)+
   geom_ribbon(alpha=0.3, aes(fill="#CC0033"))+
   geom_line(aes(color="#CC0033"))+
@@ -948,58 +955,58 @@ fig_CCAA_multilineas
 
 # Mapa de RII en sedentarismo 2001-2020 por Comunidades Autónomas - 7 figuras (4x3)
 
-shapefile_ccaa <- rgdal::readOGR("Physical Activity/Maps/Comunidades_Autonomas_ETRS89_30N.shp") # Leemos los datos de capa
+data_ccaa <- st_read("Physical Activity/Maps/Comunidades_Autonomas_ETRS89_30N.shp") # Leemos los datos de capa
 
-data_ccaa <- broom::tidy(shapefile_ccaa) # Los convertimos en un dataframe
+data_ccaa <- st_read(shapefile_ccaa) # Los convertimos en un dataframe
 
-data_ccaa$id<-as.character(data_ccaa$id)
+data_ccaa <- data_ccaa %>% 
+  dplyr::rename(id = Codigo) %>% 
+  mutate(id=as.numeric(id))
 
-rii_sedentario_map<-rii_sedentario_CCAA %>% 
-  mutate(id=ccaa-1) %>% 
-  filter(sexo=="Overall")
+rii_sedentarismo_map<-rii_sedentarismo_CCAA %>% 
+  mutate(id=ccaa) %>% 
+  filter(sexo=="Overall") %>% 
+  mutate(id=as.numeric(id))
 
-data_ccaa_map<-rii_sedentario_map %>% 
-  filter(id!=17 & id !=18) %>% 
-  mutate(id=as.character(id)) %>%
-  right_join(data_ccaa, by= "id")
+data_ccaa_map<-data_ccaa %>% 
+  left_join(rii_sedentarismo_map, by= "id")
 
 
 save(data_ccaa_map, file="Physical Activity/data_map.RData")
 
-sedentarismo_map <- ggplot(na.omit(data_ccaa_map), aes(x = long, y = lat, group = group)) +
-  geom_polygon(aes(fill=rii), color= "white", linewidth = 0.2) +
-  scale_fill_distiller(palette = "Blues", direction = 1, name="Relative Index of Inequality") +
+sedentarismo_map <- ggplot(data_ccaa_map %>% filter(!is.na(rii))) +
+  geom_sf(aes(fill = rii), color = "white", linewidth = 0.2) +
+  scale_fill_distiller(palette = "Blues", direction = 1, 
+                       name="Relative Index of Inequality", guide = guide_colorbar(direction="horizontal")) +
   labs() +
   facet_wrap(~encuesta, nrow = 2, ncol=4)+
   theme(axis.line = element_blank(),
         axis.text = element_blank(),
         axis.title = element_blank(),
         axis.ticks = element_blank(),
-        legend.position = c(0.9, 0.3),
+        legend.position = "bottom",
         plot.title = element_text(size=14),
         panel.grid = element_blank(),
         panel.background = element_blank(),
         strip.text.x.top = element_text(
           size = 14, face="bold"),
-        legend.key.size = unit(1.5, 'cm'),
+        legend.key.size = unit(1.0, 'cm'),
         legend.text = element_text(size=12),
         legend.title = element_text(face="bold", size = 12))
 sedentarismo_map
 
 
-# Mapa de tasa de variación relativa 2001-2020 en RII en sedentarismo por Comunidad Autónoma - 1 figura
+# Mapa de tasa de variación relativa 2001-2023 en RII en sedentarismo por Comunidad Autónoma - 1 figura
 
 rii_variacion_map<-rii_variacion_CCAA %>% 
   mutate(id=ccaa-1)
 
-rii_variacion_map<-rii_variacion_map %>% 
-  filter(id!=17 & id !=18) %>% 
-  mutate(id=as.character(id)) %>%
-  right_join(data_ccaa, by= "id")
+rii_variacion_map<-data_ccaa %>% 
+  right_join(rii_variacion_map, by= "id")
 
-variacion_sedentarismo_map <- ggplot(rii_variacion_map, aes(x = long, y = lat, group = group)) +
-  geom_polygon(aes(fill=variacion), color= "white", linewidth = 0.2) +
-  scale_fill_distiller(palette='RdBu',direction=-1, limits=c(-20,28))  +
+variacion_sedentarismo_map <- ggplot(rii_variacion_map) +
+  geom_sf(aes(fill=variacion), color= "white", linewidth = 0.2) +
+  scale_fill_distiller(palette='RdBu',direction=1, limits=c(-20,50))  +
   labs(fill = "% Variación") +
   theme_minimal() +
   theme(axis.line = element_blank(),
@@ -1016,7 +1023,7 @@ variacion_sedentarismo_map
 
 # Intento de figura multilineas CCAA multicolor - 1 figura (No vale)
 
-fig_rii_PA_CCAA <-  rii_sedentario_CCAA %>%
+fig_rii_PA_CCAA <-  rii_sedentarismo_CCAA %>%
   filter(sexo=="Overall") %>% 
   ggplot(aes(x=encuesta, y=rii, ymin=rii_infci, ymax=rii_supci, group=nombre_notilde)) +
   geom_hline(yintercept = 1, lty=2)+
@@ -1053,7 +1060,7 @@ fig_rii_PA_CCAA
 prevalencias_spain_overall <- dta %>%
   as_survey_design(weights = c(factor2)) %>%
   group_by(encuesta) %>%
-  summarize(sedentario = survey_mean(sedentario, na.rm = T, vartype = "ci"),
+  summarize(sedentarismo = survey_mean(sedentarismo, na.rm = T, vartype = "ci"),
   ) %>%
   mutate(sexo="Overall",
          ccaa=0,
@@ -1064,7 +1071,7 @@ prevalencias_spain_sexo <- dta %>%
   filter(encuesta != "2009") %>% 
   as_survey_design(weights = c(factor2)) %>%
   group_by(sexo, encuesta) %>%
-  summarize(sedentario = survey_mean(sedentario, na.rm = T, vartype = "ci"),
+  summarize(sedentarismo = survey_mean(sedentarismo, na.rm = T, vartype = "ci"),
   ) %>%
   mutate(sexo=case_when(sexo==0~"Women", sexo==1~"Men"),
          ccaa=0,
@@ -1083,10 +1090,10 @@ prevalencias_peso_ccaa_overall <- dta %>%
   filter(encuesta != "2009") %>% 
   as_survey_design(weights = c(factor2)) %>%
   group_by(ccaa, education_3, encuesta) %>%
-  summarize(poblacion = survey_total(sedentario, na.rm = T, 
+  summarize(poblacion = survey_total(sedentarismo, na.rm = T, 
                                      vartype = c("ci"),
                                      level = 0.95,) , 
-            sedentario = survey_mean(sedentario, na.rm = T, vartype = "ci"),
+            sedentarismo = survey_mean(sedentarismo, na.rm = T, vartype = "ci"),
   ) %>%
   left_join(ccaas) %>%
   mutate(sex="Overall")
@@ -1095,10 +1102,10 @@ prevalencias_peso_ccaa_sexo <- dta %>%
   filter(encuesta != "2009") %>% 
   as_survey_design(weights = c(factor2)) %>%
   group_by(sexo, ccaa, education_3, encuesta) %>%
-  summarize(poblacion = survey_total(sedentario, na.rm = T, 
+  summarize(poblacion = survey_total(sedentarismo, na.rm = T, 
                                      vartype = c("ci"),
                                      level = 0.95,) , 
-            sedentario = survey_mean(sedentario, na.rm = T, vartype = "ci"),
+            sedentarismo = survey_mean(sedentarismo, na.rm = T, vartype = "ci"),
   ) %>%
   left_join(ccaas) %>% 
   mutate(sex=case_when(sexo==0~"Women", sexo==1~"Men"))
@@ -1112,7 +1119,7 @@ prevalencias_peso_ccaa <- prevalencias_peso_ccaa_overall %>%
 prevalencias_peso_spain_overall <- dta %>%
   as_survey_design(weights = c(factor2)) %>%
   group_by(education_3, encuesta) %>%
-  summarize(sedentario = survey_mean(sedentario, na.rm = T, vartype = "ci"),
+  summarize(sedentarismo = survey_mean(sedentarismo, na.rm = T, vartype = "ci"),
   ) %>%
   mutate(sex="Overall",
          ccaa=0,
@@ -1123,7 +1130,7 @@ prevalencias_peso_spain_sexo <- dta %>%
   filter(encuesta != "2009") %>% 
   as_survey_design(weights = c(factor2)) %>%
   group_by(sexo, education_3, encuesta) %>%
-  summarize(sedentario = survey_mean(sedentario, na.rm = T, vartype = "ci"),
+  summarize(sedentarismo = survey_mean(sedentarismo, na.rm = T, vartype = "ci"),
   ) %>%
   mutate(sex=case_when(sexo==0~"Women", sexo==1~"Men"),
          ccaa=0,
@@ -1147,10 +1154,10 @@ load("Physical Activity/sedentarismo_prevalencias_informes.RData")
 
 # Figura descriptivo sedentarismo España Overall
 
-fig_desc_sedentario_overall <-  
+fig_desc_sedentarismo_overall <-  
   prevalencias_spain %>% 
   filter(encuesta!=2009, sexo=="Overall") %>% 
-  ggplot(aes(x=encuesta, y=(sedentario*100), ymin=(sedentario_low*100), ymax=(sedentario_upp*100))) +
+  ggplot(aes(x=encuesta, y=(sedentarismo*100), ymin=(sedentarismo_low*100), ymax=(sedentarismo_upp*100))) +
   geom_line(linewidth=0.75, color="dimgray")+  
   geom_ribbon(alpha=0.3, color="dimgray")+
   scale_y_continuous(expand = c(0, 0), breaks = c(10, 20, 30, 40, 50, 60, 70))+
@@ -1160,17 +1167,17 @@ fig_desc_sedentario_overall <-
   theme_bw()+
   theme_fis+
   theme(legend.key.size=unit(3, "line"))
-fig_desc_sedentario_overall
+fig_desc_sedentarismo_overall
 
 ggsave("Physical Activity/Figuras/preva_desc_overall.png", width = 4000, height = 2200, dpi=300, units = "px")
 
 
 # Figura descriptivo sedentarismo España por sexo
 
-fig_desc_sedentario_sexo <-  
+fig_desc_sedentarismo_sexo <-  
   prevalencias_spain %>% 
   filter(encuesta!=2009, ccaa==0) %>% 
-  ggplot(aes(x=encuesta, y=(sedentario*100), ymin=(sedentario_low*100), ymax=(sedentario_upp*100))) +
+  ggplot(aes(x=encuesta, y=(sedentarismo*100), ymin=(sedentarismo_low*100), ymax=(sedentarismo_upp*100))) +
   geom_line(aes(color=as.factor(sexo), linetype=as.factor(sexo)), linewidth=0.75)+  
   geom_ribbon(alpha=0.3, aes(fill=as.factor(sexo)))+
   scale_y_continuous(expand = c(0, 0), breaks = c(10, 20, 30, 40, 50, 60, 70))+
@@ -1192,7 +1199,7 @@ fig_desc_sedentario_sexo <-
   theme_bw()+
   theme_fis+
   theme(legend.key.size=unit(3, "line"))
-fig_desc_sedentario_sexo
+fig_desc_sedentarismo_sexo
 
 ggsave("Physical Activity/Figuras/preva_desc.png", width = 4000, height = 2200, dpi=300, units = "px")
 
@@ -1202,7 +1209,7 @@ ggsave("Physical Activity/Figuras/preva_desc.png", width = 4000, height = 2200, 
 fig_prev_sedentarismo_educacion <-  
   sedentarismo_prevalencias %>% 
   filter(encuesta!=2009, ccaa==0, sex=="Overall") %>% 
-  ggplot(aes(x=encuesta, y=(sedentario*100), ymin=(sedentario_low*100), ymax=(sedentario_upp*100))) +
+  ggplot(aes(x=encuesta, y=(sedentarismo*100), ymin=(sedentarismo_low*100), ymax=(sedentarismo_upp*100))) +
   geom_line(aes(color=as.factor(education_3)))+  
   geom_ribbon(alpha=0.3, aes(fill=as.factor(education_3)))+
   scale_y_continuous(expand = c(0, 0), breaks = c(10, 20, 30, 40, 50, 60, 70))+
@@ -1232,7 +1239,7 @@ ggsave("Physical Activity/Figuras/preva_educa_overall.png", width = 4000, height
 fig_prev_sedentarismo_educacion_sexo <-  
   sedentarismo_prevalencias %>% 
   filter(encuesta!=2009, ccaa==0) %>% 
-  ggplot(aes(x=encuesta, y=(sedentario*100), ymin=(sedentario_low*100), ymax=(sedentario_upp*100))) +
+  ggplot(aes(x=encuesta, y=(sedentarismo*100), ymin=(sedentarismo_low*100), ymax=(sedentarismo_upp*100))) +
   geom_line(aes(color=as.factor(education_3)))+  
   geom_ribbon(alpha=0.3, aes(fill=as.factor(education_3)))+
   facet_grid(~factor(sex, levels=c("Overall", "Men", "Women")))+
@@ -1259,10 +1266,10 @@ ggsave("Physical Activity/Figuras/preva_educa_sexo.png", width = 4000, height = 
 
 
 # Prueba figura prevalencias por nivel educativo y por Comunidad Autónoma - 17 figuras (no vale)
-fig_des_sedentario_CCAA <-  
+fig_des_sedentarismo_CCAA <-  
   sedentarismo_prevalencias %>% 
   filter(encuesta!=2009, ccaa!=0, sex=="Overall") %>% 
-  ggplot(aes(x=encuesta, y=(sedentario*100), ymin=(sedentario_low*100), ymax=(sedentario_upp*100))) +
+  ggplot(aes(x=encuesta, y=(sedentarismo*100), ymin=(sedentarismo_low*100), ymax=(sedentarismo_upp*100))) +
   geom_line(aes(color=as.factor(education_3)))+  
   geom_ribbon(alpha=0.3, aes(fill=as.factor(education_3)))+
   facet_grid(cols = vars(nombre_notilde))+
@@ -1275,14 +1282,14 @@ fig_des_sedentario_CCAA <-
   theme_fis+
   theme()
 
-fig_des_sedentario_CCAA
+fig_des_sedentarismo_CCAA
 
 
 #Figura republicana
-fig_prev_sedentario <-  
+fig_prev_sedentarismo <-  
   sedentarismo_prevalencias %>% 
   filter(ccaa==0) %>% 
-  ggplot(aes(x=encuesta, y=sedentario, ymin=sedentario_low, ymax=sedentario_upp)) +
+  ggplot(aes(x=encuesta, y=sedentarismo, ymin=sedentarismo_low, ymax=sedentarismo_upp)) +
   geom_line(aes(color=as.factor(education_3)))+  
   geom_ribbon(alpha=0.3, aes(fill=as.factor(education_3)))+
   facet_grid(cols = vars(sexo))+
@@ -1308,7 +1315,7 @@ fig_prev_sedentario <-
         panel.grid.minor = element_blank())+
   labs( title = "Prevalence of sedentarism by educational level and sex between 2001-2020")
 
-fig_prev_sedentario
+fig_prev_sedentarismo
 
 
 ########################################################################
@@ -1318,12 +1325,12 @@ fig_prev_sedentario
 
 # Hallamaos ICC para cada año entre las CCAA
 
-rii_model_icc_2001 <- rii_sedentario_CCAA %>% 
+rii_model_icc_2001 <- rii_sedentarismo_CCAA %>% 
   filter(encuesta==2001, sexo=="Overall") %>% 
   select(rii, ccaa) %>%
   pivot_wider(names_from = ccaa, values_from = rii)
 
-rii_model_icc <- rii_sedentario_CCAA %>% 
+rii_model_icc <- rii_sedentarismo_CCAA %>% 
   filter(sexo=="Overall") %>% 
   select(encuesta, rii, ccaa) %>%
   pivot_wider(names_from = ccaa, values_from = rii)
@@ -1332,60 +1339,66 @@ icc_model <- rii_model_icc %>%
   filter(encuesta==2020) %>% 
   select(-c(encuesta))
 
-ICC(icc_model)
+icc(icc_model)
 
-rii_model_icc_2001 <- rii_sedentario_CCAA %>% 
+rii_model_icc_2001 <- rii_sedentarismo_CCAA %>% 
   filter(encuesta==2001, sexo=="Overall") %>% 
   select(rii, ccaa) %>%
   pivot_wider(names_from = ccaa, values_from = rii)
 
-rii_model_icc_2001 <- rii_sedentario_CCAA %>% 
+rii_model_icc_2001 <- rii_sedentarismo_CCAA %>% 
   filter(encuesta==2001, sexo=="Overall") %>% 
   select(rii, ccaa) %>%
   pivot_wider(names_from = ccaa, values_from = rii)
 
 
-irr_model_icc_2001 <- glmmTMB(sedentario~education_3_tr+(1|ccaa), data=subset(dta, dta$encuesta==2001),
+irr_model_icc_2001 <- glmmTMB(sedentarismo~education_3_tr+(1|ccaa), data=subset(dta, dta$encuesta==2001),
                               family="poisson")
 
 icc_2001 <- irr::icc(irr_model_icc_2001) %>% 
   mutate(encuesta=2001)
 
-irr_model_icc_2003 <- glmmTMB(sedentario~education_3_tr+edad+sexo+(1+education_3_tr|ccaa), data=subset(dta, dta$encuesta==2003),
+irr_model_icc_2003 <- glmmTMB(sedentarismo~education_3_tr+edad+sexo+(1+education_3_tr|ccaa), data=subset(dta, dta$encuesta==2003),
                               family="poisson")
 
 icc_2003 <- performance::icc(irr_model_icc_2003) %>% 
   mutate(encuesta=2003)
 
-irr_model_icc_2006 <- glmmTMB(sedentario~education_3_tr+edad+sexo+(1+education_3_tr|ccaa), data=subset(dta, dta$encuesta==2006),
+irr_model_icc_2006 <- glmmTMB(sedentarismo~education_3_tr+edad+sexo+(1+education_3_tr|ccaa), data=subset(dta, dta$encuesta==2006),
                               family="poisson")
 
 icc_2006 <- performance::icc(irr_model_icc_2006) %>% 
   mutate(encuesta=2006)
 
-irr_model_icc_2011 <- glmmTMB(sedentario~education_3_tr+edad+sexo+(1+education_3_tr|ccaa), data=subset(dta, dta$encuesta==2011),
+irr_model_icc_2011 <- glmmTMB(sedentarismo~education_3_tr+edad+sexo+(1+education_3_tr|ccaa), data=subset(dta, dta$encuesta==2011),
                               family="poisson")
 
 icc_2011 <- performance::icc(irr_model_icc_2011) %>% 
   mutate(encuesta=2011)
 
-irr_model_icc_2014 <- glmmTMB(sedentario~education_3_tr+edad+sexo+(1+education_3_tr|ccaa), data=subset(dta, dta$encuesta==2014),
+irr_model_icc_2014 <- glmmTMB(sedentarismo~education_3_tr+edad+sexo+(1+education_3_tr|ccaa), data=subset(dta, dta$encuesta==2014),
                               family="poisson")
 
 icc_2014 <- performance::icc(irr_model_icc_2014) %>% 
   mutate(encuesta=2014)
 
-irr_model_icc_2017 <- glmmTMB(sedentario~education_3_tr+edad+sexo+(1+education_3_tr|ccaa), data=subset(dta, dta$encuesta==2017),
+irr_model_icc_2017 <- glmmTMB(sedentarismo~education_3_tr+edad+sexo+(1+education_3_tr|ccaa), data=subset(dta, dta$encuesta==2017),
                               family="poisson")
 º
 icc_2017 <- performance::icc(irr_model_icc_2017) %>% 
   mutate(encuesta=2017)
 
-irr_model_icc_2020 <- glmmTMB(sedentario~education_3_tr+edad+sexo+(1+education_3_tr|ccaa), data=subset(dta, dta$encuesta==2020),
+irr_model_icc_2020 <- glmmTMB(sedentarismo~education_3_tr+edad+sexo+(1+education_3_tr|ccaa), data=subset(dta, dta$encuesta==2020),
                               family="poisson")
 
 icc_2020 <- performance::icc(irr_model_icc_2020) %>% 
   mutate(encuesta=2020)
+
+irr_model_icc_2023 <- glmmTMB(sedentarismo~education_3_tr+edad+sexo+(1+education_3_tr|ccaa), data=subset(dta, dta$encuesta==2023),
+                              family="poisson")
+
+icc_2023 <- performance::icc(irr_model_icc_2023) %>% 
+  mutate(encuesta=2023)
 
 icc_ccaa <- icc_2001 %>%
   mutate(encuesta=2001) %>% 
@@ -1415,7 +1428,7 @@ fig_icc
 
 ####FIGURA RII (EDUCACIÓN) HOMBRES, MUJERES, OVERALL####
 
-fig_rii_junto <-  ggplot(rii_sedentario_education, aes(x=encuesta, y=rii, ymin=rii_infci, ymax=rii_supci)) +
+fig_rii_junto <-  ggplot(rii_sedentarismo_education, aes(x=encuesta, y=rii, ymin=rii_infci, ymax=rii_supci)) +
   geom_hline(yintercept = 1, lty=2)+
   geom_ribbon(alpha=0.3, aes(fill=sexo))+
   geom_line(aes(color=sexo)) +
@@ -1430,7 +1443,7 @@ fig_rii_junto <-  ggplot(rii_sedentario_education, aes(x=encuesta, y=rii, ymin=r
 fig_rii_junto
 
 
-fig_rii_separado <-  ggplot(rii_sedentario_education, aes(x=encuesta, y=rii, ymin=rii_infci, ymax=rii_supci)) +
+fig_rii_separado <-  ggplot(rii_sedentarismo_education, aes(x=encuesta, y=rii, ymin=rii_infci, ymax=rii_supci)) +
   geom_hline(yintercept = 1, lty=2)+
   geom_ribbon(alpha=0.3, aes(fill=sexo))+
   geom_line(aes(color=sexo)) +
@@ -1447,7 +1460,7 @@ fig_rii_separado
 
 ####FIGURA SII (EDUCACIÓN) HOMBRES, MUJERES, OVERALL####
 
-figura_sii_junto <-   ggplot(sii_sedentario_education, aes(x=encuesta, y=sii, ymin=sii_infci, ymax=sii_supci)) +
+figura_sii_junto <-   ggplot(sii_sedentarismo_education, aes(x=encuesta, y=sii, ymin=sii_infci, ymax=sii_supci)) +
   geom_hline(yintercept = 1, lty=2)+
   geom_ribbon(alpha=0.3, aes(fill=sexo))+
   geom_line(aes(color=sexo)) +
@@ -1462,7 +1475,7 @@ figura_sii_junto <-   ggplot(sii_sedentario_education, aes(x=encuesta, y=sii, ym
 figura_sii_junto
 
 
-figura_sii_separado <-  ggplot(sii_sedentario_education, aes(x=encuesta, y=sii, ymin=sii_infci, ymax=sii_supci)) +
+figura_sii_separado <-  ggplot(sii_sedentarismo_education, aes(x=encuesta, y=sii, ymin=sii_infci, ymax=sii_supci)) +
   geom_hline(yintercept = 1, lty=2)+
   geom_ribbon(alpha=0.3, aes(fill=sexo))+
   geom_line(aes(color=sexo)) +
@@ -1478,10 +1491,10 @@ figura_sii_separado
 
 ####FIGURA RII Y SII HOMBRES, MUJERES, OVERALL####
 
-sedentario_educacion$exp <- factor(sedentario_educacion$exp, levels = c("sii", "rii"),
+sedentarismo_educacion$exp <- factor(sedentarismo_educacion$exp, levels = c("sii", "rii"),
                                    labels = c("SII", "RII"))
 
-figura_sii_rii <-   ggplot(sedentario_educacion, aes(x=encuesta, y=est, ymin=infci, ymax=supci)) +
+figura_sii_rii <-   ggplot(sedentarismo_educacion, aes(x=encuesta, y=est, ymin=infci, ymax=supci)) +
   geom_hline(yintercept = 1, lty=2)+
   geom_ribbon(alpha=0.3, aes(fill=sexo))+
   geom_line(aes(color=sexo)) +
@@ -1497,7 +1510,7 @@ figura_sii_rii
 
 ####FIGURA RII COMUNIDADES AUTÓNOMAS HOMBRES, MUJERES, OVERALL####
 
-fig_CCAA <- ggplot(rii_sedentario_CCAA, aes(x=encuesta, y=rii, ymin=rii_infci, ymax=rii_supci, group=sexo)) +
+fig_CCAA <- ggplot(rii_sedentarismo_CCAA, aes(x=encuesta, y=rii, ymin=rii_infci, ymax=rii_supci, group=sexo)) +
   geom_hline(yintercept = 1, lty=2)+
   geom_ribbon(alpha=0.3, aes(fill="red"))+
   geom_line(aes(color="red")) +
@@ -1522,9 +1535,7 @@ fig_CCAA
 
 #Comunidades Autónomas Mapa RII Sedentarismo#
 
-shapefile_ccaa <- rgdal::readOGR("Physical Activity/Maps/Comunidades_Autonomas_ETRS89_30N.shp") # Leemos los datos de capa
-
-data_ccaa <- broom::tidy(shapefile_ccaa) # Los convertimos en un dataframe
+shapefile_ccaa <- st_read("Physical Activity/Maps/Comunidades_Autonomas_ETRS89_30N.shp") # Leemos los datos de capa
 
 #Test de mapa de ejjjpañita
 
@@ -1539,10 +1550,10 @@ ggplot(data_ccaa, aes(x= long, y = lat, group = group)) + # Hacemos el mapa
 
 data_ccaa$id<-as.character(data_ccaa$id)
 
-rii_sedentario_map<-rii_sedentario_CCAA %>% 
+rii_sedentarismo_map<-rii_sedentarismo_CCAA %>% 
   mutate(id=ccaa-1)
 
-data_ccaa_map<-rii_sedentario_map %>% 
+data_ccaa_map<-rii_sedentarismo_map %>% 
   mutate(id=as.character(id)) %>%
   right_join(data_ccaa, by= "id")%>% 
   filter(id!=17 & id !=18)
@@ -1586,11 +1597,11 @@ prevalencias_spain$education_3 <- factor(prevalencias_spain$education_3, levels 
                                          labels = c("Low", "Medium", "High"))
 
 prevalencias_spain <- prevalencias_spain %>% 
-  mutate(sedentario=sedentario*100, 
-         sedentario_low=sedentario_low*100,
-         sedentario_upp=sedentario_upp*100)
+  mutate(sedentarismo=sedentarismo*100, 
+         sedentarismo_low=sedentarismo_low*100,
+         sedentarismo_upp=sedentarismo_upp*100)
 
-fig_des_sedentario <-  ggplot(subset(prevalencias_spain, encuesta !=2009), aes(x=encuesta, y=sedentario, ymin=sedentario_low, ymax=sedentario_upp)) +
+fig_des_sedentarismo <-  ggplot(subset(prevalencias_spain, encuesta !=2009), aes(x=encuesta, y=sedentarismo, ymin=sedentarismo_low, ymax=sedentarismo_upp)) +
   geom_line(aes(color=as.factor(education_3)))+  
   geom_ribbon(alpha=0.3, aes(fill=as.factor(education_3)))+
   facet_grid(cols = vars(sexo))+
@@ -1604,10 +1615,10 @@ fig_des_sedentario <-  ggplot(subset(prevalencias_spain, encuesta !=2009), aes(x
   theme()+
   labs( title = "Prevalence of sedentarism by educational level and sex between 2001-2020")
 
-fig_des_sedentario
+fig_des_sedentarismo
 
 ###Versión republicana
-fig_des_sedentario <-  ggplot(subset(prevalencias_spain, encuesta !=2009), aes(x=encuesta, y=sedentario, ymin=sedentario_low, ymax=sedentario_upp)) +
+fig_des_sedentarismo <-  ggplot(subset(prevalencias_spain, encuesta !=2009), aes(x=encuesta, y=sedentarismo, ymin=sedentarismo_low, ymax=sedentarismo_upp)) +
   geom_line(aes(color=as.factor(education_3)))+  
   geom_ribbon(alpha=0.3, aes(fill=as.factor(education_3)))+
   facet_grid(cols = vars(sexo))+
@@ -1622,9 +1633,9 @@ fig_des_sedentario <-  ggplot(subset(prevalencias_spain, encuesta !=2009), aes(x
   theme()+
   labs( title = "Prevalence of sedentarism by educational level and sex between 2001-2020")
 
-fig_des_sedentario
+fig_des_sedentarismo
 
-fig_des_sedentario <-  ggplot(subset(prevalencias_peso_ccaa, abreviatura=="AN"), aes(x=encuesta, y=sedentario, ymin=sedentario_low, ymax=sedentario_upp)) +
+fig_des_sedentarismo <-  ggplot(subset(prevalencias_peso_ccaa, abreviatura=="AN"), aes(x=encuesta, y=sedentarismo, ymin=sedentarismo_low, ymax=sedentarismo_upp)) +
   geom_line(aes(color=as.factor(education_3)))+  
   geom_ribbon(alpha=0.3, aes(fill=as.factor(education_3)))+
   facet_grid(cols = vars(sexo))+
@@ -1638,11 +1649,11 @@ fig_des_sedentario <-  ggplot(subset(prevalencias_peso_ccaa, abreviatura=="AN"),
   theme()+
   labs( title = "Prevalence of sedentarism by educational level and sex between 2001-2020")
 
-fig_des_sedentario
+fig_des_sedentarismo
 
 ##############
 
-rii_sedentario_CCAA <- rii_sedentario_CCAA %>%
+rii_sedentarismo_CCAA <- rii_sedentarismo_CCAA %>%
   extract_random_coefs(re="encuesta:ccaa") %>%
   mutate(rii=exp(value), 
          rii_infci=exp(value-1.96*se),
@@ -1785,7 +1796,7 @@ eese_2009 <-  eese_2009 %>%
                             PE3==0~1), 
          vigorosa=case_when((PE1==1 | PE1==2 | PE1==3 | PE1==4 | PE1==5 | PE1==6 | PE1==7)~0, 
                             PE1==0~1), 
-         sedentario=case_when((moderada==1 | vigorosa==1)~1, 
+         sedentarismo=case_when((moderada==1 | vigorosa==1)~1, 
                               (moderada==0 & vigorosa==0)~0), 
          fruta=na_if(FV1, 9), fruta=na_if(fruta, 8), 
          verdura=na_if(FV2, 9), verdura=na_if(verdura, 8), 
@@ -1797,13 +1808,13 @@ eese_2009 <-  eese_2009 %>%
                                  (fruta==0 | verdura==0)~0)) %>%
   select(id, factor, edad, sexo, ccaa, nacionalidad, migration, clase, clase_tr,
          education_3, education_3_tr, education_5, education_5_tr, diabetes, hta, 
-         col, imc, obesity, sobrepeso, smoking, alcohol, sedentario, fruta, verdura, fruta_verdura,
+         col, imc, obesity, sobrepeso, smoking, alcohol, sedentarismo, fruta, verdura, fruta_verdura,
          recomendaciones, caminar_semana, moderada_semana, intensa_semana, moderosa_semana, mets_semana) %>%
   filter(edad>17) %>%
   distinct() %>%
   drop_na(id, factor, edad, sexo, ccaa, nacionalidad, migration, 
           education_3, education_3_tr, education_5, education_5_tr, diabetes, hta, 
-          imc, obesity, sobrepeso, smoking, sedentario) %>%
+          imc, obesity, sobrepeso, smoking, sedentarismo) %>%
   mutate(encuesta=2009)
 
 save(eese_2009, file = "Physical Activity/ense2009_pa.RData")
@@ -1908,7 +1919,7 @@ table(ense_2011$moderada_semana, useNA='always')
 table(ense_2011$intensa_semana, useNA='always')
 table(ense_2011$moderosa_semana, useNA='always')
 
-#Creo variable sedentario y lo añado al resto de variables del joint
+#Creo variable sedentarismo y lo añado al resto de variables del joint
 
 ense_2011 <-  ense_2011 %>% 
   mutate(id=IDENTHOGAR, 
@@ -1947,7 +1958,7 @@ ense_2011 <-  ense_2011 %>%
                            (S105==3 | S105==4) ~ 0), 
          alcohol=case_when(T121==1~1, 
                            T121==6~0), 
-         sedentario=case_when(U129==1~1, 
+         sedentarismo=case_when(U129==1~1, 
                               (U129==2 | U129==3 | U129==4)~0), 
          fruta=na_if(V133_1, 9), fruta=na_if(fruta, 8), 
          verdura=na_if(V133_7, 9), verdura=na_if(verdura, 8), 
@@ -1959,13 +1970,13 @@ ense_2011 <-  ense_2011 %>%
                                  (fruta==0 | verdura==0)~0)) %>%
   select(id, factor, edad, sexo, ccaa, nacionalidad, migration, clase, clase_tr,
          education_3, education_3_tr, education_5, education_5_tr, diabetes, hta, 
-         col, imc, obesity, sobrepeso, smoking, alcohol, sedentario, fruta, verdura, fruta_verdura,
+         col, imc, obesity, sobrepeso, smoking, alcohol, sedentarismo, fruta, verdura, fruta_verdura,
          recomendaciones, caminar_semana, moderada_semana, intensa_semana, moderosa_semana, mets_semana) %>%
   filter(edad>17) %>%
   distinct() %>%
   drop_na(id, factor, edad, sexo, ccaa, nacionalidad, migration, clase, clase_tr,
           education_3, education_3_tr, education_5, education_5_tr, diabetes, hta, 
-          col, imc, obesity, sobrepeso, smoking, sedentario, fruta_verdura) %>%
+          col, imc, obesity, sobrepeso, smoking, sedentarismo, fruta_verdura) %>%
   mutate(encuesta=2011)
 
 save(ense_2011, file = "Physical Activity/ense2011_pa.RData")
@@ -2070,7 +2081,7 @@ table(ense_2017$moderada_semana, useNA='always')
 table(ense_2017$intensa_semana, useNA='always')
 table(ense_2017$moderosa_semana, useNA='always')
 
-#Creo variable sedentario y lo añado al resto de variables del joint
+#Creo variable sedentarismo y lo añado al resto de variables del joint
 
 ense_2017 <-  ense_2017 %>% 
   mutate(id=IDENTHOGAR, 
@@ -2111,7 +2122,7 @@ ense_2017 <-  ense_2017 %>%
          alcohol=case_when((alcohol==1 | alcohol==2 | alcohol==3 | alcohol==4 
                             | alcohol==5 | alcohol==6 | alcohol==7)~1, 
                            (alcohol==8 | alcohol==9)~0), 
-         sedentario=case_when(T112==1~1, 
+         sedentarismo=case_when(T112==1~1, 
                               (T112==2 | T112==3 | T112==4)~0), 
          fruta=na_if(U120_1, 9), fruta=na_if(fruta, 8), 
          verdura=na_if(U120_7, 9), verdura=na_if(verdura, 8), 
@@ -2123,13 +2134,13 @@ ense_2017 <-  ense_2017 %>%
                                  (fruta==0 | verdura==0)~0)) %>%
   select(id, factor, edad, sexo, ccaa, nacionalidad, migration, clase, clase_tr,
          education_3, education_3_tr, education_5, education_5_tr, diabetes, hta, 
-         col, imc, obesity, sobrepeso, smoking, alcohol, sedentario, fruta, verdura, fruta_verdura, 
+         col, imc, obesity, sobrepeso, smoking, alcohol, sedentarismo, fruta, verdura, fruta_verdura, 
          recomendaciones, caminar_semana, moderada_semana, intensa_semana, moderosa_semana, mets_semana) %>%
   filter(edad>17) %>%
   distinct() %>%
   drop_na(id, factor, edad, sexo, ccaa, nacionalidad, migration, clase, clase_tr,
           education_3, education_3_tr, education_5, education_5_tr, diabetes, hta, 
-          col, imc, obesity, sobrepeso, smoking, alcohol, sedentario, fruta_verdura) %>%
+          col, imc, obesity, sobrepeso, smoking, alcohol, sedentarismo, fruta_verdura) %>%
   mutate(encuesta=2017)
 
 save(ense_2017, file = "Physical Activity/ense2017_pa.RData")
@@ -2216,7 +2227,7 @@ rii_mets_educacion <- rii_mets_overall %>%
   rbind(rii_mets_h) %>% 
   rbind(rii_mets_m)
 
-#Dicotomizo recomendaciones OMS e invierto (0= cumple, 1=no cumple) para igualar a sedentario
+#Dicotomizo recomendaciones OMS e invierto (0= cumple, 1=no cumple) para igualar a sedentarismo
 
 dta_pa$recomendaciones[dta_pa$recomendaciones>0] <- 2
 dta_pa$recomendaciones[dta_pa$recomendaciones<2] <- 1
@@ -2340,7 +2351,7 @@ fig_rii_mets_separado
 ## TODO JUNTO AHORA (SEDENTARISMO, METs Y RECOMENDACIONES)
 
 rii_pa_educacion <- rii_recomendaciones_educacion %>%
-  rbind(rii_sedentario_education)
+  rbind(rii_sedentarismo_education)
 
 save(rii_pa_educacion, file="Physical Activity/rii_pa_educacion.RData")
 
@@ -2365,8 +2376,8 @@ fig_rii_PA
 
 label(dta$edad_pura) <- "Age"
 label(dta$sexo) <- "Sex"
-label(dta$sedentario) <- "Sedentarism"
-dta$sedentario <- factor(dta$sedentario, levels = c(0, 1),
+label(dta$sedentarismo) <- "Sedentarism"
+dta$sedentarismo <- factor(dta$sedentarismo, levels = c(0, 1),
                          labels = c("No-Sedentary", "Sedentary"))
 label(dta$education_3_tr) <- "Educational Level"
 label(dta$education_3) <- "Educational Level"
@@ -2375,7 +2386,7 @@ dta$education_3 <- factor(dta$education_3, levels = c(1, 2, 3),
 dta$sexo <- factor(dta$sexo, levels = c(0, 1),
                    labels = c("Women", "Men"))
 
-tbl1 <- table1(~ edad_pura + education_3 | sedentario*sexo,
+tbl1 <- table1(~ edad_pura + as.character(education_3) | as.character(sedentarismo)*as.character(sexo),
                render.continuous=c(.="Median", "(IQR)"="(Q1, Q3)"),
                render.categorical=c(.="Freq (Pct%)"),
                data=dta)

@@ -194,4 +194,3 @@ eese_2023 <- adulto2023 %>%
 save(eese_2023, file = "2023/eese2023.RData")
 rm(adulto2023, eese_2023, hogar2023, metadatos_adulto2023, metadatos_hogar2023)
 
-Comprobación
